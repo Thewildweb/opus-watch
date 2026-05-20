@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OPUS — The hours, in detail.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --obs: #0a0907;
+    --obs-2: #131110;
+    --obs-3: #1d1a17;
+    --bone: #ebe6dc;
+    --bone-dim: #a8a39a;
+    --brass: #b48a4a;
+    --brass-bright: #d4a865;
+    --brass-deep: #7a5a2a;
+    --rule: rgba(180, 138, 74, 0.28);
+    --rule-dim: rgba(235, 230, 220, 0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; background: var(--obs); }
+  body {
+    background: var(--obs);
+    color: var(--bone);
+    font-family: "Manrope", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.16 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.7;
+    mix-blend-mode: overlay;
+  }
+
+  .serif { font-family: "Bodoni Moda", serif; }
+  .mono { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 3; }
+
+  /* ───── header ───── */
+  header.nav {
+    padding: 28px 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+  }
+  .nav-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 40px;
+  }
+  .logo {
+    font-family: "Bodoni Moda", serif;
+    font-weight: 400;
+    font-size: 28px;
+    letter-spacing: 0.5em;
+    color: var(--bone);
+    text-decoration: none;
+    padding-left: 0.5em;
+  }
+  .logo::before { content: "◆"; color: var(--brass); margin-right: 0.6em; font-size: 16px; vertical-align: 4px; }
+  .nav-row nav { display: flex; gap: 40px; }
+  .nav-row nav.right { justify-content: flex-end; }
+  .nav-row nav a {
+    color: var(--bone-dim);
+    text-decoration: none;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    transition: color .3s;
+    position: relative;
+  }
+  .nav-row nav a:hover { color: var(--brass-bright); }
+
+  /* ───── hero ───── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    padding: 120px 0 80px;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: -20% -10%;
+    background:
+      radial-gradient(40% 50% at 50% 45%, rgba(212, 168, 101, 0.28), transparent 60%),
+      radial-gradient(70% 70% at 50% 45%, rgba(180, 138, 74, 0.10), transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 80%, transparent 40%, var(--obs) 80%);
+    pointer-events: none;
+  }
+  .hero-inner {
+    text-align: center;
+    position: relative;
+    z-index: 4;
+    width: 100%;
+  }
+
+  .eyebrow-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 48px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.32em;
+    color: var(--brass);
+  }
+  .eyebrow-row .bar { height: 1px; width: 60px; background: var(--brass); }
+  .eyebrow-row .star { font-size: 10px; color: var(--brass-bright); }
+
+  h1.hero-title {
+    font-family: "Bodoni Moda", serif;
+    font-weight: 400;
+    font-size: clamp(64px, 9.5vw, 168px);
+    line-height: 0.92;
+    letter-spacing: -0.025em;
+    color: var(--bone);
+    text-shadow: 0 0 80px rgba(212, 168, 101, 0.15);
+  }
+  h1.hero-title .it {
+    font-style: italic;
+    color: var(--brass-bright);
+    font-weight: 400;
+    display: block;
+    transform: translateX(0.3em);
+  }
+  h1.hero-title .small {
+    display: block;
+    font-size: 0.38em;
+    letter-spacing: 0.04em;
+    color: var(--bone-dim);
+    font-weight: 400;
+    margin-top: 0.4em;
+    font-style: italic;
+  }
+
+  .hero-watch-wrap {
+    position: relative;
+    margin: 60px auto 0;
+    width: clamp(280px, 38vw, 540px);
+    aspect-ratio: 1;
+  }
+  .hero-watch-wrap::before {
+    content: "";
+    position: absolute;
+    inset: -8%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(212, 168, 101, 0.30), transparent 70%);
+    filter: blur(40px);
+    z-index: -1;
+    animation: pulse 5s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+  .hero-watch {
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 60px 80px rgba(0,0,0,0.8));
+    animation: rise 7s ease-in-out infinite;
+  }
+  @keyframes rise {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 64px;
+    margin-top: 56px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--bone-dim);
+  }
+  .hero-meta div { position: relative; }
+  .hero-meta div + div::before {
+    content: "";
+    position: absolute;
+    left: -32px;
+    top: 6px;
+    width: 1px;
+    height: 14px;
+    background: var(--brass);
+    opacity: 0.5;
+  }
+  .hero-meta b {
+    display: block;
+    font-family: "Bodoni Moda", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    text-transform: none;
+    color: var(--brass-bright);
+    margin-top: 4px;
+  }
+
+  /* ───── reveal scroll ───── */
+  .scroll-cue {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.4em;
+    color: var(--bone-dim);
+    z-index: 5;
+  }
+  .scroll-cue::after {
+    content: "";
+    display: block;
+    width: 1px;
+    height: 30px;
+    background: linear-gradient(to bottom, var(--brass), transparent);
+    margin: 14px auto 0;
+  }
+
+  /* ───── collection ───── */
+  .collection {
+    padding: 140px 0;
+    position: relative;
+    border-top: 1px solid var(--rule-dim);
+  }
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+    margin-bottom: 80px;
+  }
+  .section-head .label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .section-head .label::before { content: "◆"; font-size: 9px; }
+  .section-head h2 {
+    font-family: "Bodoni Moda", serif;
+    font-weight: 400;
+    font-size: clamp(48px, 6vw, 96px);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--bone);
+  }
+  .section-head h2 em { font-style: italic; color: var(--brass-bright); }
+  .section-head .lede {
+    max-width: 460px;
+    color: var(--bone-dim);
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  .pieces {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    background: var(--rule-dim);
+    border: 1px solid var(--rule-dim);
+  }
+  .piece {
+    background: var(--obs);
+    padding: 60px 40px 40px;
+    position: relative;
+    cursor: pointer;
+    transition: background .6s;
+    overflow: hidden;
+  }
+  .piece::before {
+    content: "";
+    position: absolute;
+    inset: -50% -10% auto -10%;
+    height: 100%;
+    background: radial-gradient(ellipse at 50% 50%, rgba(212, 168, 101, 0.18), transparent 60%);
+    opacity: 0;
+    transition: opacity .6s;
+    pointer-events: none;
+  }
+  .piece:hover::before { opacity: 1; }
+  .piece:hover { background: var(--obs-2); }
+  .piece .ref {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--brass);
+    display: flex;
+    justify-content: space-between;
+  }
+  .piece .ref .status {
+    color: var(--bone-dim);
+  }
+  .piece-img {
+    margin: 30px auto 30px;
+    aspect-ratio: 1;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .piece-img svg {
+    width: 78%;
+    filter: drop-shadow(0 30px 50px rgba(0,0,0,0.7));
+    transition: transform .6s cubic-bezier(.2,.7,.2,1);
+  }
+  .piece:hover .piece-img svg { transform: scale(1.06); }
+
+  .piece h3 {
+    font-family: "Bodoni Moda", serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 42px;
+    line-height: 1;
+    margin-bottom: 14px;
+    color: var(--bone);
+  }
+  .piece .spec {
+    color: var(--bone-dim);
+    font-size: 14px;
+    margin-bottom: 28px;
+    line-height: 1.55;
+  }
+  .piece .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 20px;
+    border-top: 1px solid var(--rule);
+  }
+  .piece .price {
+    font-family: "Bodoni Moda", serif;
+    font-size: 24px;
+    color: var(--brass-bright);
+  }
+  .piece .view {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone);
+    text-decoration: none;
+    border-bottom: 1px solid var(--brass);
+    padding-bottom: 3px;
+  }
+  .piece .view:hover { color: var(--brass-bright); }
+
+  /* ───── feature interlude ───── */
+  .interlude {
+    padding: 140px 0;
+    position: relative;
+    border-top: 1px solid var(--rule-dim);
+    overflow: hidden;
+  }
+  .interlude::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(50% 80% at 80% 50%, rgba(180, 138, 74, 0.10), transparent 70%);
+  }
+  .interlude-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 100px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  .interlude h2 {
+    font-family: "Bodoni Moda", serif;
+    font-weight: 400;
+    font-size: clamp(48px, 6vw, 96px);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    color: var(--bone);
+    margin-bottom: 32px;
+  }
+  .interlude h2 em { font-style: italic; color: var(--brass-bright); }
+
+  .interlude .pullquote {
+    font-family: "Bodoni Moda", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.4;
+    color: var(--bone);
+    border-left: 1px solid var(--brass);
+    padding-left: 32px;
+    margin: 40px 0;
+  }
+  .interlude .signature {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.24em;
+    color: var(--brass);
+    margin-top: 12px;
+  }
+
+  .specsheet {
+    background: var(--obs-2);
+    border: 1px solid var(--rule);
+    padding: 56px 48px;
+    position: relative;
+  }
+  .specsheet::before, .specsheet::after {
+    content: "";
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border: 1px solid var(--brass);
+  }
+  .specsheet::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+  .specsheet::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+  .specsheet-title {
+    font-family: "Bodoni Moda", serif;
+    font-style: italic;
+    font-size: 32px;
+    margin-bottom: 8px;
+    color: var(--brass-bright);
+  }
+  .specsheet-ref {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+    margin-bottom: 36px;
+  }
+  .specsheet table { width: 100%; border-collapse: collapse; }
+  .specsheet td {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule-dim);
+    font-size: 14px;
+    vertical-align: top;
+  }
+  .specsheet td:first-child {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+    width: 40%;
+  }
+  .specsheet td:last-child {
+    color: var(--bone);
+    text-align: right;
+    font-family: "Bodoni Moda", serif;
+    font-style: italic;
+    font-size: 18px;
+  }
+
+  /* ───── atelier ───── */
+  .atelier {
+    padding: 160px 0 120px;
+    background:
+      linear-gradient(180deg, var(--obs) 0%, #0d0b08 100%);
+    position: relative;
+    border-top: 1px solid var(--rule-dim);
+  }
+  .atelier::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(40% 60% at 50% 20%, rgba(212, 168, 101, 0.18), transparent 60%);
+    pointer-events: none;
+  }
+  .atelier .container { text-align: center; position: relative; z-index: 2; }
+
+  .atelier .eyebrow {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.36em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 36px;
+  }
+  .atelier h2 {
+    font-family: "Bodoni Moda", serif;
+    font-weight: 400;
+    font-size: clamp(56px, 8vw, 144px);
+    line-height: 0.95;
+    letter-spacing: -0.03em;
+    color: var(--bone);
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  .atelier h2 em { font-style: italic; color: var(--brass-bright); }
+  .atelier .lede {
+    max-width: 580px;
+    margin: 40px auto 60px;
+    color: var(--bone-dim);
+    font-size: 18px;
+    line-height: 1.65;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 60px;
+    margin: 80px 0 60px;
+    text-align: left;
+  }
+  .service {
+    border-top: 1px solid var(--brass);
+    padding-top: 24px;
+    position: relative;
+  }
+  .service .n {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 18px;
+  }
+  .service h3 {
+    font-family: "Bodoni Moda", serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 32px;
+    margin-bottom: 14px;
+    color: var(--bone);
+  }
+  .service p {
+    color: var(--bone-dim);
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .service .meta {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--brass-bright);
+  }
+
+  .cta-bar {
+    margin-top: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+  }
+  .cta-btn {
+    background: transparent;
+    color: var(--bone);
+    border: 1px solid var(--brass);
+    padding: 24px 44px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all .35s;
+    display: inline-flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .cta-btn:hover {
+    background: var(--brass);
+    color: var(--obs);
+    letter-spacing: 0.34em;
+  }
+
+  /* ───── footer ───── */
+  footer.foot {
+    padding: 100px 0 30px;
+    border-top: 1px solid var(--rule-dim);
+    position: relative;
+  }
+  .foot-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 80px;
+  }
+  .foot-logo {
+    font-family: "Bodoni Moda", serif;
+    font-size: 48px;
+    letter-spacing: 0.32em;
+    color: var(--bone);
+    margin-bottom: 20px;
+  }
+  .foot-logo::before { content: "◆"; color: var(--brass); margin-right: 0.4em; font-size: 24px; vertical-align: 8px; }
+  .foot p { color: var(--bone-dim); font-size: 14px; max-width: 320px; }
+  .foot h4 {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--brass);
+    margin-bottom: 22px;
+  }
+  .foot a {
+    display: block;
+    padding: 5px 0;
+    color: var(--bone-dim);
+    text-decoration: none;
+    font-size: 14px;
+    transition: color .25s;
+  }
+  .foot a:hover { color: var(--brass-bright); }
+  .foot-bot {
+    padding-top: 24px;
+    border-top: 1px solid var(--rule-dim);
+    display: flex;
+    justify-content: space-between;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--bone-dim);
+  }
+
+  .style-badge {
+    position: fixed;
+    left: 24px;
+    bottom: 24px;
+    background: var(--brass);
+    color: var(--obs);
+    padding: 10px 16px;
+    z-index: 100;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .style-badge:hover { background: var(--brass-bright); }
+
+  @media (max-width: 900px) {
+    .pieces, .services-grid, .foot-grid { grid-template-columns: 1fr; }
+    .section-head, .interlude-grid { grid-template-columns: 1fr; gap: 40px; }
+    .hero-meta { flex-direction: column; gap: 24px; }
+    .hero-meta div + div::before { display: none; }
+    .nav-row nav.left { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="style-badge" href="index.html">← STYLE 03 · NOCTURNE</a>
+
+<header class="nav">
+  <div class="container">
+    <div class="nav-row">
+      <nav class="left">
+        <a href="#">Collection</a>
+        <a href="#">Atelier</a>
+        <a href="#">Maison</a>
+      </nav>
+      <a class="logo" href="#">OPUS</a>
+      <nav class="right">
+        <a href="#">Account</a>
+        <a href="#">Search</a>
+        <a href="#">Bag · 0</a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="eyebrow-row">
+      <span class="bar"></span>
+      <span>Volume IV · Spring</span>
+      <span class="star">◆</span>
+      <span>Edition of 86</span>
+      <span class="bar"></span>
+    </div>
+
+    <h1 class="hero-title">
+      The hours,
+      <span class="it">in detail.</span>
+      <span class="small">— Opus Calibre 04 · Aurum Noir</span>
+    </h1>
+
+    <div class="hero-watch-wrap">
+      <svg class="hero-watch" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="caseN" cx="50%" cy="30%" r="80%">
+            <stop offset="0%" stop-color="#5a4226" />
+            <stop offset="40%" stop-color="#3a2a16" />
+            <stop offset="100%" stop-color="#1a120a" />
+          </radialGradient>
+          <radialGradient id="bezelN" cx="50%" cy="30%" r="80%">
+            <stop offset="0%" stop-color="#d4a865" />
+            <stop offset="50%" stop-color="#a67d3a" />
+            <stop offset="100%" stop-color="#5a3e1a" />
+          </radialGradient>
+          <radialGradient id="dialN" cx="50%" cy="30%" r="85%">
+            <stop offset="0%" stop-color="#1d1a16" />
+            <stop offset="60%" stop-color="#0e0c08" />
+            <stop offset="100%" stop-color="#000000" />
+          </radialGradient>
+          <radialGradient id="crownN" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#d4a865" />
+            <stop offset="100%" stop-color="#7a5a2a" />
+          </radialGradient>
+          <linearGradient id="reflectN" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="rgba(255,255,255,0.18)" />
+            <stop offset="40%" stop-color="rgba(255,255,255,0.04)" />
+            <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+          </linearGradient>
+        </defs>
+        <!-- crown -->
+        <rect x="548" y="282" width="22" height="36" rx="3" fill="url(#crownN)" />
+        <rect x="552" y="288" width="14" height="24" fill="none" stroke="#3a2a16" stroke-width="0.6" />
+        <!-- lugs -->
+        <path d="M198 80 L240 110 L210 140 L180 110 Z" fill="url(#bezelN)" />
+        <path d="M402 80 L420 110 L390 140 L360 110 Z" fill="url(#bezelN)" />
+        <path d="M198 520 L240 490 L210 460 L180 490 Z" fill="url(#bezelN)" />
+        <path d="M402 520 L420 490 L390 460 L360 490 Z" fill="url(#bezelN)" />
+        <!-- case outer ring -->
+        <circle cx="300" cy="300" r="260" fill="url(#bezelN)" />
+        <circle cx="300" cy="300" r="252" fill="none" stroke="#3a2a16" stroke-width="0.6" />
+        <!-- inner case -->
+        <circle cx="300" cy="300" r="232" fill="url(#caseN)" />
+        <!-- dial -->
+        <circle cx="300" cy="300" r="218" fill="url(#dialN)" />
+        <!-- inner ring -->
+        <circle cx="300" cy="300" r="208" fill="none" stroke="#b48a4a" stroke-width="0.5" opacity="0.6" />
+        <!-- hour markers (applied indices) -->
+        <g id="hour-marks"></g>
+        <!-- 12 marker (diamond) -->
+        <polygon points="300,98 308,112 300,126 292,112" fill="#d4a865" />
+        <!-- 6 marker (diamond) -->
+        <polygon points="300,474 308,488 300,502 292,488" fill="#d4a865" />
+        <!-- maker -->
+        <text x="300" y="200" font-family="Bodoni Moda, serif" font-style="italic" font-size="22" fill="#d4a865" text-anchor="middle">Opus</text>
+        <text x="300" y="220" font-family="JetBrains Mono, monospace" font-size="8" letter-spacing="4" fill="#b48a4a" text-anchor="middle" opacity="0.7">CAL. 04 · AURUM NOIR</text>
+        <!-- sub dial moon phase -->
+        <circle cx="300" cy="380" r="42" fill="#000" stroke="#b48a4a" stroke-width="0.6" />
+        <circle cx="285" cy="378" r="14" fill="#d4a865" opacity="0.85" />
+        <circle cx="320" cy="378" r="14" fill="#0a0907" />
+        <text x="300" y="442" font-family="JetBrains Mono, monospace" font-size="7" letter-spacing="3" fill="#7a5a2a" text-anchor="middle">PHASE LUNAIRE</text>
+        <!-- hands -->
+        <g transform="rotate(-50 300 300)">
+          <rect x="297" y="120" width="6" height="190" rx="2" fill="#d4a865" />
+          <rect x="298.5" y="130" width="3" height="170" fill="#1a1a18" />
+        </g>
+        <g transform="rotate(80 300 300)">
+          <rect x="297" y="150" width="6" height="155" rx="2" fill="#d4a865" />
+          <rect x="298.5" y="160" width="3" height="135" fill="#1a1a18" />
+        </g>
+        <!-- second hand -->
+        <g transform="rotate(220 300 300)">
+          <rect x="299" y="120" width="2" height="195" fill="#d4a865" opacity="0.8" />
+          <circle cx="300" cy="135" r="6" fill="none" stroke="#d4a865" stroke-width="1" />
+        </g>
+        <circle cx="300" cy="300" r="10" fill="url(#crownN)" />
+        <circle cx="300" cy="300" r="3" fill="#1a1a18" />
+        <!-- reflection -->
+        <ellipse cx="240" cy="220" rx="120" ry="80" fill="url(#reflectN)" />
+      </svg>
+      <script>
+        (function() {
+          const hm = document.querySelector('#hour-marks');
+          if (!hm) return;
+          for (let i = 0; i < 12; i++) {
+            if (i === 0 || i === 6) continue;
+            const a = (i/12) * Math.PI * 2 - Math.PI/2;
+            const r = 195;
+            const x = 300 + Math.cos(a) * r;
+            const y = 300 + Math.sin(a) * r;
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('x', x - 1.5);
+            rect.setAttribute('y', y - 7);
+            rect.setAttribute('width', 3);
+            rect.setAttribute('height', 14);
+            rect.setAttribute('fill', '#d4a865');
+            rect.setAttribute('transform', `rotate(${(i/12)*360} ${x} ${y})`);
+            hm.appendChild(rect);
+          }
+          // minute ticks
+          for (let i = 0; i < 60; i++) {
+            if (i % 5 === 0) continue;
+            const a = (i/60) * Math.PI * 2 - Math.PI/2;
+            const r1 = 200, r2 = 206;
+            const x1 = 300 + Math.cos(a) * r1;
+            const y1 = 300 + Math.sin(a) * r1;
+            const x2 = 300 + Math.cos(a) * r2;
+            const y2 = 300 + Math.sin(a) * r2;
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+            line.setAttribute('stroke', '#b48a4a');
+            line.setAttribute('stroke-width', 0.5);
+            line.setAttribute('opacity', 0.7);
+            hm.appendChild(line);
+          }
+        })();
+      </script>
+    </div>
+
+    <div class="hero-meta">
+      <div>Calibre <b>OP-04 Automatique</b></div>
+      <div>Case <b>40 mm · Acier Noir</b></div>
+      <div>Reserve <b>72 hours</b></div>
+      <div>Edition <b>№ 21 / 86</b></div>
+    </div>
+  </div>
+  <div class="scroll-cue">Descend</div>
+</section>
+
+<section class="collection">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="label">The Spring Trio · MMXXVI</div>
+        <h2>Three pieces,<br/><em>finished by hand.</em></h2>
+      </div>
+      <div class="lede">
+        Volume IV opens with three watches drawn from the same calibre family —
+        each made to order, signed by the watchmaker who completed it, and
+        delivered to the address you give us in a walnut presentation case.
+      </div>
+    </div>
+
+    <div class="pieces">
+
+      <article class="piece">
+        <div class="ref">
+          <span>Réf. AUR-04-N · 40mm</span>
+          <span class="status">№ 21 / 86</span>
+        </div>
+        <div class="piece-img">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="b1" cx="50%" cy="35%" r="70%">
+                <stop offset="0%" stop-color="#d4a865" /><stop offset="100%" stop-color="#5a3e1a" />
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="95" fill="url(#b1)" />
+            <circle cx="100" cy="100" r="83" fill="#0a0907" />
+            <circle cx="100" cy="100" r="78" fill="none" stroke="#b48a4a" stroke-width="0.4" opacity="0.6" />
+            <text x="100" y="46" font-family="Bodoni Moda, serif" font-style="italic" font-size="10" fill="#d4a865" text-anchor="middle">Opus</text>
+            <polygon points="100,38 104,46 100,54 96,46" fill="#d4a865" />
+            <polygon points="100,150 104,158 100,166 96,158" fill="#d4a865" />
+            <circle cx="100" cy="125" r="14" fill="none" stroke="#b48a4a" stroke-width="0.5" />
+            <g transform="rotate(-30 100 100)"><rect x="98.5" y="55" width="3" height="50" fill="#d4a865" /></g>
+            <g transform="rotate(70 100 100)"><rect x="98.5" y="65" width="3" height="40" fill="#d4a865" /></g>
+            <circle cx="100" cy="100" r="4" fill="#d4a865" />
+          </svg>
+        </div>
+        <h3>Aurum Noir</h3>
+        <p class="spec">Acier noir · phase lunaire · automatique. Aiguilles or rose appliquées.</p>
+        <div class="row">
+          <span class="price">€ 28,400</span>
+          <a class="view" href="#">Reserve →</a>
+        </div>
+      </article>
+
+      <article class="piece">
+        <div class="ref">
+          <span>Réf. SOL-04-G · 38mm</span>
+          <span class="status">№ 42 / 120</span>
+        </div>
+        <div class="piece-img">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="b2" cx="50%" cy="35%" r="70%">
+                <stop offset="0%" stop-color="#f0e7d4" /><stop offset="100%" stop-color="#8a7758" />
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="95" fill="url(#b2)" />
+            <circle cx="100" cy="100" r="83" fill="#1d1a16" />
+            <text x="100" y="46" font-family="Bodoni Moda, serif" font-style="italic" font-size="10" fill="#d4a865" text-anchor="middle">Opus</text>
+            <text x="100" y="38" font-family="Bodoni Moda, serif" font-size="12" fill="#ebe6dc" text-anchor="middle">XII</text>
+            <text x="155" y="105" font-family="Bodoni Moda, serif" font-size="12" fill="#ebe6dc" text-anchor="middle">III</text>
+            <text x="100" y="170" font-family="Bodoni Moda, serif" font-size="12" fill="#ebe6dc" text-anchor="middle">VI</text>
+            <text x="45" y="105" font-family="Bodoni Moda, serif" font-size="12" fill="#ebe6dc" text-anchor="middle">IX</text>
+            <g transform="rotate(15 100 100)"><rect x="98.5" y="55" width="3" height="50" fill="#ebe6dc" /></g>
+            <g transform="rotate(125 100 100)"><rect x="98.5" y="65" width="3" height="40" fill="#ebe6dc" /></g>
+            <circle cx="100" cy="100" r="4" fill="#d4a865" />
+          </svg>
+        </div>
+        <h3>Solstice</h3>
+        <p class="spec">Or champagne · cadran noir laqué · trois aiguilles. La pièce la plus discrète.</p>
+        <div class="row">
+          <span class="price">€ 19,800</span>
+          <a class="view" href="#">Reserve →</a>
+        </div>
+      </article>
+
+      <article class="piece">
+        <div class="ref">
+          <span>Réf. NOC-04-T · 42mm</span>
+          <span class="status">№ 09 / 48</span>
+        </div>
+        <div class="piece-img">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="b3" cx="50%" cy="35%" r="70%">
+                <stop offset="0%" stop-color="#3d3530" /><stop offset="100%" stop-color="#0a0907" />
+              </radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="95" fill="url(#b3)" />
+            <circle cx="100" cy="100" r="83" fill="#040403" />
+            <text x="100" y="46" font-family="Bodoni Moda, serif" font-style="italic" font-size="10" fill="#d4a865" text-anchor="middle">Opus</text>
+            <g id="ticks3" stroke="#b48a4a" stroke-width="0.5"></g>
+            <circle cx="70" cy="110" r="14" fill="none" stroke="#b48a4a" stroke-width="0.5" />
+            <circle cx="130" cy="110" r="14" fill="none" stroke="#b48a4a" stroke-width="0.5" />
+            <g transform="rotate(-60 100 100)"><rect x="98.5" y="55" width="3" height="50" fill="#d4a865" /></g>
+            <g transform="rotate(40 100 100)"><rect x="98.5" y="65" width="3" height="40" fill="#d4a865" /></g>
+            <circle cx="100" cy="100" r="4" fill="#d4a865" />
+          </svg>
+        </div>
+        <h3>Nocturne</h3>
+        <p class="spec">Édition tonneau · chronographe rattrapante. Une pièce, faite à la commande.</p>
+        <div class="row">
+          <span class="price">€ 52,000</span>
+          <a class="view" href="#">Reserve →</a>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<section class="interlude">
+  <div class="container">
+    <div class="interlude-grid">
+      <div>
+        <div class="label" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--brass); margin-bottom: 24px;">— On Restraint</div>
+        <h2>We refuse<br/>to scale.<em> Slowness</em><br/>is the point.</h2>
+        <div class="pullquote">
+          "There is a certain dignity to producing fewer than a hundred watches a year.
+          You can know each one. You can name the maker. You can take the call when
+          something goes wrong."
+        </div>
+        <div class="signature">E. Veyrat &nbsp;·&nbsp; Founder, Maître Horloger</div>
+      </div>
+      <div class="specsheet">
+        <div class="specsheet-title">Aurum Noir</div>
+        <div class="specsheet-ref">Réf. AUR-04-N · Calibre OP-04 Lunar</div>
+        <table>
+          <tr><td>Movement</td><td>OP-04, automatic</td></tr>
+          <tr><td>Frequency</td><td>28,800 vph</td></tr>
+          <tr><td>Power reserve</td><td>72 hours</td></tr>
+          <tr><td>Jewels</td><td>32</td></tr>
+          <tr><td>Case</td><td>40 mm · DLC steel</td></tr>
+          <tr><td>Crystal</td><td>Sapphire, AR x2</td></tr>
+          <tr><td>Water resistance</td><td>50 m</td></tr>
+          <tr><td>Strap</td><td>Calf, hand-stitched</td></tr>
+          <tr><td>Edition</td><td>86 pieces</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="atelier">
+  <div class="container">
+    <div class="eyebrow">— THE ATELIER · BY APPOINTMENT</div>
+    <h2>Restored<br/>at the bench,<br/><em>by the maker.</em></h2>
+    <p class="lede">
+      Every Opus comes home for service, and the atelier accepts a small
+      number of outside pieces each season — fine watches and old, by appointment
+      and under our insured courier.
+    </p>
+
+    <div class="services-grid">
+      <div class="service">
+        <div class="n">— 01</div>
+        <h3>Service<br/>complet</h3>
+        <p>Full revision, cleaning, lubrication and regulation of the movement,
+        with refinish of case and bracelet.</p>
+        <div class="meta">5–7 weeks · upon estimate</div>
+      </div>
+      <div class="service">
+        <div class="n">— 02</div>
+        <h3>Restauration<br/>vintage</h3>
+        <p>Hand-restoration of dials, hands and movements for pieces over twenty
+        years old. Photographic dossier supplied.</p>
+        <div class="meta">9–14 weeks · upon estimate</div>
+      </div>
+      <div class="service">
+        <div class="n">— 03</div>
+        <h3>Privé &amp;<br/>conseil</h3>
+        <p>By appointment in Antwerp or Geneva. A two-hour conversation,
+        the watches in front of us, no obligation.</p>
+        <div class="meta">private · sans frais</div>
+      </div>
+    </div>
+
+    <a class="cta-btn" href="#">
+      Request the Atelier
+      <span>→</span>
+    </a>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo">OPUS</div>
+        <p>An independent house of watchmakers. Antwerp &amp; Geneva. We make few watches, by intention, and finish them by hand.</p>
+      </div>
+      <div>
+        <h4>Maison</h4>
+        <a href="#">Collection</a>
+        <a href="#">Archive</a>
+        <a href="#">Journal</a>
+        <a href="#">Heritage</a>
+      </div>
+      <div>
+        <h4>Atelier</h4>
+        <a href="#">Service</a>
+        <a href="#">Restoration</a>
+        <a href="#">Couriers</a>
+        <a href="#">Certificates</a>
+      </div>
+      <div>
+        <h4>Salons</h4>
+        <a href="#">Antwerp · Hopland</a>
+        <a href="#">Geneva · Rue des Granges</a>
+        <a href="#">Tokyo · Aoyama</a>
+        <a href="#">Private viewings</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <div>◆ OPUS · MMXVIII–MMXXVI</div>
+      <div>Imprint · Privacy · Conditions</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

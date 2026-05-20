@@ -1,0 +1,1466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OPUS / Cal. 04 — Technical Specifications</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bone: #f1ede4;
+    --bone-deep: #e8e2d2;
+    --paper: #faf7ee;
+    --ink: #14140f;
+    --ink-soft: #5a5851;
+    --rule: #c8c2af;
+    --rule-soft: #d8d3c0;
+    --blue: #1357a8;
+    --blue-bright: #0e6ba8;
+    --blue-deep: #0a3d6f;
+    --red: #c93418;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--bone); }
+  body {
+    background: var(--bone);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  /* blueprint grid texture */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(to right, rgba(20,20,15,0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(20,20,15,0.05) 1px, transparent 1px);
+    background-size: 40px 40px;
+    z-index: 1;
+  }
+
+  .serif { font-family: "Newsreader", serif; font-weight: 300; }
+  .mono { font-family: "IBM Plex Mono", monospace; }
+  .upper { text-transform: uppercase; letter-spacing: 0.14em; }
+
+  .container { max-width: 1440px; margin: 0 auto; padding: 0 40px; position: relative; z-index: 2; }
+
+  /* ───── header ───── */
+  header.top {
+    border-bottom: 1px solid var(--ink);
+    background: var(--bone);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .top-bar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 14px 40px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .top-bar .left, .top-bar .right { display: flex; gap: 26px; align-items: center; }
+  .top-bar .right { justify-content: flex-end; }
+  .top-bar a {
+    color: var(--ink);
+    text-decoration: none;
+    padding: 4px 0;
+    border-bottom: 1px solid transparent;
+  }
+  .top-bar a:hover { color: var(--blue); border-bottom-color: var(--blue); }
+  .logo {
+    font-family: "Newsreader", serif;
+    font-weight: 400;
+    font-style: italic;
+    font-size: 24px;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.02em;
+  }
+  .logo::before {
+    content: "▸";
+    font-style: normal;
+    color: var(--blue);
+    margin-right: 8px;
+    font-size: 14px;
+    vertical-align: 3px;
+  }
+
+  .breadcrumb {
+    padding: 8px 40px;
+    border-top: 1px solid var(--rule-soft);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: flex;
+    justify-content: space-between;
+  }
+  .breadcrumb .crumbs span { color: var(--blue); }
+  .breadcrumb .crumbs em { color: var(--ink); font-style: normal; }
+
+  /* ───── hero / blueprint ───── */
+  .blueprint {
+    position: relative;
+    padding: 50px 0 60px;
+    border-bottom: 1px solid var(--ink);
+    background:
+      linear-gradient(180deg, var(--bone) 0%, var(--paper) 100%);
+  }
+
+  .bp-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr 280px;
+    gap: 40px;
+    align-items: stretch;
+  }
+
+  /* left specs */
+  .bp-side h4 {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .bp-side .data-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px dotted var(--rule);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+  }
+  .bp-side .data-row .l { color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.08em; }
+  .bp-side .data-row .v { color: var(--ink); font-weight: 500; }
+  .bp-side .data-row .v em {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--blue);
+  }
+  .bp-side .block + .block { margin-top: 36px; }
+
+  .bp-side .ref-large {
+    font-family: "Newsreader", serif;
+    font-weight: 300;
+    font-size: 72px;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin: 28px 0 8px;
+  }
+  .bp-side .ref-large em { font-style: italic; color: var(--blue); }
+
+  /* center diagram */
+  .bp-center {
+    background: var(--paper);
+    border: 1px solid var(--ink);
+    position: relative;
+    padding: 30px;
+    aspect-ratio: 1.05/1;
+    overflow: hidden;
+  }
+  .bp-center::before, .bp-center::after,
+  .bp-center .c1, .bp-center .c2 {
+    content: "";
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 1px solid var(--blue);
+  }
+  .bp-center::before { top: 8px; left: 8px; border-right: none; border-bottom: none; }
+  .bp-center::after { top: 8px; right: 8px; border-left: none; border-bottom: none; }
+  .bp-center .c1 { bottom: 8px; left: 8px; border-right: none; border-top: none; }
+  .bp-center .c2 { bottom: 8px; right: 8px; border-left: none; border-top: none; }
+
+  .bp-center::marker { content: none; }
+
+  .bp-meta {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: var(--paper);
+    padding: 0 12px;
+  }
+  .bp-meta-bot {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    background: var(--paper);
+    padding: 0 12px;
+  }
+
+  .bp-diagram { width: 100%; height: 100%; display: block; }
+
+  /* ───── headline strip ───── */
+  .strip {
+    padding: 60px 0;
+    border-bottom: 1px solid var(--ink);
+    background: var(--bone);
+  }
+  .strip-row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 50px;
+    align-items: center;
+  }
+  .strip .ident {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+  .strip h1 {
+    font-family: "Newsreader", serif;
+    font-weight: 300;
+    font-size: clamp(40px, 5.2vw, 92px);
+    line-height: 0.96;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .strip h1 em {
+    font-style: italic;
+    color: var(--blue);
+    font-weight: 400;
+  }
+  .strip h1 .strike {
+    text-decoration: line-through;
+    text-decoration-thickness: 1px;
+    color: var(--ink-soft);
+    font-weight: 300;
+  }
+  .strip .price-tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-align: right;
+    color: var(--ink-soft);
+  }
+  .strip .price-tag b {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 38px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    display: block;
+    margin-top: 4px;
+    text-transform: none;
+  }
+
+  /* ───── calibre details ───── */
+  .cal-details { padding: 80px 0; border-bottom: 1px solid var(--ink); }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 60px;
+  }
+  .cal-grid h2 {
+    font-family: "Newsreader", serif;
+    font-weight: 300;
+    font-size: clamp(36px, 4.6vw, 64px);
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin-bottom: 24px;
+  }
+  .cal-grid h2 em { font-style: italic; color: var(--blue); }
+  .cal-grid p {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+    max-width: 520px;
+  }
+  .cal-grid p strong { color: var(--ink); font-weight: 500; }
+  .cal-section-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .cal-section-label::before { content: ""; height: 1px; width: 32px; background: var(--blue); }
+
+  .specs-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--ink);
+    border: 1px solid var(--ink);
+  }
+  .spec-cell {
+    background: var(--bone);
+    padding: 28px 26px;
+    position: relative;
+  }
+  .spec-cell .num {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    color: var(--blue);
+  }
+  .spec-cell .l {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+  .spec-cell .v {
+    font-family: "Newsreader", serif;
+    font-weight: 300;
+    font-size: 38px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+  .spec-cell .v em { font-style: italic; color: var(--blue); font-weight: 400; }
+  .spec-cell .unit {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+    margin-left: 4px;
+  }
+
+  /* ───── catalogue ───── */
+  .catalogue {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--ink);
+  }
+  .cat-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+    margin-bottom: 50px;
+  }
+  .cat-head h2 {
+    font-family: "Newsreader", serif;
+    font-weight: 300;
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+  .cat-head h2 em { font-style: italic; color: var(--blue); }
+  .cat-head .count {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    text-align: right;
+  }
+  .cat-head .count b {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 24px;
+    color: var(--blue);
+    text-transform: none;
+    letter-spacing: -0.01em;
+    display: block;
+  }
+
+  .cat-filter {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 36px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .pill {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 8px 14px;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .pill:hover, .pill.active { background: var(--ink); color: var(--bone); }
+  .pill.active { background: var(--blue); border-color: var(--blue); }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--ink);
+    border: 1px solid var(--ink);
+  }
+  .cat-card {
+    background: var(--paper);
+    padding: 26px;
+    cursor: pointer;
+    transition: background .25s;
+    position: relative;
+  }
+  .cat-card:hover { background: var(--bone-deep); }
+  .cat-card .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--ink);
+    margin-bottom: 20px;
+  }
+  .cat-card .ref {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .cat-card .stock {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--blue);
+  }
+  .cat-card .stock.warn { color: var(--red); }
+
+  .cat-card .img {
+    background:
+      repeating-linear-gradient(45deg, transparent 0 8px, rgba(19,87,168,0.04) 8px 9px);
+    border: 1px solid var(--rule);
+    aspect-ratio: 1;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .cat-card .img svg { width: 80%; height: 80%; }
+  .cat-card .img::before {
+    content: "";
+    position: absolute;
+    inset: 8px;
+    border: 1px dashed rgba(19,87,168,0.3);
+    pointer-events: none;
+  }
+
+  .cat-card h3 {
+    font-family: "Newsreader", serif;
+    font-weight: 300;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+  }
+  .cat-card h3 em { font-style: italic; color: var(--blue); font-weight: 400; }
+  .cat-card .desc {
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.55;
+    min-height: 60px;
+    margin-bottom: 18px;
+  }
+  .cat-card .data {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 14px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    margin-bottom: 22px;
+    padding: 14px 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+  }
+  .cat-card .data div { display: flex; justify-content: space-between; }
+  .cat-card .data .k { color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.12em; }
+  .cat-card .data .v { color: var(--ink); font-weight: 500; }
+
+  .cat-card .foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .cat-card .price {
+    font-family: "Newsreader", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 22px;
+    color: var(--ink);
+  }
+  .cat-card .price small {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-right: 6px;
+    font-style: normal;
+  }
+  .cat-card .cta {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue);
+    text-decoration: none;
+    border-bottom: 1px solid var(--blue);
+    padding-bottom: 2px;
+  }
+
+  /* ───── workshop flow ───── */
+  .workshop {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--ink);
+    background: var(--paper);
+  }
+  .ws-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 56px;
+  }
+  .ws-head h2 {
+    font-family: "Newsreader", serif;
+    font-weight: 300;
+    font-size: clamp(40px, 5vw, 76px);
+    line-height: 1;
+    letter-spacing: -0.025em;
+  }
+  .ws-head h2 em { font-style: italic; color: var(--blue); }
+  .ws-head p {
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+    max-width: 500px;
+  }
+
+  .flow {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    border: 1px solid var(--ink);
+    background: var(--bone);
+  }
+  .flow-step {
+    padding: 26px;
+    border-right: 1px solid var(--ink);
+    position: relative;
+  }
+  .flow-step:last-child { border-right: none; }
+  .flow-step::after {
+    content: "→";
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--bone);
+    color: var(--blue);
+    padding: 0 4px;
+    z-index: 2;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+  }
+  .flow-step:last-child::after { display: none; }
+  .flow-step .num {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--blue);
+    margin-bottom: 18px;
+  }
+  .flow-step h3 {
+    font-family: "Newsreader", serif;
+    font-weight: 400;
+    font-size: 22px;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    margin-bottom: 12px;
+  }
+  .flow-step h3 em { font-style: italic; color: var(--blue); }
+  .flow-step p {
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+  .flow-step .time {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ink);
+    padding-top: 12px;
+    border-top: 1px dotted var(--rule);
+  }
+
+  .ws-cta {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 40px;
+    padding: 30px;
+    background: var(--bone);
+    border: 1px solid var(--ink);
+  }
+  .ws-cta .lead {
+    font-family: "Newsreader", serif;
+    font-weight: 300;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .ws-cta .lead em { font-style: italic; color: var(--blue); }
+  .ws-cta .lead .mono-tag {
+    display: block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 8px;
+  }
+  .btn {
+    background: var(--ink);
+    color: var(--bone);
+    border: none;
+    padding: 22px 36px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .25s;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .btn:hover { background: var(--blue); }
+  .btn .arr { transition: transform .25s; }
+  .btn:hover .arr { transform: translateX(6px); }
+
+  /* ───── footer ───── */
+  footer.foot {
+    padding: 60px 0 24px;
+    background: var(--ink);
+    color: var(--bone);
+  }
+  .foot-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 50px;
+    padding-bottom: 50px;
+    border-bottom: 1px solid rgba(241,237,228,0.18);
+  }
+  .foot-logo {
+    font-family: "Newsreader", serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 48px;
+    letter-spacing: -0.02em;
+    color: var(--bone);
+    margin-bottom: 20px;
+  }
+  .foot-logo::before {
+    content: "▸";
+    font-style: normal;
+    color: var(--blue-bright);
+    margin-right: 12px;
+  }
+  .foot p { color: rgba(241,237,228,0.6); font-size: 13px; max-width: 360px; }
+  .foot h4 {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--blue-bright);
+    margin-bottom: 20px;
+  }
+  .foot a {
+    display: block;
+    padding: 4px 0;
+    color: rgba(241,237,228,0.7);
+    text-decoration: none;
+    font-size: 13px;
+  }
+  .foot a:hover { color: var(--bone); }
+  .foot-bot {
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(241,237,228,0.4);
+  }
+
+  .style-badge {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    background: var(--blue);
+    color: var(--bone);
+    padding: 10px 16px;
+    z-index: 100;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .style-badge:hover { background: var(--ink); }
+
+  @media (max-width: 980px) {
+    .bp-grid { grid-template-columns: 1fr; }
+    .specs-grid { grid-template-columns: 1fr; }
+    .cat-grid { grid-template-columns: 1fr 1fr; }
+    .flow { grid-template-columns: 1fr 1fr; }
+    .flow-step::after { display: none; }
+    .foot-grid, .ws-head, .cal-grid { grid-template-columns: 1fr; gap: 30px; }
+    .strip-row { grid-template-columns: 1fr; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<a class="style-badge" href="index.html">← STYLE 04 · TECHNICAL</a>
+
+<header class="top">
+  <div class="top-bar">
+    <div class="left">
+      <a href="#">CATALOGUE</a>
+      <a href="#">CALIBRES</a>
+      <a href="#">ARCHIVE</a>
+      <a href="#">WORKSHOP</a>
+    </div>
+    <a class="logo" href="#">Opus</a>
+    <div class="right">
+      <a href="#">ACCOUNT</a>
+      <a href="#">EN / FR / DE</a>
+      <a href="#">BAG · 0</a>
+    </div>
+  </div>
+  <div class="breadcrumb">
+    <div class="crumbs">
+      <span>OPUS</span> &nbsp;/&nbsp;
+      <span>CATALOGUE</span> &nbsp;/&nbsp;
+      <span>CAL. 04</span> &nbsp;/&nbsp;
+      <em>SEXTANT &middot; SXT-39-A</em>
+    </div>
+    <div>LAST UPDATE · 2026.05.20 · 14:22 GMT</div>
+  </div>
+</header>
+
+<section class="blueprint">
+  <div class="container">
+    <div class="bp-grid">
+
+      <!-- left technical readout -->
+      <aside class="bp-side">
+        <div class="ref-large"><em>Cal.</em><br/>04</div>
+        <div class="data-row" style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; padding: 8px 0 14px; border-bottom: 1px solid var(--ink); margin-bottom: 30px;">
+          <span class="l">PRODUCED</span><span class="v">SINCE 2024</span>
+        </div>
+
+        <div class="block">
+          <h4>Movement</h4>
+          <div class="data-row"><span class="l">Type</span><span class="v">Automatic</span></div>
+          <div class="data-row"><span class="l">Diameter</span><span class="v">31.0 mm</span></div>
+          <div class="data-row"><span class="l">Height</span><span class="v">4.8 mm</span></div>
+          <div class="data-row"><span class="l">Frequency</span><span class="v">28,800 vph</span></div>
+          <div class="data-row"><span class="l">Power reserve</span><span class="v">72 h</span></div>
+          <div class="data-row"><span class="l">Jewels</span><span class="v">32</span></div>
+          <div class="data-row"><span class="l">Parts</span><span class="v">219</span></div>
+          <div class="data-row"><span class="l">Finish</span><span class="v"><em>Côtes de Genève</em></span></div>
+        </div>
+
+        <div class="block">
+          <h4>Tolerances</h4>
+          <div class="data-row"><span class="l">Rate (mean)</span><span class="v">-2 / +4 s/d</span></div>
+          <div class="data-row"><span class="l">Six positions</span><span class="v">±6 s/d</span></div>
+          <div class="data-row"><span class="l">Amplitude</span><span class="v">≥ 280°</span></div>
+          <div class="data-row"><span class="l">Isochronism</span><span class="v">±3 s/d</span></div>
+        </div>
+      </aside>
+
+      <!-- center diagram -->
+      <div class="bp-center">
+        <span class="c1"></span><span class="c2"></span>
+        <div class="bp-meta">DWG № 04-A · ELEVATION · 1:1</div>
+        <div class="bp-meta-bot">OPUS · ANTWERP · MMXXVI · SCALE 1:1</div>
+
+        <svg class="bp-diagram" viewBox="0 0 700 660" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <pattern id="grid04" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(19,87,168,0.10)" stroke-width="0.5" />
+            </pattern>
+            <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="6" stroke="rgba(20,20,15,0.35)" stroke-width="0.6" />
+            </pattern>
+          </defs>
+
+          <!-- grid background -->
+          <rect width="700" height="660" fill="url(#grid04)" />
+
+          <!-- center crosshair -->
+          <line x1="0" y1="330" x2="700" y2="330" stroke="rgba(19,87,168,0.30)" stroke-width="0.5" stroke-dasharray="4 4" />
+          <line x1="350" y1="0" x2="350" y2="660" stroke="rgba(19,87,168,0.30)" stroke-width="0.5" stroke-dasharray="4 4" />
+
+          <!-- watch -->
+          <g transform="translate(350 330)">
+            <!-- outer case ring -->
+            <circle r="240" fill="none" stroke="#14140f" stroke-width="1.4" />
+            <circle r="232" fill="none" stroke="#14140f" stroke-width="0.5" />
+            <circle r="225" fill="#faf7ee" stroke="#14140f" stroke-width="0.8" />
+            <!-- bezel inner edge -->
+            <circle r="208" fill="none" stroke="#14140f" stroke-width="0.5" />
+            <circle r="200" fill="none" stroke="#14140f" stroke-width="0.3" stroke-dasharray="2 3" />
+            <!-- dial -->
+            <circle r="195" fill="#f1ede4" stroke="#14140f" stroke-width="0.5" />
+            <!-- inner chapter ring -->
+            <circle r="178" fill="none" stroke="#14140f" stroke-width="0.4" />
+            <circle r="160" fill="none" stroke="#14140f" stroke-width="0.4" />
+            <!-- hour ticks -->
+            <g id="bp-ticks-04"></g>
+            <!-- numerals -->
+            <g font-family="Newsreader, serif" font-size="22" font-weight="300" fill="#14140f" text-anchor="middle">
+              <text x="0" y="-150">12</text>
+              <text x="160" y="8">3</text>
+              <text x="0" y="166">6</text>
+              <text x="-160" y="8">9</text>
+            </g>
+            <!-- text -->
+            <text x="0" y="-80" font-family="Newsreader, serif" font-style="italic" font-size="16" fill="#1357a8" text-anchor="middle">Opus</text>
+            <text x="0" y="-62" font-family="IBM Plex Mono, monospace" font-size="7" letter-spacing="3" fill="#5a5851" text-anchor="middle">SEXTANT · CAL. 04</text>
+
+            <!-- sub seconds at 6 -->
+            <circle cx="0" cy="100" r="42" fill="#faf7ee" stroke="#14140f" stroke-width="0.5" />
+            <g id="bp-sub-04"></g>
+            <text x="0" y="76" font-family="IBM Plex Mono, monospace" font-size="6" letter-spacing="2" fill="#5a5851" text-anchor="middle">SECONDS</text>
+
+            <!-- hands -->
+            <g transform="rotate(50)">
+              <polygon points="-3,-145 3,-145 5,-15 -5,-15" fill="#14140f" />
+            </g>
+            <g transform="rotate(140)">
+              <polygon points="-3,-110 3,-110 5,-15 -5,-15" fill="#14140f" />
+            </g>
+            <!-- sub second hand -->
+            <g transform="translate(0 100) rotate(60)">
+              <rect x="-0.6" y="-30" width="1.2" height="38" fill="#c93418" />
+              <circle r="2" fill="#14140f" />
+            </g>
+            <!-- center cap -->
+            <circle r="5" fill="#14140f" />
+            <circle r="1.5" fill="#c93418" />
+
+            <!-- crown -->
+            <g transform="translate(240 0)">
+              <rect x="0" y="-14" width="22" height="28" fill="url(#hatch)" stroke="#14140f" stroke-width="0.8" />
+              <rect x="2" y="-10" width="18" height="20" fill="none" stroke="#14140f" stroke-width="0.4" />
+            </g>
+          </g>
+
+          <!-- callouts -->
+          <!-- 1: case -->
+          <g font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.5" fill="#1357a8">
+            <line x1="350" y1="90" x2="350" y2="40" stroke="#1357a8" stroke-width="0.5" />
+            <line x1="350" y1="40" x2="600" y2="40" stroke="#1357a8" stroke-width="0.5" />
+            <circle cx="350" cy="90" r="3" fill="none" stroke="#1357a8" stroke-width="1" />
+            <text x="612" y="34">01 ─ CASE ø 39.00 mm</text>
+            <text x="612" y="46" fill="#5a5851">    POLISHED STEEL</text>
+          </g>
+          <!-- 2: bezel -->
+          <g font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.5" fill="#1357a8">
+            <line x1="550" y1="330" x2="650" y2="220" stroke="#1357a8" stroke-width="0.5" />
+            <circle cx="555" cy="320" r="3" fill="none" stroke="#1357a8" stroke-width="1" />
+            <text x="612" y="212">02 ─ BEZEL</text>
+            <text x="612" y="224" fill="#5a5851">    SLOPED · POLISHED</text>
+          </g>
+          <!-- 3: dial -->
+          <g font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.5" fill="#1357a8">
+            <line x1="150" y1="330" x2="60" y2="220" stroke="#1357a8" stroke-width="0.5" />
+            <line x1="60" y1="220" x2="240" y2="220" stroke="#1357a8" stroke-width="0.5" />
+            <circle cx="155" cy="320" r="3" fill="none" stroke="#1357a8" stroke-width="1" />
+            <text x="22" y="214">03 ─ DIAL</text>
+            <text x="22" y="226" fill="#5a5851">    SECTOR · LACQUER</text>
+          </g>
+          <!-- 4: crown -->
+          <g font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.5" fill="#1357a8">
+            <line x1="608" y1="330" x2="660" y2="380" stroke="#1357a8" stroke-width="0.5" />
+            <circle cx="600" cy="330" r="3" fill="none" stroke="#1357a8" stroke-width="1" />
+            <text x="540" y="402">04 ─ CROWN · SCREW-DOWN</text>
+            <text x="540" y="414" fill="#5a5851">          STEEL · KNURLED</text>
+          </g>
+          <!-- 5: sub seconds -->
+          <g font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.5" fill="#1357a8">
+            <line x1="350" y1="475" x2="350" y2="600" stroke="#1357a8" stroke-width="0.5" />
+            <line x1="350" y1="600" x2="600" y2="600" stroke="#1357a8" stroke-width="0.5" />
+            <circle cx="350" cy="475" r="3" fill="none" stroke="#1357a8" stroke-width="1" />
+            <text x="612" y="595">05 ─ SUB-SECONDS @ 6H</text>
+            <text x="612" y="607" fill="#5a5851">    RED LIVERY HAND</text>
+          </g>
+          <!-- 6: lugs -->
+          <g font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="1.5" fill="#1357a8">
+            <line x1="150" y1="540" x2="60" y2="600" stroke="#1357a8" stroke-width="0.5" />
+            <line x1="60" y1="600" x2="240" y2="600" stroke="#1357a8" stroke-width="0.5" />
+            <circle cx="160" cy="540" r="3" fill="none" stroke="#1357a8" stroke-width="1" />
+            <text x="22" y="595">06 ─ LUG TO LUG</text>
+            <text x="22" y="607" fill="#5a5851">    46.20 mm / DRILLED</text>
+          </g>
+
+          <!-- measurement bar bottom -->
+          <g stroke="#14140f" stroke-width="0.6">
+            <line x1="110" y1="640" x2="110" y2="650" />
+            <line x1="590" y1="640" x2="590" y2="650" />
+            <line x1="110" y1="645" x2="240" y2="645" />
+            <line x1="460" y1="645" x2="590" y2="645" />
+          </g>
+          <text x="350" y="649" font-family="IBM Plex Mono, monospace" font-size="9" letter-spacing="2" fill="#14140f" text-anchor="middle">39.00 mm</text>
+        </svg>
+
+        <script>
+          (function() {
+            const t = document.querySelector('#bp-ticks-04');
+            if (t) {
+              for (let i = 0; i < 60; i++) {
+                if (i % 15 === 0) continue; // skip cardinal numerals
+                const a = (i/60) * Math.PI * 2 - Math.PI/2;
+                const r1 = i % 5 === 0 ? 160 : 168;
+                const r2 = 175;
+                const x1 = Math.cos(a) * r1;
+                const y1 = Math.sin(a) * r1;
+                const x2 = Math.cos(a) * r2;
+                const y2 = Math.sin(a) * r2;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+                line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+                line.setAttribute('stroke', '#14140f');
+                line.setAttribute('stroke-width', i % 5 === 0 ? '1.5' : '0.5');
+                line.setAttribute('stroke-linecap', 'round');
+                t.appendChild(line);
+              }
+            }
+            const s = document.querySelector('#bp-sub-04');
+            if (s) {
+              for (let i = 0; i < 60; i++) {
+                const a = (i/60) * Math.PI * 2 - Math.PI/2;
+                const r1 = i % 15 === 0 ? 33 : (i % 5 === 0 ? 35 : 37);
+                const r2 = 40;
+                const x1 = Math.cos(a) * r1;
+                const y1 = 100 + Math.sin(a) * r1;
+                const x2 = Math.cos(a) * r2;
+                const y2 = 100 + Math.sin(a) * r2;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+                line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+                line.setAttribute('stroke', '#14140f');
+                line.setAttribute('stroke-width', i % 15 === 0 ? '0.9' : '0.3');
+                s.appendChild(line);
+              }
+            }
+          })();
+        </script>
+      </div>
+
+      <!-- right technical readout -->
+      <aside class="bp-side">
+        <div class="block">
+          <h4>Case</h4>
+          <div class="data-row"><span class="l">Diameter</span><span class="v">39.00 mm</span></div>
+          <div class="data-row"><span class="l">Lug to lug</span><span class="v">46.20 mm</span></div>
+          <div class="data-row"><span class="l">Thickness</span><span class="v">9.65 mm</span></div>
+          <div class="data-row"><span class="l">Lug width</span><span class="v">20.00 mm</span></div>
+          <div class="data-row"><span class="l">Material</span><span class="v">316L steel</span></div>
+          <div class="data-row"><span class="l">Crystal</span><span class="v">Sapphire · AR×2</span></div>
+          <div class="data-row"><span class="l">Water resist.</span><span class="v">100 m</span></div>
+        </div>
+
+        <div class="block">
+          <h4>Strap</h4>
+          <div class="data-row"><span class="l">Type</span><span class="v">Calf, hand-stitched</span></div>
+          <div class="data-row"><span class="l">Width</span><span class="v">20 → 16 mm</span></div>
+          <div class="data-row"><span class="l">Buckle</span><span class="v">Steel, signed</span></div>
+        </div>
+
+        <div class="block">
+          <h4>Production</h4>
+          <div class="data-row"><span class="l">Edition</span><span class="v"><em>240 pcs</em></span></div>
+          <div class="data-row"><span class="l">№ remaining</span><span class="v">86</span></div>
+          <div class="data-row"><span class="l">Lead time</span><span class="v">4–6 weeks</span></div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+</section>
+
+<section class="strip">
+  <div class="container">
+    <div class="strip-row">
+      <div class="ident">
+        SXT-39-A<br/>
+        <span style="color: var(--ink-soft);">Catalogue Nº 04.04</span>
+      </div>
+      <h1>The <em>Sextant.</em> 39 mm,<br/>sector dial, <em>nothing extra.</em></h1>
+      <div class="price-tag">
+        Price (incl. VAT)<br/>
+        <b>€ 4,850</b>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="cal-details">
+  <div class="container">
+    <div class="cal-grid">
+      <div>
+        <div class="cal-section-label">CALIBRE OP-04 / NOTES FROM THE BENCH</div>
+        <h2>An automatic three-hander,<br/><em>finished by hand.</em></h2>
+        <p>
+          <strong>OP-04</strong> is a modified ETA 2892-A2 base, raised to chronometer
+          tolerances and re-finished entirely in our Antwerp workshop. The base plate
+          carries an applied Côtes de Genève; bridges are bevelled to a 45° angle and
+          polished by hand, edge by edge. The free-sprung balance runs at 28,800 vph
+          and delivers a 72-hour reserve.
+        </p>
+        <p>
+          We regulate each calibre in six positions before casing — a
+          <strong>certified dossier</strong> with rate, amplitude and beat error
+          accompanies every watch. The dossier is signed by the regulator and dated
+          to the day of casing.
+        </p>
+      </div>
+
+      <div class="specs-grid">
+        <div class="spec-cell">
+          <span class="num">01</span>
+          <div class="l">Frequency</div>
+          <div class="v">28,800 <span class="unit">vph</span></div>
+        </div>
+        <div class="spec-cell">
+          <span class="num">02</span>
+          <div class="l">Power reserve</div>
+          <div class="v">72 <span class="unit">h</span></div>
+        </div>
+        <div class="spec-cell">
+          <span class="num">03</span>
+          <div class="l">Jewels</div>
+          <div class="v">32</div>
+        </div>
+        <div class="spec-cell">
+          <span class="num">04</span>
+          <div class="l">Parts</div>
+          <div class="v">219</div>
+        </div>
+        <div class="spec-cell">
+          <span class="num">05</span>
+          <div class="l">Mean rate</div>
+          <div class="v">-2 / +4 <span class="unit">s/d</span></div>
+        </div>
+        <div class="spec-cell">
+          <span class="num">06</span>
+          <div class="l">Six-position</div>
+          <div class="v"><em>±6</em> <span class="unit">s/d</span></div>
+        </div>
+        <div class="spec-cell">
+          <span class="num">07</span>
+          <div class="l">Amplitude (dial up)</div>
+          <div class="v">285° <span class="unit">min.</span></div>
+        </div>
+        <div class="spec-cell">
+          <span class="num">08</span>
+          <div class="l">Finish</div>
+          <div class="v" style="font-size: 22px; padding-top: 12px;"><em>Côtes de Genève</em><br/>Anglage à la main</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="catalogue">
+  <div class="container">
+    <div class="cat-head">
+      <h2>Current <em>catalogue</em></h2>
+      <div class="count">In production — <b>4 references</b></div>
+    </div>
+
+    <div class="cat-filter">
+      <button class="pill active">ALL</button>
+      <button class="pill">CAL. 01</button>
+      <button class="pill">CAL. 02</button>
+      <button class="pill">CAL. 04</button>
+      <button class="pill">DRESS</button>
+      <button class="pill">FIELD</button>
+      <button class="pill">CHRONO</button>
+      <button class="pill">≤ 38 MM</button>
+      <button class="pill">≥ 40 MM</button>
+    </div>
+
+    <div class="cat-grid">
+      <article class="cat-card">
+        <div class="head">
+          <span class="ref">SXT-39-A · Cal. 04</span>
+          <span class="stock">86 / 240</span>
+        </div>
+        <div class="img">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="92" fill="none" stroke="#14140f" stroke-width="1" />
+            <circle cx="100" cy="100" r="84" fill="#faf7ee" stroke="#14140f" stroke-width="0.5" />
+            <circle cx="100" cy="100" r="74" fill="none" stroke="#14140f" stroke-width="0.3" stroke-dasharray="2 3" />
+            <text x="100" y="48" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#14140f">12</text>
+            <text x="156" y="105" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#14140f">3</text>
+            <text x="100" y="160" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#14140f">6</text>
+            <text x="44" y="105" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#14140f">9</text>
+            <text x="100" y="88" font-family="Newsreader, serif" font-style="italic" font-size="9" text-anchor="middle" fill="#1357a8">Opus</text>
+            <circle cx="100" cy="130" r="14" fill="none" stroke="#14140f" stroke-width="0.4" />
+            <g transform="rotate(50 100 100)"><rect x="98.5" y="55" width="3" height="50" fill="#14140f" /></g>
+            <g transform="rotate(140 100 100)"><rect x="98.5" y="65" width="3" height="40" fill="#14140f" /></g>
+            <circle cx="100" cy="100" r="3" fill="#14140f" />
+          </svg>
+        </div>
+        <h3>The <em>Sextant</em></h3>
+        <p class="desc">Sector dial, sub-seconds at six. The catalogue's quietest reference, made for daily wear.</p>
+        <div class="data">
+          <div><span class="k">ø</span><span class="v">39 mm</span></div>
+          <div><span class="k">CAL.</span><span class="v">04</span></div>
+          <div><span class="k">RES.</span><span class="v">72h</span></div>
+          <div><span class="k">VPH</span><span class="v">28,800</span></div>
+        </div>
+        <div class="foot">
+          <div class="price"><small>€</small>4,850</div>
+          <a class="cta" href="#">ORDER →</a>
+        </div>
+      </article>
+
+      <article class="cat-card">
+        <div class="head">
+          <span class="ref">SOL-38-B · Cal. 02</span>
+          <span class="stock warn">12 / 180</span>
+        </div>
+        <div class="img">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="92" fill="none" stroke="#14140f" stroke-width="1" />
+            <circle cx="100" cy="100" r="84" fill="#3d2f18" stroke="#14140f" stroke-width="0.5" />
+            <text x="100" y="48" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">XII</text>
+            <text x="156" y="105" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">III</text>
+            <text x="100" y="160" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">VI</text>
+            <text x="44" y="105" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">IX</text>
+            <text x="100" y="88" font-family="Newsreader, serif" font-style="italic" font-size="9" text-anchor="middle" fill="#d4a865">Opus</text>
+            <g transform="rotate(-20 100 100)"><rect x="98.5" y="55" width="3" height="50" fill="#f1ede4" /></g>
+            <g transform="rotate(85 100 100)"><rect x="98.5" y="65" width="3" height="40" fill="#f1ede4" /></g>
+            <circle cx="100" cy="100" r="3" fill="#d4a865" />
+          </svg>
+        </div>
+        <h3><em>Solstice</em> 38</h3>
+        <p class="desc">Bronze case, lacquered chocolate dial. A small-diameter dress watch with Roman numerals.</p>
+        <div class="data">
+          <div><span class="k">ø</span><span class="v">38 mm</span></div>
+          <div><span class="k">CAL.</span><span class="v">02</span></div>
+          <div><span class="k">RES.</span><span class="v">42h</span></div>
+          <div><span class="k">VPH</span><span class="v">28,800</span></div>
+        </div>
+        <div class="foot">
+          <div class="price"><small>€</small>5,400</div>
+          <a class="cta" href="#">ORDER →</a>
+        </div>
+      </article>
+
+      <article class="cat-card">
+        <div class="head">
+          <span class="ref">NOC-40-F · Cal. 03</span>
+          <span class="stock">42 / 220</span>
+        </div>
+        <div class="img">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="92" fill="none" stroke="#14140f" stroke-width="1" />
+            <circle cx="100" cy="100" r="84" fill="#1a1a18" stroke="#14140f" stroke-width="0.5" />
+            <g stroke="#f1ede4" stroke-width="2">
+              <line x1="100" y1="24" x2="100" y2="36" />
+              <line x1="100" y1="164" x2="100" y2="176" />
+              <line x1="24" y1="100" x2="36" y2="100" />
+              <line x1="164" y1="100" x2="176" y2="100" />
+            </g>
+            <g stroke="#f1ede4" stroke-width="1" stroke-linecap="round">
+              <g id="ticks-noc"></g>
+            </g>
+            <text x="100" y="88" font-family="Newsreader, serif" font-style="italic" font-size="9" text-anchor="middle" fill="#c93418">Opus</text>
+            <g transform="rotate(70 100 100)"><rect x="98.5" y="55" width="3" height="50" fill="#f1ede4" /></g>
+            <g transform="rotate(160 100 100)"><rect x="98.5" y="65" width="3" height="40" fill="#f1ede4" /></g>
+            <circle cx="100" cy="100" r="3" fill="#c93418" />
+          </svg>
+        </div>
+        <h3><em>Nocturne</em> Field</h3>
+        <p class="desc">Sandblasted steel, fully luminous dial, drilled lugs. A field watch made without compromises.</p>
+        <div class="data">
+          <div><span class="k">ø</span><span class="v">40 mm</span></div>
+          <div><span class="k">CAL.</span><span class="v">03</span></div>
+          <div><span class="k">RES.</span><span class="v">60h</span></div>
+          <div><span class="k">VPH</span><span class="v">21,600</span></div>
+        </div>
+        <div class="foot">
+          <div class="price"><small>€</small>3,650</div>
+          <a class="cta" href="#">ORDER →</a>
+        </div>
+      </article>
+
+      <article class="cat-card">
+        <div class="head">
+          <span class="ref">AUB-36-W · Cal. 01</span>
+          <span class="stock warn">SOLD OUT</span>
+        </div>
+        <div class="img">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="92" fill="none" stroke="#14140f" stroke-width="1" />
+            <circle cx="100" cy="100" r="84" fill="#fefcf6" stroke="#14140f" stroke-width="0.5" />
+            <text x="100" y="48" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#14140f">XII</text>
+            <text x="156" y="105" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#14140f">III</text>
+            <text x="100" y="160" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#14140f">VI</text>
+            <text x="44" y="105" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#14140f">IX</text>
+            <text x="100" y="88" font-family="Newsreader, serif" font-style="italic" font-size="9" text-anchor="middle" fill="#1357a8">Opus</text>
+            <g transform="rotate(-40 100 100)"><rect x="98.5" y="55" width="2.5" height="50" fill="#14140f" /></g>
+            <g transform="rotate(60 100 100)"><rect x="98.5" y="65" width="2.5" height="40" fill="#14140f" /></g>
+            <circle cx="100" cy="100" r="2.5" fill="#14140f" />
+          </svg>
+        </div>
+        <h3>The <em>Aubade</em></h3>
+        <p class="desc">A 36 mm dress watch in white gold, with a porcelain dial and blued steel hands. Edition sold.</p>
+        <div class="data">
+          <div><span class="k">ø</span><span class="v">36 mm</span></div>
+          <div><span class="k">CAL.</span><span class="v">01</span></div>
+          <div><span class="k">RES.</span><span class="v">42h</span></div>
+          <div><span class="k">VPH</span><span class="v">28,800</span></div>
+        </div>
+        <div class="foot">
+          <div class="price"><small>€</small>11,200</div>
+          <a class="cta" href="#">WAITLIST →</a>
+        </div>
+      </article>
+
+      <article class="cat-card">
+        <div class="head">
+          <span class="ref">EQX-39-G · Cal. 02</span>
+          <span class="stock warn">SOLD OUT</span>
+        </div>
+        <div class="img">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="92" fill="none" stroke="#14140f" stroke-width="1" />
+            <circle cx="100" cy="100" r="84" fill="#7a7a72" stroke="#14140f" stroke-width="0.5" />
+            <text x="100" y="48" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">12</text>
+            <text x="156" y="105" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">3</text>
+            <text x="100" y="160" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">6</text>
+            <text x="44" y="105" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">9</text>
+            <g transform="rotate(110 100 100)"><rect x="98.5" y="55" width="3" height="50" fill="#f1ede4" /></g>
+            <g transform="rotate(35 100 100)"><rect x="98.5" y="65" width="3" height="40" fill="#f1ede4" /></g>
+            <circle cx="100" cy="100" r="3" fill="#c93418" />
+          </svg>
+        </div>
+        <h3>The <em>Equinox</em></h3>
+        <p class="desc">Grey enamel, applied indices, double-domed sapphire. First edition of OP-02.</p>
+        <div class="data">
+          <div><span class="k">ø</span><span class="v">39 mm</span></div>
+          <div><span class="k">CAL.</span><span class="v">02</span></div>
+          <div><span class="k">RES.</span><span class="v">42h</span></div>
+          <div><span class="k">VPH</span><span class="v">28,800</span></div>
+        </div>
+        <div class="foot">
+          <div class="price"><small>€</small>6,200</div>
+          <a class="cta" href="#">WAITLIST →</a>
+        </div>
+      </article>
+
+      <article class="cat-card">
+        <div class="head">
+          <span class="ref">MER-41-G · Cal. 02</span>
+          <span class="stock">9 / 60</span>
+        </div>
+        <div class="img">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="92" fill="none" stroke="#14140f" stroke-width="1" />
+            <circle cx="100" cy="100" r="84" fill="#1357a8" stroke="#14140f" stroke-width="0.5" />
+            <text x="100" y="48" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">XII</text>
+            <text x="156" y="105" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">III</text>
+            <text x="100" y="160" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">VI</text>
+            <text x="44" y="105" font-family="Newsreader, serif" font-size="11" text-anchor="middle" fill="#f1ede4">IX</text>
+            <text x="100" y="88" font-family="Newsreader, serif" font-style="italic" font-size="9" text-anchor="middle" fill="#d4a865">Opus</text>
+            <circle cx="100" cy="100" r="40" fill="none" stroke="#f1ede4" stroke-width="0.4" />
+            <g transform="rotate(20 100 100)"><rect x="98.5" y="55" width="3" height="50" fill="#f1ede4" /></g>
+            <g transform="rotate(130 100 100)"><rect x="98.5" y="65" width="3" height="40" fill="#f1ede4" /></g>
+            <g transform="rotate(220 100 100)"><rect x="99.5" y="40" width="1.5" height="65" fill="#d4a865" /></g>
+            <circle cx="100" cy="100" r="3" fill="#d4a865" />
+          </svg>
+        </div>
+        <h3><em>Méridien</em></h3>
+        <p class="desc">GMT with second time zone on the inner ring. Royal blue cadran, gilt hand.</p>
+        <div class="data">
+          <div><span class="k">ø</span><span class="v">41 mm</span></div>
+          <div><span class="k">CAL.</span><span class="v">02 / GMT</span></div>
+          <div><span class="k">RES.</span><span class="v">48h</span></div>
+          <div><span class="k">VPH</span><span class="v">28,800</span></div>
+        </div>
+        <div class="foot">
+          <div class="price"><small>€</small>7,800</div>
+          <a class="cta" href="#">ORDER →</a>
+        </div>
+      </article>
+    </div>
+    <script>
+      (function() {
+        // noc ticks
+        const t = document.querySelector('#ticks-noc');
+        if (t) {
+          for (let i = 0; i < 60; i++) {
+            if (i % 15 === 0) continue;
+            const a = (i/60) * Math.PI * 2 - Math.PI/2;
+            const r1 = i % 5 === 0 ? 65 : 70, r2 = 76;
+            const x1 = 100 + Math.cos(a) * r1, y1 = 100 + Math.sin(a) * r1;
+            const x2 = 100 + Math.cos(a) * r2, y2 = 100 + Math.sin(a) * r2;
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+            line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+            line.setAttribute('stroke', '#f1ede4');
+            line.setAttribute('stroke-width', i % 5 === 0 ? 1.5 : 0.5);
+            t.appendChild(line);
+          }
+        }
+      })();
+    </script>
+  </div>
+</section>
+
+<section class="workshop">
+  <div class="container">
+    <div class="ws-head">
+      <h2>The <em>workshop.</em><br/>Service &amp; restoration.</h2>
+      <p>
+        We service every Opus we make, and accept a small number of outside
+        watches each season. Below is the service flow, end to end. Lead times
+        are conservative — most pieces ship sooner than quoted.
+      </p>
+    </div>
+
+    <div class="flow">
+      <div class="flow-step">
+        <div class="num">— STEP 01</div>
+        <h3>Courier <em>sealed</em></h3>
+        <p>Insured pickup, photographed at arrival, signed for by the watchmaker on duty.</p>
+        <div class="time">T+ 2–4 DAYS</div>
+      </div>
+      <div class="flow-step">
+        <div class="num">— STEP 02</div>
+        <h3>Open &amp; quote</h3>
+        <p>Disassembly, full photographic record, written estimate emailed to you.</p>
+        <div class="time">T+ 4 DAYS</div>
+      </div>
+      <div class="flow-step">
+        <div class="num">— STEP 03</div>
+        <h3>Bench work</h3>
+        <p>Movement service, anglage refinish where needed, gaskets, regulation in 6 positions.</p>
+        <div class="time">T+ 3–7 WEEKS</div>
+      </div>
+      <div class="flow-step">
+        <div class="num">— STEP 04</div>
+        <h3>QC &amp; <em>dossier</em></h3>
+        <p>72-hour testing window. Rate, amplitude and beat error printed and signed.</p>
+        <div class="time">T+ 1 WEEK</div>
+      </div>
+      <div class="flow-step">
+        <div class="num">— STEP 05</div>
+        <h3>Returned</h3>
+        <p>Sealed return courier with certificate, dossier and a two-year warranty.</p>
+        <div class="time">T+ 2–4 DAYS</div>
+      </div>
+    </div>
+
+    <div class="ws-cta">
+      <div class="lead">
+        <span class="mono-tag">— BOOKING IS OPEN · SPRING INTAKE</span>
+        Send us your watch. We'll<br/>open it, photograph it, and <em>write you back.</em>
+      </div>
+      <a class="btn" href="#">Book the workshop <span class="arr">→</span></a>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo">Opus</div>
+        <p>Independent watchmakers. Antwerp &amp; Geneva, since 2018. Calibres OP-01 through OP-04, all finished by hand at the bench.</p>
+      </div>
+      <div>
+        <h4>Catalogue</h4>
+        <a href="#">Current</a>
+        <a href="#">Archive</a>
+        <a href="#">Calibres</a>
+        <a href="#">Straps</a>
+      </div>
+      <div>
+        <h4>Workshop</h4>
+        <a href="#">Service</a>
+        <a href="#">Restoration</a>
+        <a href="#">Couriers</a>
+        <a href="#">Documentation</a>
+      </div>
+      <div>
+        <h4>House</h4>
+        <a href="#">Manifesto</a>
+        <a href="#">Journal</a>
+        <a href="#">Antwerp · Hopland 12</a>
+        <a href="#">Geneva · by appt.</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <div>▸ OPUS · MMXVIII–MMXXVI · DOCUMENT REV. 04-A</div>
+      <div>IMPRINT &nbsp;/&nbsp; PRIVACY &nbsp;/&nbsp; TERMS</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

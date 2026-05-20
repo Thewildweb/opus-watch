@@ -1,0 +1,683 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Opus · Watch boutique — four style studies</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #161512;
+    --bg-2: #1f1d18;
+    --paper: #f0ece2;
+    --paper-dim: rgba(240,236,226,0.55);
+    --rule: rgba(240,236,226,0.12);
+    --accent: #c9a35a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--bg); }
+  body {
+    background: var(--bg);
+    color: var(--paper);
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.18 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.6;
+    mix-blend-mode: overlay;
+    z-index: 1;
+  }
+
+  .mono { font-family: "JetBrains Mono", monospace; }
+
+  .container { max-width: 1440px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 2; }
+
+  header.top {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .top-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+  }
+  .top-row .l { font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--paper-dim); }
+  .top-row .r { text-align: right; font-family: "JetBrains Mono", monospace; font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--paper-dim); }
+  .wordmark {
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-size: 24px;
+    letter-spacing: 0.32em;
+    color: var(--paper);
+  }
+  .wordmark::before { content: "◆"; color: var(--accent); margin-right: 12px; vertical-align: 2px; font-size: 14px; }
+
+  .intro {
+    padding: 100px 0 50px;
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 80px;
+    align-items: end;
+    border-bottom: 1px solid var(--rule);
+  }
+  .intro .eyebrow {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .intro .eyebrow::before { content: ""; height: 1px; width: 40px; background: var(--accent); }
+  .intro h1 {
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-size: clamp(56px, 7vw, 120px);
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+  }
+  .intro h1 em { font-style: italic; color: var(--accent); font-variation-settings: "opsz" 144; }
+  .intro p {
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--paper-dim);
+    max-width: 520px;
+  }
+  .intro p strong { color: var(--paper); font-weight: 400; }
+
+  .meta-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    padding: 28px 0;
+    border-bottom: 1px solid var(--rule);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--paper-dim);
+  }
+  .meta-bar b {
+    display: block;
+    font-family: "Fraunces", serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+    color: var(--paper);
+    text-transform: none;
+    margin-top: 4px;
+  }
+
+  /* style grid */
+  .styles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    margin: 0 -1px;
+  }
+  .style {
+    background: var(--bg);
+    padding: 56px 48px 48px;
+    position: relative;
+    text-decoration: none;
+    color: var(--paper);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    transition: background .4s;
+    overflow: hidden;
+  }
+  .style::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(60% 80% at 50% 30%, rgba(201,163,90,0.08), transparent 70%);
+    opacity: 0;
+    transition: opacity .5s;
+    pointer-events: none;
+  }
+  .style:hover { background: var(--bg-2); }
+  .style:hover::before { opacity: 1; }
+
+  .style-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .style-num {
+    font-family: "Fraunces", serif;
+    font-variation-settings: "opsz" 144;
+    font-weight: 300;
+    font-size: 84px;
+    line-height: 0.85;
+    color: var(--accent);
+    letter-spacing: -0.04em;
+  }
+  .style-tag {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--paper-dim);
+    text-align: right;
+  }
+  .style-tag b { color: var(--accent); display: block; margin-top: 4px; }
+
+  /* preview window — each unique to its style */
+  .preview {
+    aspect-ratio: 16/9;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+  }
+
+  /* preview 01: heritage */
+  .pv-01 {
+    background:
+      radial-gradient(closest-side at 70% 40%, rgba(184,148,90,0.18), transparent 60%),
+      linear-gradient(180deg, #f4ece0 0%, #ebe0cd 100%);
+    color: #281b10;
+    padding: 24px 28px;
+    font-family: "EB Garamond", "Georgia", serif;
+  }
+  .pv-01 .tiny {
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    color: #9c7536;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .pv-01 .h {
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 32px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: #281b10;
+  }
+  .pv-01 .h em { color: #9c7536; font-style: italic; }
+  .pv-01 .w {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 40%, #f3e3c2, #8b6628);
+    box-shadow: inset 0 0 0 4px #3a2a16, 0 10px 24px rgba(40,27,16,0.4);
+  }
+  .pv-01 .w::after {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #fbf3e0, #e8d6b0);
+  }
+
+  /* preview 02: editorial */
+  .pv-02 {
+    background: #fafaf6;
+    color: #0e0e0d;
+    padding: 24px;
+    font-family: "Fraunces", serif;
+  }
+  .pv-02 .tiny {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #e63a17;
+    margin-bottom: 10px;
+  }
+  .pv-02 .big {
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-size: 64px;
+    line-height: 0.85;
+    color: #0e0e0d;
+    letter-spacing: -0.04em;
+  }
+  .pv-02 .big em { font-style: italic; color: #e63a17; }
+  .pv-02 .row {
+    position: absolute;
+    bottom: 16px;
+    left: 24px;
+    right: 24px;
+    display: flex;
+    justify-content: space-between;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #5a5854;
+  }
+  .pv-02 .w {
+    position: absolute;
+    top: 22px;
+    right: 22px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 30%, #f3f1ea, #74726e);
+    box-shadow: 0 6px 20px rgba(14,14,13,0.18);
+  }
+  .pv-02 .w::after {
+    content: "";
+    position: absolute;
+    inset: 7px;
+    border-radius: 50%;
+    background: #fafaf6;
+    box-shadow: inset 0 0 0 1px #0e0e0d;
+  }
+
+  /* preview 03: nocturne */
+  .pv-03 {
+    background:
+      radial-gradient(60% 80% at 50% 50%, rgba(212,168,101,0.25), transparent 60%),
+      linear-gradient(180deg, #0a0907, #131110);
+    color: #ebe6dc;
+    padding: 24px;
+  }
+  .pv-03 .tiny {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: #d4a865;
+    margin-bottom: 14px;
+    text-align: center;
+  }
+  .pv-03 .big {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-size: 38px;
+    line-height: 0.95;
+    text-align: center;
+    color: #ebe6dc;
+    letter-spacing: -0.02em;
+  }
+  .pv-03 .big em { font-style: italic; color: #d4a865; }
+  .pv-03 .w {
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 30%, #d4a865 0%, #5a3e1a 60%, #1a120a 100%);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  }
+  .pv-03 .w::after {
+    content: "";
+    position: absolute;
+    inset: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 30%, #1d1a16, #000);
+    box-shadow: inset 0 0 0 1px #b48a4a;
+  }
+
+  /* preview 04: technical */
+  .pv-04 {
+    background:
+      linear-gradient(rgba(20,20,15,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(20,20,15,0.04) 1px, transparent 1px),
+      #faf7ee;
+    background-size: 20px 20px, 20px 20px;
+    color: #14140f;
+    padding: 18px 22px;
+    font-family: "IBM Plex Sans", sans-serif;
+  }
+  .pv-04 .tiny {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: #1357a8;
+    margin-bottom: 8px;
+  }
+  .pv-04 .big {
+    font-family: "Newsreader", serif;
+    font-weight: 300;
+    font-size: 30px;
+    line-height: 1;
+    color: #14140f;
+    letter-spacing: -0.02em;
+  }
+  .pv-04 .big em { font-style: italic; color: #1357a8; }
+  .pv-04 .specs {
+    position: absolute;
+    bottom: 14px;
+    left: 22px;
+    right: 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #5a5851;
+    padding-top: 10px;
+    border-top: 1px solid #14140f;
+  }
+  .pv-04 .specs b { color: #14140f; }
+  .pv-04 .w {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    width: 92px;
+    height: 92px;
+    border-radius: 50%;
+    border: 1px solid #14140f;
+    background: #faf7ee;
+    box-shadow: inset 0 0 0 1px rgba(19,87,168,0.3);
+  }
+  .pv-04 .w::before {
+    content: "";
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    border: 1px dashed rgba(19,87,168,0.4);
+  }
+
+  .style-body h2 {
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-size: 46px;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin-bottom: 16px;
+  }
+  .style-body h2 em { font-style: italic; color: var(--accent); }
+  .style-body p {
+    color: var(--paper-dim);
+    font-family: "Fraunces", serif;
+    font-size: 16px;
+    line-height: 1.55;
+    margin-bottom: 24px;
+    max-width: 460px;
+  }
+  .palette {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 24px;
+  }
+  .palette span {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(240,236,226,0.2);
+  }
+
+  .style-foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 24px;
+    border-top: 1px solid var(--rule);
+  }
+  .style-cta {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .style:hover .style-cta { color: var(--accent); }
+  .style:hover .style-cta .arr { transform: translateX(8px); }
+  .style-cta .arr { transition: transform .35s; }
+
+  .style-fonts {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--paper-dim);
+    text-align: right;
+  }
+  .style-fonts b { color: var(--paper); display: block; }
+
+  footer.foot {
+    padding: 80px 0 40px;
+    margin-top: 80px;
+    border-top: 1px solid var(--rule);
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 60px;
+  }
+  footer.foot h3 {
+    font-family: "Fraunces", serif;
+    font-weight: 300;
+    font-size: 32px;
+    line-height: 1.1;
+    color: var(--paper);
+    letter-spacing: -0.02em;
+    max-width: 600px;
+  }
+  footer.foot h3 em { font-style: italic; color: var(--accent); }
+  footer.foot .mono {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--paper-dim);
+    text-align: right;
+  }
+
+  @media (max-width: 900px) {
+    .intro, .styles, .meta-bar { grid-template-columns: 1fr; gap: 30px; }
+    footer.foot { grid-template-columns: 1fr; }
+    .style { padding: 32px 24px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="container">
+    <div class="top-row">
+      <div class="l">Client · Opus Watch Boutique</div>
+      <div class="wordmark">OPUS</div>
+      <div class="r">Style review · MMXXVI</div>
+    </div>
+  </div>
+</header>
+
+<section class="container">
+  <div class="intro">
+    <div>
+      <div class="eyebrow">Direction review · four studies</div>
+      <h1>Four <em>directions,</em><br/>one boutique.</h1>
+    </div>
+    <p>
+      Below are four full-page style studies for the new <strong>Opus</strong> watch
+      boutique. Each is the same house — own brand, repairs atelier, shop and
+      catalogue — but drawn from a different aesthetic stance. <strong>Pick the one
+      that feels closest</strong>, and we'll develop it across the full site.
+    </p>
+  </div>
+
+  <div class="meta-bar">
+    <div>POSITIONING<b>Independent boutique · own brand</b></div>
+    <div>STACK<b>WordPress · WooCommerce · Elasticsearch</b></div>
+    <div>SECTIONS<b>Shop · Catalogue · Repairs · Journal</b></div>
+    <div>STUDIES<b>04 / four directions</b></div>
+  </div>
+
+  <div class="styles">
+
+    <a class="style" href="01-heritage.html">
+      <div class="style-head">
+        <div class="style-num">01</div>
+        <div class="style-tag">Style 01<b>Classical heritage</b></div>
+      </div>
+      <div class="preview pv-01">
+        <div class="tiny">Maison &amp; Opus · Depuis MCMXXIV</div>
+        <div class="h">The hours,<br/><em>unhurried.</em></div>
+        <div class="w"></div>
+      </div>
+      <div class="style-body">
+        <h2>Maison <em>&amp;</em> Opus</h2>
+        <p>
+          Cream ivory, Cormorant serif, gold-foil accents and Roman numerals.
+          Reads like a watchmaker's letterhead — old-world weight, made for
+          a house with a story.
+        </p>
+        <div class="palette">
+          <span style="background: #f4ece0"></span>
+          <span style="background: #281b10"></span>
+          <span style="background: #9c7536"></span>
+          <span style="background: #b8945a"></span>
+        </div>
+      </div>
+      <div class="style-foot">
+        <div class="style-fonts">FONTS<b>Cormorant + EB Garamond</b></div>
+        <div class="style-cta">Open study <span class="arr">→</span></div>
+      </div>
+    </a>
+
+    <a class="style" href="02-editorial.html">
+      <div class="style-head">
+        <div class="style-num">02</div>
+        <div class="style-tag">Style 02<b>Editorial modernist</b></div>
+      </div>
+      <div class="preview pv-02">
+        <div class="tiny">VOL. 01 · SPRING MMXXVI</div>
+        <div class="big">Watches,<br/><em>considered.</em></div>
+        <div class="w"></div>
+        <div class="row">
+          <span>OPUS / 01</span>
+          <span>EDITION OF 240</span>
+        </div>
+      </div>
+      <div class="style-body">
+        <h2>Opus<em>.</em></h2>
+        <p>
+          Paper-white, Swiss grid, Fraunces serif against JetBrains Mono. A
+          magazine in interface form — confident, generous with whitespace,
+          one bold accent.
+        </p>
+        <div class="palette">
+          <span style="background: #fafaf6"></span>
+          <span style="background: #0e0e0d"></span>
+          <span style="background: #e63a17"></span>
+          <span style="background: #f0eee5"></span>
+        </div>
+      </div>
+      <div class="style-foot">
+        <div class="style-fonts">FONTS<b>Fraunces + Schibsted + JBM</b></div>
+        <div class="style-cta">Open study <span class="arr">→</span></div>
+      </div>
+    </a>
+
+    <a class="style" href="03-nocturne.html">
+      <div class="style-head">
+        <div class="style-num">03</div>
+        <div class="style-tag">Style 03<b>Dark refined / nocturnal</b></div>
+      </div>
+      <div class="preview pv-03">
+        <div class="tiny">— VOLUME IV · SPRING —</div>
+        <div class="big">The hours,<br/><em>in detail.</em></div>
+        <div class="w"></div>
+      </div>
+      <div class="style-body">
+        <h2>◆ <em>Opus</em></h2>
+        <p>
+          Obsidian and brass, Bodoni against Manrope, dramatic lighting and a
+          single spotlit watch. Reads like a boutique by night — exclusive,
+          quiet, low-key luxury.
+        </p>
+        <div class="palette">
+          <span style="background: #0a0907"></span>
+          <span style="background: #b48a4a"></span>
+          <span style="background: #d4a865"></span>
+          <span style="background: #ebe6dc"></span>
+        </div>
+      </div>
+      <div class="style-foot">
+        <div class="style-fonts">FONTS<b>Bodoni + Manrope + JBM</b></div>
+        <div class="style-cta">Open study <span class="arr">→</span></div>
+      </div>
+    </a>
+
+    <a class="style" href="04-technical.html">
+      <div class="style-head">
+        <div class="style-num">04</div>
+        <div class="style-tag">Style 04<b>Technical horological</b></div>
+      </div>
+      <div class="preview pv-04">
+        <div class="tiny">▸ DWG № 04-A · CAL. 04 · 1:1</div>
+        <div class="big">The <em>Sextant.</em><br/>39 mm, sector.</div>
+        <div class="w"></div>
+        <div class="specs">
+          <div>ø<b>39 mm</b></div>
+          <div>VPH<b>28,800</b></div>
+          <div>RES<b>72h</b></div>
+        </div>
+      </div>
+      <div class="style-body">
+        <h2>▸ Opus / <em>Cal. 04</em></h2>
+        <p>
+          Blueprint grid, Newsreader against IBM Plex Mono, exploded
+          callouts and dense data. Made for the collector who reads spec
+          sheets for fun.
+        </p>
+        <div class="palette">
+          <span style="background: #f1ede4"></span>
+          <span style="background: #14140f"></span>
+          <span style="background: #1357a8"></span>
+          <span style="background: #c93418"></span>
+        </div>
+      </div>
+      <div class="style-foot">
+        <div class="style-fonts">FONTS<b>Newsreader + Plex Sans + Mono</b></div>
+        <div class="style-cta">Open study <span class="arr">→</span></div>
+      </div>
+    </a>
+
+  </div>
+
+  <footer class="foot">
+    <h3>
+      Pick the one that feels closest to the client's
+      <em>voice</em> — we'll develop it across shop, repairs and the
+      brand archive next.
+    </h3>
+    <div class="mono">
+      ◆ OPUS · DESIGN REVIEW<br/>
+      v0.1 · 2026.05.20
+    </div>
+  </footer>
+
+</section>
+
+</body>
+</html>

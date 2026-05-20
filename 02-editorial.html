@@ -1,0 +1,940 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OPUS / Vol. 01 — Watches, considered.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT,WONK@0,9..144,300..900,0..100,0..1;1,9..144,300..900,0..100,0..1&family=Schibsted+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #fafaf6;
+    --paper-deep: #f0eee5;
+    --ink: #0e0e0d;
+    --ink-soft: #5a5854;
+    --rule: #1a1a18;
+    --rule-soft: #cdc9bd;
+    --accent: #e63a17;
+    --accent-dim: #c93315;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Schibsted Grotesk", sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .serif { font-family: "Fraunces", serif; font-optical-sizing: auto; font-variation-settings: "SOFT" 50, "WONK" 0; }
+  .mono { font-family: "JetBrains Mono", monospace; }
+  .upper { text-transform: uppercase; letter-spacing: 0.14em; }
+
+  .container { max-width: 1400px; margin: 0 auto; padding: 0 40px; }
+
+  /* ───── top ribbon ───── */
+  .ribbon {
+    border-bottom: 1px solid var(--rule);
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    overflow: hidden;
+  }
+  .ribbon-inner {
+    display: flex;
+    gap: 60px;
+    padding: 10px 40px;
+    white-space: nowrap;
+    animation: scroll 60s linear infinite;
+  }
+  @keyframes scroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  .ribbon-inner span:nth-child(odd) { color: var(--accent); }
+
+  /* ───── header ───── */
+  header.nav {
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .nav-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 20px 40px;
+  }
+  .logo {
+    font-family: "Fraunces", serif;
+    font-variation-settings: "SOFT" 50, "WONK" 1;
+    font-weight: 600;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .logo em { font-style: italic; font-weight: 400; color: var(--accent); }
+  .nav-row nav { display: flex; gap: 36px; }
+  .nav-row nav a {
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    position: relative;
+    padding: 4px 0;
+  }
+  .nav-row nav a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 1px;
+    width: 0;
+    background: var(--accent);
+    transition: width .3s;
+  }
+  .nav-row nav a:hover::after { width: 100%; }
+  .nav-row nav.right { justify-content: flex-end; }
+  .nav-row nav.right a {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  /* ───── hero ───── */
+  .hero { padding: 24px 0 0; position: relative; }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-bottom: 1px solid var(--rule);
+    min-height: calc(100vh - 90px);
+  }
+  .hero-left {
+    padding: 80px 60px 60px 0;
+    border-right: 1px solid var(--rule);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .issue-mark {
+    display: flex;
+    align-items: baseline;
+    gap: 24px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+    margin-bottom: 60px;
+  }
+  .issue-mark .num {
+    font-family: "Fraunces", serif;
+    font-variation-settings: "SOFT" 50, "WONK" 1, "opsz" 144;
+    font-size: 140px;
+    line-height: 0.85;
+    font-weight: 300;
+    color: var(--ink);
+  }
+
+  h1.hero-title {
+    font-family: "Fraunces", serif;
+    font-variation-settings: "SOFT" 50, "WONK" 0, "opsz" 144;
+    font-weight: 300;
+    font-size: clamp(72px, 9vw, 144px);
+    line-height: 0.94;
+    letter-spacing: -0.035em;
+    margin-bottom: 40px;
+  }
+  h1.hero-title em {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+    color: var(--accent);
+    font-weight: 400;
+  }
+
+  .hero-foot {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: end;
+    gap: 40px;
+  }
+  .lede {
+    max-width: 360px;
+    font-size: 16px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  .lede-label {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--accent);
+    margin-bottom: 14px;
+    display: block;
+  }
+  .cta {
+    background: var(--ink);
+    color: var(--paper);
+    text-decoration: none;
+    padding: 22px 40px;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    transition: all .3s;
+    border: 1px solid var(--ink);
+  }
+  .cta:hover { background: var(--accent); border-color: var(--accent); }
+  .cta .arrow { transition: transform .3s; }
+  .cta:hover .arrow { transform: translateX(6px); }
+
+  .hero-right {
+    position: relative;
+    background:
+      radial-gradient(ellipse 80% 60% at 60% 50%, #efeae0 0%, var(--paper) 80%);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-right::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(to right, var(--rule-soft) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--rule-soft) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.4;
+  }
+  .hero-watch {
+    width: 80%;
+    max-width: 600px;
+    position: relative;
+    z-index: 2;
+    filter: drop-shadow(0 40px 80px rgba(14,14,13,0.20));
+    animation: float 7s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-14px) rotate(-0.4deg); }
+  }
+  .caption-cluster {
+    position: absolute;
+    z-index: 3;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink);
+  }
+  .caption-cluster .line { height: 1px; background: var(--ink); }
+  .cc-tl { top: 20%; left: 8%; }
+  .cc-tl .line { width: 100px; margin-bottom: 8px; }
+  .cc-tr { top: 30%; right: 8%; text-align: right; }
+  .cc-tr .line { width: 80px; margin-bottom: 8px; margin-left: auto; }
+  .cc-br { bottom: 14%; right: 10%; text-align: right; }
+  .cc-br .line { width: 120px; margin-top: 8px; margin-left: auto; background: var(--accent); }
+  .cc-br .price {
+    font-family: "Fraunces", serif;
+    font-size: 22px;
+    text-transform: none;
+    letter-spacing: -0.01em;
+    color: var(--accent);
+    display: block;
+    margin-top: 6px;
+  }
+
+  .running-num {
+    position: absolute;
+    bottom: 24px;
+    left: 24px;
+    font-family: "Fraunces", serif;
+    font-variation-settings: "opsz" 144;
+    font-weight: 200;
+    font-size: 220px;
+    line-height: 1;
+    color: rgba(14,14,13,0.06);
+    letter-spacing: -0.04em;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  /* ───── manifesto bar ───── */
+  .manifesto {
+    padding: 80px 0;
+    border-bottom: 1px solid var(--rule);
+    overflow: hidden;
+  }
+  .manifesto-text {
+    font-family: "Fraunces", serif;
+    font-variation-settings: "SOFT" 80, "WONK" 1, "opsz" 144;
+    font-weight: 300;
+    font-size: clamp(40px, 5.5vw, 88px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    max-width: 1200px;
+  }
+  .manifesto-text em {
+    font-style: italic;
+    color: var(--accent);
+    font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+  }
+  .manifesto-text .strike {
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    color: var(--ink-soft);
+  }
+  .manifesto-meta {
+    margin-top: 50px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+    border-top: 1px solid var(--rule);
+    padding-top: 30px;
+  }
+  .manifesto-meta div span {
+    display: block;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .manifesto-meta div strong {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-size: 26px;
+    letter-spacing: -0.01em;
+    display: block;
+  }
+
+  /* ───── archive index ───── */
+  .archive { padding: 80px 0; border-bottom: 1px solid var(--rule); }
+  .archive-head {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+    margin-bottom: 50px;
+  }
+  .archive-head h2 {
+    font-family: "Fraunces", serif;
+    font-variation-settings: "SOFT" 50, "WONK" 0, "opsz" 144;
+    font-weight: 300;
+    font-size: clamp(48px, 6vw, 88px);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+  .archive-head h2 em {
+    font-style: italic;
+    font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144;
+    color: var(--accent);
+  }
+  .archive-head .filters {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .filter {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    color: var(--ink);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .filter:hover, .filter.active { background: var(--ink); color: var(--paper); }
+  .filter.active { background: var(--accent); border-color: var(--accent); }
+
+  .arch-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .arch-table tr {
+    border-bottom: 1px solid var(--rule);
+    transition: background .25s;
+  }
+  .arch-table tr:hover {
+    background: var(--paper-deep);
+  }
+  .arch-table tr:hover .arch-name { color: var(--accent); }
+  .arch-table td {
+    padding: 28px 16px;
+    vertical-align: middle;
+  }
+  .arch-table td:first-child { padding-left: 0; width: 60px; }
+  .arch-table td:last-child { padding-right: 0; text-align: right; }
+  .arch-num {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .arch-name {
+    font-family: "Fraunces", serif;
+    font-variation-settings: "SOFT" 50, "WONK" 1, "opsz" 144;
+    font-weight: 400;
+    font-size: 38px;
+    letter-spacing: -0.02em;
+    transition: color .25s;
+  }
+  .arch-name em { font-style: italic; }
+  .arch-spec {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+  }
+  .arch-tag {
+    display: inline-block;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    padding: 4px 8px;
+    background: var(--ink);
+    color: var(--paper);
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+  }
+  .arch-tag.accent { background: var(--accent); }
+  .arch-price {
+    font-family: "Fraunces", serif;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+
+  /* ───── workshop band ───── */
+  .workshop {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 100px 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .workshop-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .workshop h2 {
+    font-family: "Fraunces", serif;
+    font-variation-settings: "SOFT" 80, "WONK" 1, "opsz" 144;
+    font-weight: 300;
+    font-size: clamp(48px, 6vw, 96px);
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+  }
+  .workshop h2 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .workshop .eyebrow {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.22em;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .workshop p.body {
+    color: rgba(250,250,246,0.7);
+    font-size: 17px;
+    line-height: 1.6;
+    margin-top: 28px;
+    max-width: 460px;
+  }
+  .workshop-steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(250,250,246,0.15);
+    border: 1px solid rgba(250,250,246,0.15);
+  }
+  .step {
+    background: var(--ink);
+    padding: 40px 32px;
+    position: relative;
+  }
+  .step-num {
+    font-family: "Fraunces", serif;
+    font-variation-settings: "opsz" 144;
+    font-weight: 200;
+    font-size: 72px;
+    line-height: 0.9;
+    color: var(--accent);
+  }
+  .step h3 {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-size: 26px;
+    margin: 18px 0 12px;
+    letter-spacing: -0.01em;
+  }
+  .step p {
+    color: rgba(250,250,246,0.6);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .step .mono {
+    margin-top: 22px;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+  }
+
+  /* ───── footer ───── */
+  footer.foot {
+    padding: 80px 0 24px;
+    border-top: 1px solid var(--rule);
+  }
+  .foot-mark {
+    font-family: "Fraunces", serif;
+    font-variation-settings: "SOFT" 50, "WONK" 1, "opsz" 144;
+    font-weight: 300;
+    font-size: clamp(96px, 16vw, 280px);
+    line-height: 0.85;
+    letter-spacing: -0.05em;
+    color: var(--ink);
+    text-align: left;
+  }
+  .foot-mark em { color: var(--accent); font-style: italic; }
+  .foot-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 40px;
+    margin: 60px 0 40px;
+    padding-top: 40px;
+    border-top: 1px solid var(--rule);
+  }
+  .foot h4 {
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    margin-bottom: 18px;
+    color: var(--accent);
+  }
+  .foot a { display: block; padding: 4px 0; color: var(--ink); text-decoration: none; font-size: 14px; }
+  .foot a:hover { color: var(--accent); }
+  .foot p { font-size: 14px; color: var(--ink-soft); max-width: 320px; }
+  .foot-bot {
+    padding-top: 22px;
+    border-top: 1px solid var(--rule-soft);
+    display: flex;
+    justify-content: space-between;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--ink-soft);
+  }
+
+  .style-badge {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+    z-index: 100;
+    font-family: "JetBrains Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .style-badge:hover { background: var(--accent); }
+
+  @media (max-width: 900px) {
+    .hero-grid, .workshop-grid { grid-template-columns: 1fr; }
+    .workshop-steps, .foot-grid { grid-template-columns: 1fr 1fr; }
+    .arch-name { font-size: 24px; }
+    .arch-table td { padding: 16px 8px; }
+    .nav-row nav.left { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="style-badge" href="index.html">← STYLE 02 · EDITORIAL</a>
+
+<div class="ribbon">
+  <div class="ribbon-inner">
+    <span>VOL. 01</span><span>—</span>
+    <span>SPRING / MMXXVI</span><span>—</span>
+    <span>NEW: THE SEXTANT</span><span>—</span>
+    <span>WORKSHOP NOW BOOKING</span><span>—</span>
+    <span>FREE COURIER WORLDWIDE</span><span>—</span>
+    <span>VOL. 01</span><span>—</span>
+    <span>SPRING / MMXXVI</span><span>—</span>
+    <span>NEW: THE SEXTANT</span><span>—</span>
+    <span>WORKSHOP NOW BOOKING</span><span>—</span>
+    <span>FREE COURIER WORLDWIDE</span><span>—</span>
+  </div>
+</div>
+
+<header class="nav">
+  <div class="nav-row">
+    <nav class="left">
+      <a href="#">Shop</a>
+      <a href="#">Workshop</a>
+      <a href="#">Archive</a>
+      <a href="#">Journal</a>
+    </nav>
+    <a class="logo" href="#">Opus<em>.</em></a>
+    <nav class="right">
+      <a href="#">EN / FR</a>
+      <a href="#">Search</a>
+      <a href="#">Bag (0)</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-left" style="padding-left: 40px;">
+      <div>
+        <div class="issue-mark">
+          <span class="num">01</span>
+          <div>
+            Vol. Nº1<br/>
+            Spring / MMXXVI<br/>
+            Edition of 240
+          </div>
+        </div>
+        <h1 class="hero-title">
+          Watches,<br/>
+          <em>considered.</em>
+        </h1>
+      </div>
+      <div class="hero-foot">
+        <div class="lede">
+          <span class="lede-label">— Note from the bench</span>
+          We make watches the way we'd want to own them: in small numbers, with the
+          movement finished by hand, and the back left open so you can watch the
+          thing work. Issue one introduces the Sextant — a 39mm three-hander with
+          a sector dial — and reopens our workshop to outside repairs.
+        </div>
+        <div></div>
+        <a class="cta" href="#">
+          Read Vol. 01
+          <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <div class="caption-cluster cc-tl">
+        <div>Fig. 01</div>
+        <div class="line"></div>
+        <div>The Sextant<br/>Réf. SXT-39-A</div>
+      </div>
+      <div class="caption-cluster cc-tr">
+        <div>39mm steel</div>
+        <div class="line"></div>
+        <div>Cal. OP-01<br/>72h reserve</div>
+      </div>
+      <div class="caption-cluster cc-br">
+        <div>Available — 86 / 240</div>
+        <div class="line"></div>
+        <span class="price">€ 4,850</span>
+      </div>
+      <div class="running-num">01</div>
+
+      <svg class="hero-watch" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="steel" cx="50%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#f3f1ea" />
+            <stop offset="50%" stop-color="#b8b6b0" />
+            <stop offset="100%" stop-color="#74726e" />
+          </radialGradient>
+          <linearGradient id="strap" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#1a1a18" />
+            <stop offset="100%" stop-color="#363632" />
+          </linearGradient>
+          <radialGradient id="dial2" cx="50%" cy="35%" r="70%">
+            <stop offset="0%" stop-color="#fafaf6" />
+            <stop offset="100%" stop-color="#ddd9cd" />
+          </radialGradient>
+        </defs>
+        <!-- strap top -->
+        <path d="M180 30 L320 30 L310 100 L190 100 Z" fill="url(#strap)" />
+        <!-- strap bottom -->
+        <path d="M190 400 L310 400 L320 470 L180 470 Z" fill="url(#strap)" />
+        <!-- case -->
+        <circle cx="250" cy="250" r="190" fill="url(#steel)" />
+        <circle cx="250" cy="250" r="180" fill="none" stroke="#5a5854" stroke-width="0.8" opacity="0.4" />
+        <!-- crown -->
+        <rect x="438" y="234" width="18" height="32" fill="url(#steel)" rx="3" />
+        <rect x="440" y="240" width="14" height="20" fill="none" stroke="#5a5854" stroke-width="0.5" />
+        <!-- bezel inner -->
+        <circle cx="250" cy="250" r="168" fill="#0e0e0d" />
+        <!-- dial -->
+        <circle cx="250" cy="250" r="160" fill="url(#dial2)" />
+        <!-- sector dial lines -->
+        <g stroke="#0e0e0d" stroke-width="0.4" fill="none">
+          <circle cx="250" cy="250" r="155" />
+          <circle cx="250" cy="250" r="135" />
+          <circle cx="250" cy="250" r="115" />
+        </g>
+        <!-- hour markers -->
+        <g id="hour-ticks"></g>
+        <!-- numerals -->
+        <g font-family="Fraunces, serif" font-size="20" fill="#0e0e0d" text-anchor="middle">
+          <text x="250" y="124">12</text>
+          <text x="370" y="258">3</text>
+          <text x="250" y="390">6</text>
+          <text x="130" y="258">9</text>
+        </g>
+        <!-- accent dot at 12 -->
+        <circle cx="250" cy="100" r="3.5" fill="#e63a17" />
+        <!-- maker -->
+        <text x="250" y="190" font-family="Fraunces, serif" font-style="italic" font-size="14" fill="#0e0e0d" text-anchor="middle">Opus.</text>
+        <text x="250" y="206" font-family="JetBrains Mono, monospace" font-size="7" letter-spacing="3" fill="#5a5854" text-anchor="middle">SEXTANT · 01</text>
+        <!-- sub-seconds -->
+        <circle cx="250" cy="320" r="36" fill="none" stroke="#0e0e0d" stroke-width="0.6" />
+        <g id="sub-ticks"></g>
+        <text x="250" y="294" font-family="JetBrains Mono, monospace" font-size="6" letter-spacing="2" fill="#5a5854" text-anchor="middle">SECONDS</text>
+        <!-- hands -->
+        <g transform="rotate(125 250 250)">
+          <rect x="248" y="120" width="4" height="140" fill="#0e0e0d" rx="1" />
+        </g>
+        <g transform="rotate(35 250 250)">
+          <rect x="248" y="140" width="4" height="120" fill="#0e0e0d" rx="1" />
+        </g>
+        <circle cx="250" cy="250" r="6" fill="#0e0e0d" />
+        <circle cx="250" cy="250" r="2" fill="#e63a17" />
+        <!-- sub-second hand -->
+        <g transform="rotate(280 250 320)">
+          <rect x="249" y="290" width="2" height="32" fill="#e63a17" />
+          <circle cx="250" cy="320" r="2.5" fill="#0e0e0d" />
+        </g>
+      </svg>
+      <script>
+        (function() {
+          // hour ticks
+          const ht = document.querySelector('#hour-ticks');
+          if (ht) {
+            for (let i = 0; i < 60; i++) {
+              if (i % 5 === 0 && (i % 15 === 0)) continue;
+              const a = (i/60) * Math.PI * 2 - Math.PI/2;
+              const r1 = i % 5 === 0 ? 142 : 150;
+              const r2 = 155;
+              const x1 = 250 + Math.cos(a) * r1;
+              const y1 = 250 + Math.sin(a) * r1;
+              const x2 = 250 + Math.cos(a) * r2;
+              const y2 = 250 + Math.sin(a) * r2;
+              const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+              line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+              line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+              line.setAttribute('stroke', '#0e0e0d');
+              line.setAttribute('stroke-width', i % 5 === 0 ? '2' : '0.7');
+              line.setAttribute('stroke-linecap', 'round');
+              ht.appendChild(line);
+            }
+          }
+          // sub seconds ticks
+          const st = document.querySelector('#sub-ticks');
+          if (st) {
+            for (let i = 0; i < 60; i++) {
+              const a = (i/60) * Math.PI * 2 - Math.PI/2;
+              const r1 = i % 15 === 0 ? 30 : 32;
+              const r2 = 34;
+              const x1 = 250 + Math.cos(a) * r1;
+              const y1 = 320 + Math.sin(a) * r1;
+              const x2 = 250 + Math.cos(a) * r2;
+              const y2 = 320 + Math.sin(a) * r2;
+              const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+              line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+              line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+              line.setAttribute('stroke', '#0e0e0d');
+              line.setAttribute('stroke-width', i % 15 === 0 ? '1.2' : '0.4');
+              st.appendChild(line);
+            }
+          }
+        })();
+      </script>
+    </div>
+  </div>
+</section>
+
+<section class="manifesto">
+  <div class="container">
+    <p class="manifesto-text">
+      We design <em>fewer watches</em>, finish them by hand, and <span class="strike">forecast quarterly demand</span> &mdash; we just <em>open the workshop</em> when there's time to do it properly.
+    </p>
+    <div class="manifesto-meta">
+      <div><span>FOUNDED</span><strong>Antwerp · 2018</strong></div>
+      <div><span>EDITIONS / YEAR</span><strong>3 to 4</strong></div>
+      <div><span>PIECES / EDITION</span><strong>120 — 280</strong></div>
+      <div><span>SIGNED &amp; NUMBERED BY</span><strong>The maker</strong></div>
+    </div>
+  </div>
+</section>
+
+<section class="archive">
+  <div class="container">
+    <div class="archive-head">
+      <h2>The <em>archive</em></h2>
+      <div class="filters">
+        <button class="filter active">ALL</button>
+        <button class="filter">CURRENT</button>
+        <button class="filter">SOLD OUT</button>
+        <button class="filter">DRESS</button>
+        <button class="filter">FIELD</button>
+        <button class="filter">CHRONO</button>
+      </div>
+    </div>
+
+    <table class="arch-table">
+      <tbody>
+        <tr>
+          <td class="arch-num">01.04</td>
+          <td><span class="arch-name">The <em>Sextant</em></span></td>
+          <td class="arch-spec">SEXTANT · 39mm steel · Cal. OP-01</td>
+          <td><span class="arch-tag accent">NEW</span></td>
+          <td class="arch-price">€ 4,850</td>
+        </tr>
+        <tr>
+          <td class="arch-num">01.03</td>
+          <td><span class="arch-name"><em>Solstice</em> 38</span></td>
+          <td class="arch-spec">SOL-38-B · bronze · Cal. OP-02</td>
+          <td><span class="arch-tag">12 LEFT</span></td>
+          <td class="arch-price">€ 5,400</td>
+        </tr>
+        <tr>
+          <td class="arch-num">01.02</td>
+          <td><span class="arch-name">The <em>Aubade</em></span></td>
+          <td class="arch-spec">AUB-36-W · white gold · Cal. OP-01</td>
+          <td><span class="arch-tag">SOLD OUT</span></td>
+          <td class="arch-price">€ 11,200</td>
+        </tr>
+        <tr>
+          <td class="arch-num">01.01</td>
+          <td><span class="arch-name"><em>Nocturne</em> Field</span></td>
+          <td class="arch-spec">NOC-40-F · sandblasted · Cal. OP-03</td>
+          <td><span class="arch-tag">42 LEFT</span></td>
+          <td class="arch-price">€ 3,650</td>
+        </tr>
+        <tr>
+          <td class="arch-num">00.04</td>
+          <td><span class="arch-name">The <em>Equinox</em></span></td>
+          <td class="arch-spec">EQX-39-G · grey enamel · Cal. OP-02</td>
+          <td><span class="arch-tag">SOLD OUT</span></td>
+          <td class="arch-price">€ 6,200</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="workshop">
+  <div class="container">
+    <div class="workshop-grid">
+      <div>
+        <div class="eyebrow">— THE WORKSHOP / REPAIRS</div>
+        <h2>Bring your<br/>watch <em>home.</em></h2>
+        <p class="body">
+          We service every Opus, of course — and we open the bench for outside
+          pieces twice a year. Send us yours, and we'll quote the work after
+          opening it, photographing it, and writing you a note.
+        </p>
+        <a class="cta" href="#" style="margin-top: 40px; background: var(--accent); border-color: var(--accent);">
+          Book the workshop
+          <span class="arrow">→</span>
+        </a>
+      </div>
+      <div class="workshop-steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <h3>Send under seal</h3>
+          <p>Free insured courier worldwide. Tracked, signed, photographed on arrival.</p>
+          <div class="mono">2–4 DAYS</div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <h3>Open &amp; quote</h3>
+          <p>The bench writes you back with photos, findings, and a flat estimate within four days.</p>
+          <div class="mono">+4 DAYS</div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <h3>Restored by hand</h3>
+          <p>Movement service, refinish, gasket, regulation — done one piece at a time.</p>
+          <div class="mono">3–7 WEEKS</div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <h3>Returned home</h3>
+          <p>Signed certificate, two-year warranty, and a postcard from the maker.</p>
+          <div class="mono">UPON RETURN</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="container">
+    <div class="foot-mark">Opus<em>.</em></div>
+    <div class="foot-grid">
+      <div>
+        <h4>— THE HOUSE</h4>
+        <p>An independent house of watchmakers. Antwerp & Geneva, since 2018. We make few watches, by intention, and finish them by hand.</p>
+      </div>
+      <div>
+        <h4>— SHOP</h4>
+        <a href="#">Current edition</a>
+        <a href="#">Archive</a>
+        <a href="#">Straps</a>
+        <a href="#">Gift cards</a>
+      </div>
+      <div>
+        <h4>— WORKSHOP</h4>
+        <a href="#">Book a service</a>
+        <a href="#">Restorations</a>
+        <a href="#">Trade-in</a>
+        <a href="#">Couriers</a>
+      </div>
+      <div>
+        <h4>— ATELIER</h4>
+        <a href="#">Antwerp · Hopland 12</a>
+        <a href="#">Geneva · by appointment</a>
+        <a href="#">Journal</a>
+        <a href="#">Press</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <div>© Opus · MMXVIII–MMXXVI · ANTWERP / GENEVA</div>
+      <div>Vol. 01 · Spring MMXXVI · Edition of 240</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

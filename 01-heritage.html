@@ -1,0 +1,845 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Maison Opus — Horlogerie depuis MCMXXIV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #f4ece0;
+    --paper-deep: #ebe0cd;
+    --ink: #281b10;
+    --ink-soft: #4a3522;
+    --gilt: #9c7536;
+    --gilt-bright: #b8945a;
+    --rule: #c8b89a;
+    --shadow: rgba(40, 27, 16, 0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "EB Garamond", "Georgia", serif;
+    font-size: 18px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(1200px 800px at 20% 0%, rgba(184, 148, 90, 0.10), transparent 60%),
+      radial-gradient(900px 600px at 100% 100%, rgba(40, 27, 16, 0.06), transparent 60%);
+    z-index: 0;
+  }
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.16  0 0 0 0 0.11  0 0 0 0 0.06  0 0 0 0.13 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    opacity: 0.55;
+    mix-blend-mode: multiply;
+    z-index: 1;
+  }
+
+  .display { font-family: "Cormorant Garamond", "Didot", serif; font-weight: 400; }
+  .italic { font-style: italic; }
+  .small-caps { font-variant: all-small-caps; letter-spacing: 0.18em; }
+
+  .container { max-width: 1240px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 2; }
+
+  /* ───── header ───── */
+  header.top {
+    padding: 28px 0 0;
+    position: relative;
+    z-index: 5;
+  }
+  .top-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 22px;
+  }
+  .top-row nav { display: flex; gap: 32px; font-size: 13px; }
+  .top-row nav a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-variant: all-small-caps;
+    letter-spacing: 0.22em;
+    transition: color .2s;
+  }
+  .top-row nav a:hover { color: var(--gilt); }
+  .top-row nav.right { justify-content: flex-end; }
+
+  .wordmark {
+    text-align: center;
+    font-family: "Cormorant Garamond", serif;
+    font-size: 26px;
+    letter-spacing: 0.22em;
+    color: var(--ink);
+  }
+  .wordmark .amp {
+    color: var(--gilt);
+    font-style: italic;
+    font-weight: 500;
+    margin: 0 4px;
+  }
+
+  .meta-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    padding: 14px 0 0;
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    font-variant: all-small-caps;
+    letter-spacing: 0.24em;
+  }
+  .meta-row .right { text-align: right; }
+
+  /* ───── hero ───── */
+  .hero {
+    padding: 96px 0 80px;
+    position: relative;
+  }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: 64px;
+    align-items: center;
+  }
+  .hero-eyebrow {
+    font-variant: all-small-caps;
+    letter-spacing: 0.32em;
+    font-size: 12px;
+    color: var(--gilt);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after {
+    content: "";
+    height: 1px;
+    background: var(--gilt);
+    flex: 0 0 40px;
+  }
+  .hero-eyebrow::after { flex: 1; }
+
+  h1.hero-title {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: clamp(56px, 7vw, 104px);
+    line-height: 0.96;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+  }
+  h1.hero-title .row-2 {
+    display: block;
+    font-style: italic;
+    color: var(--gilt);
+    padding-left: 1.4em;
+  }
+  h1.hero-title .row-3 {
+    display: block;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-desc {
+    margin-top: 36px;
+    max-width: 460px;
+    font-size: 18px;
+    line-height: 1.65;
+    color: var(--ink-soft);
+  }
+  .hero-desc::first-letter {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 64px;
+    line-height: 0.85;
+    float: left;
+    padding: 6px 12px 0 0;
+    color: var(--gilt);
+    font-style: italic;
+  }
+
+  .cta-row {
+    margin-top: 44px;
+    display: flex;
+    gap: 28px;
+    align-items: center;
+  }
+  .btn {
+    font-family: "EB Garamond", serif;
+    font-variant: all-small-caps;
+    letter-spacing: 0.24em;
+    font-size: 13px;
+    padding: 16px 28px;
+    border: 1px solid var(--ink);
+    background: transparent;
+    color: var(--ink);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all .35s ease;
+    position: relative;
+  }
+  .btn:hover { background: var(--ink); color: var(--paper); letter-spacing: 0.30em; }
+  .btn.gilt { border-color: var(--gilt); color: var(--gilt); }
+  .btn.gilt:hover { background: var(--gilt); color: var(--paper); }
+  .link-arrow {
+    color: var(--ink);
+    text-decoration: none;
+    font-style: italic;
+    font-size: 17px;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 2px;
+    transition: border-color .25s, color .25s;
+  }
+  .link-arrow:hover { color: var(--gilt); border-color: var(--gilt); }
+
+  /* watch illustration */
+  .watch-wrap {
+    position: relative;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .watch-wrap::before {
+    content: "";
+    position: absolute;
+    inset: 5%;
+    border-radius: 50%;
+    background: radial-gradient(closest-side at 50% 40%, rgba(184,148,90,0.18), transparent 70%);
+    filter: blur(20px);
+  }
+  .watch-svg {
+    width: 92%;
+    height: auto;
+    filter: drop-shadow(0 30px 60px rgba(40, 27, 16, 0.25));
+    animation: hover 8s ease-in-out infinite;
+  }
+  @keyframes hover {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .watch-caption {
+    position: absolute;
+    bottom: -28px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-style: italic;
+    color: var(--ink-soft);
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .watch-caption span { color: var(--gilt); }
+
+  /* roman numeral side marker */
+  .side-mark {
+    position: absolute;
+    right: -16px;
+    top: 40px;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-family: "Cormorant Garamond", serif;
+    font-size: 13px;
+    letter-spacing: 0.5em;
+    color: var(--gilt);
+    font-variant: all-small-caps;
+  }
+
+  /* ───── ornament divider ───── */
+  .ornament {
+    text-align: center;
+    margin: 40px 0;
+    color: var(--gilt);
+    font-size: 22px;
+    letter-spacing: 1em;
+    padding-left: 1em;
+  }
+  .rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--rule), transparent);
+  }
+
+  /* ───── collection ───── */
+  .section { padding: 80px 0; position: relative; }
+  .section-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 36px;
+    align-items: end;
+    margin-bottom: 64px;
+  }
+  .section-head h2 {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: clamp(40px, 5vw, 72px);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .section-head h2 em { color: var(--gilt); font-weight: 400; }
+  .section-head .num {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--gilt);
+  }
+  .section-head .lead-rule { height: 1px; background: var(--rule); transform: translateY(-12px); }
+
+  .pieces {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 48px;
+  }
+  .piece { cursor: pointer; }
+  .piece-frame {
+    aspect-ratio: 3/4;
+    background: linear-gradient(180deg, var(--paper-deep), var(--paper));
+    border: 1px solid var(--rule);
+    position: relative;
+    overflow: hidden;
+    transition: transform .6s cubic-bezier(.2,.7,.2,1);
+  }
+  .piece-frame::before {
+    content: "";
+    position: absolute;
+    inset: 16px;
+    border: 1px solid var(--rule);
+    pointer-events: none;
+  }
+  .piece-frame::after {
+    content: "";
+    position: absolute;
+    inset: 22px;
+    background: radial-gradient(closest-side, transparent 65%, rgba(184,148,90,0.10) 100%);
+  }
+  .piece:hover .piece-frame { transform: translateY(-6px); box-shadow: 0 40px 60px -30px rgba(40,27,16,0.45); }
+  .piece svg.dial {
+    position: absolute;
+    inset: 14% 14% 18%;
+    width: 72%;
+    height: auto;
+    margin: auto;
+    filter: drop-shadow(0 14px 30px rgba(40,27,16,0.22));
+  }
+  .piece-meta {
+    padding: 24px 4px 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-top: 1px solid var(--rule);
+    margin-top: 22px;
+  }
+  .piece-name {
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 26px;
+  }
+  .piece-ref {
+    font-variant: all-small-caps;
+    letter-spacing: 0.22em;
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .piece-line {
+    margin-top: 8px;
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+  .piece-price {
+    margin-top: 4px;
+    color: var(--gilt);
+    font-style: italic;
+    font-size: 17px;
+  }
+
+  /* ───── atelier ───── */
+  .atelier {
+    background: var(--ink);
+    color: var(--paper);
+    margin-top: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .atelier .container { padding-top: 110px; padding-bottom: 110px; }
+  .atelier::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(700px 500px at 20% 30%, rgba(184,148,90,0.18), transparent 60%),
+      radial-gradient(500px 400px at 90% 90%, rgba(184,148,90,0.10), transparent 60%);
+  }
+  .atelier-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 80px;
+    align-items: center;
+    position: relative;
+  }
+  .atelier h2 {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-size: clamp(48px, 6vw, 88px);
+    line-height: 0.98;
+    letter-spacing: -0.01em;
+  }
+  .atelier h2 em { color: var(--gilt-bright); }
+  .atelier .eyebrow {
+    font-variant: all-small-caps;
+    letter-spacing: 0.36em;
+    font-size: 12px;
+    color: var(--gilt-bright);
+    margin-bottom: 22px;
+  }
+  .atelier p {
+    margin-top: 28px;
+    color: rgba(244, 236, 224, 0.72);
+    max-width: 460px;
+    font-size: 18px;
+  }
+  .atelier .services {
+    margin-top: 36px;
+    columns: 2;
+    column-gap: 32px;
+  }
+  .atelier .services div {
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(244,236,224,0.18);
+    font-size: 15px;
+    break-inside: avoid;
+    display: flex;
+    justify-content: space-between;
+  }
+  .atelier .services span { color: var(--gilt-bright); font-style: italic; }
+
+  .atelier-card {
+    border: 1px solid rgba(184,148,90,0.4);
+    padding: 56px 48px;
+    background:
+      linear-gradient(180deg, rgba(184,148,90,0.06), transparent 80%);
+    position: relative;
+  }
+  .atelier-card::before, .atelier-card::after {
+    content: "";
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--gilt-bright);
+  }
+  .atelier-card::before { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+  .atelier-card::after { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+
+  .atelier-card h3 {
+    font-family: "Cormorant Garamond", serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: 38px;
+    margin-bottom: 24px;
+    color: var(--gilt-bright);
+  }
+  .atelier-card .signature {
+    margin-top: 32px;
+    font-family: "Cormorant Garamond", serif;
+    font-style: italic;
+    font-size: 30px;
+    color: var(--paper);
+  }
+  .atelier-card .signature span {
+    display: block;
+    font-style: normal;
+    font-variant: all-small-caps;
+    letter-spacing: 0.3em;
+    font-size: 12px;
+    margin-top: 6px;
+    color: rgba(244,236,224,0.5);
+  }
+
+  /* ───── footer ───── */
+  footer.foot {
+    padding: 80px 0 60px;
+    border-top: 1px solid var(--rule);
+    margin-top: 80px;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+  .foot-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    gap: 48px;
+  }
+  .foot h4 {
+    font-variant: all-small-caps;
+    letter-spacing: 0.26em;
+    font-size: 11px;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .foot a { display: block; padding: 4px 0; color: var(--ink-soft); text-decoration: none; font-style: italic; }
+  .foot a:hover { color: var(--gilt); }
+  .foot .mark {
+    font-family: "Cormorant Garamond", serif;
+    font-size: 32px;
+    letter-spacing: 0.22em;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  .foot .mark em { color: var(--gilt); font-style: italic; }
+  .foot-bot {
+    margin-top: 60px;
+    padding-top: 22px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: space-between;
+    font-variant: all-small-caps;
+    letter-spacing: 0.24em;
+    font-size: 11px;
+  }
+
+  .style-badge {
+    position: fixed;
+    left: 24px;
+    bottom: 24px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+    z-index: 10;
+    font-variant: all-small-caps;
+    letter-spacing: 0.26em;
+    font-size: 11px;
+    text-decoration: none;
+    border: 1px solid var(--gilt);
+  }
+  .style-badge:hover { background: var(--gilt); color: var(--ink); }
+
+  @media (max-width: 880px) {
+    .hero-grid, .atelier-grid { grid-template-columns: 1fr; }
+    .pieces { grid-template-columns: 1fr; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+    .top-row nav.left { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="style-badge" href="index.html">← Style 01 · Heritage</a>
+
+<header class="top">
+  <div class="container">
+    <div class="top-row">
+      <nav class="left">
+        <a href="#">Collections</a>
+        <a href="#">Atelier</a>
+        <a href="#">Heritage</a>
+      </nav>
+      <div class="wordmark">MAISON <span class="amp">&amp;</span> OPUS</div>
+      <nav class="right">
+        <a href="#">Journal</a>
+        <a href="#">Reserve</a>
+        <a href="#">Sign in</a>
+      </nav>
+    </div>
+    <div class="meta-row">
+      <div>Geneva · Antwerp · Tokyo</div>
+      <div class="italic" style="font-variant: normal; letter-spacing: 0.18em;">— Depuis MCMXXIV —</div>
+      <div class="right">N°XLVII · Édition de printemps</div>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-grid">
+      <div style="position: relative;">
+        <div class="side-mark">№ XLVII</div>
+        <div class="hero-eyebrow">A House of Watchmakers</div>
+        <h1 class="hero-title">
+          The hours,
+          <span class="row-2">unhurried,</span>
+          <span class="row-3">since 1924.</span>
+        </h1>
+        <p class="hero-desc">
+          Four generations have set their hands to the same workbench in our atelier
+          beneath the Rue des Granges. We make few watches, by intention. Each is
+          numbered, signed, and recorded by the maker who completed it — a small
+          act of bookkeeping that, in our trade, we still consider a kind of honesty.
+        </p>
+        <div class="cta-row">
+          <a class="btn" href="#">Explore the Collection</a>
+          <a class="link-arrow" href="#">Read our manifesto →</a>
+        </div>
+      </div>
+
+      <div class="watch-wrap">
+        <svg class="watch-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="caseG" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#f3e3c2" />
+              <stop offset="60%" stop-color="#c69955" />
+              <stop offset="100%" stop-color="#8b6628" />
+            </radialGradient>
+            <radialGradient id="dialG" cx="50%" cy="40%" r="65%">
+              <stop offset="0%" stop-color="#fbf3e0" />
+              <stop offset="100%" stop-color="#e8d6b0" />
+            </radialGradient>
+            <radialGradient id="centerG" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#9c7536" />
+              <stop offset="100%" stop-color="#5b4220" />
+            </radialGradient>
+          </defs>
+          <!-- crown -->
+          <rect x="378" y="186" width="14" height="28" fill="url(#caseG)" rx="2" />
+          <!-- lugs -->
+          <path d="M120 30 L160 70 L130 90 Z" fill="url(#caseG)" />
+          <path d="M280 30 L240 70 L270 90 Z" fill="url(#caseG)" />
+          <path d="M120 370 L160 330 L130 310 Z" fill="url(#caseG)" />
+          <path d="M280 370 L240 330 L270 310 Z" fill="url(#caseG)" />
+          <!-- case -->
+          <circle cx="200" cy="200" r="180" fill="url(#caseG)" />
+          <circle cx="200" cy="200" r="172" fill="none" stroke="#5b4220" stroke-width="1" opacity="0.5" />
+          <!-- bezel -->
+          <circle cx="200" cy="200" r="160" fill="#3a2a16" />
+          <!-- dial -->
+          <circle cx="200" cy="200" r="148" fill="url(#dialG)" />
+          <!-- decorative inner ring -->
+          <circle cx="200" cy="200" r="138" fill="none" stroke="#9c7536" stroke-width="0.5" opacity="0.6" />
+          <!-- minute markers -->
+          <g stroke="#281b10" stroke-width="0.8">
+            <!-- 60 minute marks -->
+            <g id="ticks"></g>
+          </g>
+          <!-- roman numerals -->
+          <g font-family="Cormorant Garamond, serif" font-size="22" fill="#281b10" text-anchor="middle">
+            <text x="200" y="78">XII</text>
+            <text x="262" y="92">I</text>
+            <text x="306" y="138">II</text>
+            <text x="322" y="208">III</text>
+            <text x="306" y="272">IV</text>
+            <text x="262" y="318">V</text>
+            <text x="200" y="332">VI</text>
+            <text x="138" y="318">VII</text>
+            <text x="94" y="272">VIII</text>
+            <text x="78" y="208">IX</text>
+            <text x="94" y="138">X</text>
+            <text x="138" y="92">XI</text>
+          </g>
+          <!-- maker mark -->
+          <text x="200" y="155" font-family="Cormorant Garamond, serif" font-style="italic" font-size="13" fill="#9c7536" text-anchor="middle">Maison &amp; Opus</text>
+          <text x="200" y="172" font-family="EB Garamond, serif" font-size="8" letter-spacing="3" fill="#5b4220" text-anchor="middle">GENÈVE</text>
+          <!-- subdial -->
+          <circle cx="200" cy="245" r="32" fill="none" stroke="#9c7536" stroke-width="0.6" />
+          <circle cx="200" cy="245" r="32" fill="rgba(155, 117, 54, 0.08)" />
+          <text x="200" y="248" font-family="Cormorant Garamond, serif" font-size="9" fill="#5b4220" text-anchor="middle">SECONDES</text>
+          <!-- hands -->
+          <g transform="rotate(-35 200 200)">
+            <rect x="198.5" y="80" width="3" height="125" fill="#281b10" rx="1" />
+          </g>
+          <g transform="rotate(70 200 200)">
+            <rect x="198.5" y="100" width="3" height="105" fill="#281b10" rx="1" />
+          </g>
+          <circle cx="200" cy="200" r="6" fill="url(#centerG)" />
+          <circle cx="200" cy="200" r="2" fill="#281b10" />
+        </svg>
+        <script>
+          // hour ticks via JS for the dial
+          (function() {
+            const ticks = document.querySelector('#ticks');
+            if (!ticks) return;
+            for (let i = 0; i < 60; i++) {
+              const a = (i / 60) * Math.PI * 2 - Math.PI/2;
+              const r1 = i % 5 === 0 ? 128 : 132;
+              const r2 = 138;
+              const x1 = 200 + Math.cos(a) * r1;
+              const y1 = 200 + Math.sin(a) * r1;
+              const x2 = 200 + Math.cos(a) * r2;
+              const y2 = 200 + Math.sin(a) * r2;
+              const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+              line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+              line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+              line.setAttribute('stroke', '#281b10');
+              line.setAttribute('stroke-width', i % 5 === 0 ? '1.2' : '0.5');
+              ticks.appendChild(line);
+            }
+          })();
+        </script>
+        <div class="watch-caption"><span>L'Aubade</span> · Calibre 1924/M · 38mm or rose</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="container"><div class="ornament">✦ · ✦ · ✦</div></div>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <span class="num italic">№ I</span>
+      <h2>The <em>Spring</em> Editions <em>—</em> a quiet trio.</h2>
+      <span class="num italic">Trois pièces</span>
+    </div>
+
+    <div class="pieces">
+      <article class="piece">
+        <div class="piece-frame">
+          <svg class="dial" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="95" fill="#3a2a16" />
+            <circle cx="100" cy="100" r="85" fill="#fbf3e0" />
+            <text x="100" y="42" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#281b10">XII</text>
+            <text x="158" y="105" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#281b10">III</text>
+            <text x="100" y="170" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#281b10">VI</text>
+            <text x="42" y="105" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#281b10">IX</text>
+            <text x="100" y="92" font-family="Cormorant Garamond, serif" font-style="italic" font-size="7" fill="#9c7536" text-anchor="middle">Maison &amp; Opus</text>
+            <g transform="rotate(-40 100 100)"><rect x="99" y="50" width="2" height="55" fill="#281b10" /></g>
+            <g transform="rotate(110 100 100)"><rect x="99" y="60" width="2" height="45" fill="#281b10" /></g>
+            <circle cx="100" cy="100" r="3" fill="#9c7536" />
+          </svg>
+        </div>
+        <div class="piece-meta">
+          <div class="piece-name">L'Aubade</div>
+          <div class="piece-ref">Réf. 1924/M-04</div>
+        </div>
+        <div class="piece-line">Calibre maison · 38mm · or rose</div>
+        <div class="piece-price"><span class="italic">€ 18 400</span></div>
+      </article>
+
+      <article class="piece">
+        <div class="piece-frame">
+          <svg class="dial" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="95" fill="#1a1410" />
+            <circle cx="100" cy="100" r="85" fill="#0e0a06" />
+            <text x="100" y="42" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#c69955">XII</text>
+            <text x="158" y="105" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#c69955">III</text>
+            <text x="100" y="170" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#c69955">VI</text>
+            <text x="42" y="105" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#c69955">IX</text>
+            <text x="100" y="92" font-family="Cormorant Garamond, serif" font-style="italic" font-size="7" fill="#c69955" text-anchor="middle">Maison &amp; Opus</text>
+            <circle cx="100" cy="130" r="14" fill="none" stroke="#c69955" stroke-width="0.5" />
+            <g transform="rotate(20 100 100)"><rect x="99" y="50" width="2" height="55" fill="#c69955" /></g>
+            <g transform="rotate(140 100 100)"><rect x="99" y="60" width="2" height="45" fill="#c69955" /></g>
+            <circle cx="100" cy="100" r="3" fill="#c69955" />
+          </svg>
+        </div>
+        <div class="piece-meta">
+          <div class="piece-name">Nocturne</div>
+          <div class="piece-ref">Réf. 1924/N-11</div>
+        </div>
+        <div class="piece-line">Petite seconde · 40mm · acier bleui</div>
+        <div class="piece-price"><span class="italic">€ 24 800</span></div>
+      </article>
+
+      <article class="piece">
+        <div class="piece-frame">
+          <svg class="dial" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="95" fill="#5a4a35" />
+            <circle cx="100" cy="100" r="85" fill="#f0e2c0" />
+            <text x="100" y="42" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#281b10">XII</text>
+            <text x="158" y="105" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#281b10">III</text>
+            <text x="100" y="170" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#281b10">VI</text>
+            <text x="42" y="105" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="#281b10">IX</text>
+            <text x="100" y="92" font-family="Cormorant Garamond, serif" font-style="italic" font-size="7" fill="#9c7536" text-anchor="middle">Maison &amp; Opus</text>
+            <circle cx="70" cy="100" r="14" fill="none" stroke="#5b4220" stroke-width="0.5" />
+            <circle cx="130" cy="100" r="14" fill="none" stroke="#5b4220" stroke-width="0.5" />
+            <g transform="rotate(-65 100 100)"><rect x="99" y="50" width="2" height="55" fill="#281b10" /></g>
+            <g transform="rotate(45 100 100)"><rect x="99" y="60" width="2" height="45" fill="#281b10" /></g>
+            <circle cx="100" cy="100" r="3" fill="#9c7536" />
+          </svg>
+        </div>
+        <div class="piece-meta">
+          <div class="piece-name">Méridien</div>
+          <div class="piece-ref">Réf. 1924/G-02</div>
+        </div>
+        <div class="piece-line">GMT · 41mm · or jaune satiné</div>
+        <div class="piece-price"><span class="italic">€ 32 200</span></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="atelier">
+  <div class="container">
+    <div class="atelier-grid">
+      <div>
+        <div class="eyebrow">L'Atelier · Service &amp; Restauration</div>
+        <h2>Returned to the<br/>bench<em>,</em><br/>cared for<br/>by hand.</h2>
+        <p>
+          Every Opus is welcomed home for service — and so are timepieces of other
+          houses, vintage and rare. Our master watchmakers in Geneva accept work
+          by appointment, and by post under our courier seal.
+        </p>
+        <div class="services">
+          <div>Full revision <span>5–7 weeks</span></div>
+          <div>Polishing &amp; refinish <span>3 weeks</span></div>
+          <div>Crystal &amp; gasket <span>10 days</span></div>
+          <div>Strap fitting <span>same day</span></div>
+          <div>Movement restoration <span>upon estimate</span></div>
+          <div>Dial &amp; hand refresh <span>upon estimate</span></div>
+        </div>
+      </div>
+      <div class="atelier-card">
+        <h3>Pour vous écouter,<br/>nous prenons rendez-vous.</h3>
+        <p style="color: rgba(244,236,224,0.72); font-size: 17px; max-width: none;">
+          Bring the watch in person, or send it under our insured courier — either way,
+          your piece is opened, photographed, and reviewed before any work is quoted.
+          You will hear back, by hand, within four working days.
+        </p>
+        <a class="btn gilt" href="#" style="margin-top: 28px; display: inline-block;">Request an appointment</a>
+        <div class="signature">
+          E. Veyrat
+          <span>Maître Horloger · Atelier Genève</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <div class="mark">MAISON <em>&amp;</em> OPUS</div>
+        <p style="font-style: italic;">
+          A small house of watchmakers. Geneva — since 1924.<br/>
+          We make few watches, by intention.
+        </p>
+      </div>
+      <div>
+        <h4>Maison</h4>
+        <a href="#">Heritage</a>
+        <a href="#">Atelier</a>
+        <a href="#">Calibres</a>
+        <a href="#">Journal</a>
+      </div>
+      <div>
+        <h4>Service</h4>
+        <a href="#">Book a service</a>
+        <a href="#">Certificates</a>
+        <a href="#">Trade-in</a>
+        <a href="#">Couriers</a>
+      </div>
+      <div>
+        <h4>Boutiques</h4>
+        <a href="#">Genève · Rue des Granges</a>
+        <a href="#">Antwerp · Hopland</a>
+        <a href="#">Tokyo · Aoyama</a>
+        <a href="#">Private viewings</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <div>© Maison &amp; Opus · Genève · MCMXXIV–MMXXVI</div>
+      <div>Imprint &nbsp;·&nbsp; Privacy &nbsp;·&nbsp; Terms</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
