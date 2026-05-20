@@ -1,0 +1,1589 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>OPUS — Swiss watchmaking, since 2018</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --paper: #ffffff;
+    --paper-2: #f5f4f0;
+    --paper-3: #ebe9e2;
+    --ink: #14181b;
+    --ink-2: #2a2f33;
+    --ink-soft: #6c7278;
+    --rule: #d9d7cf;
+    --rule-soft: #ebe9e2;
+    --green: #1f513b;
+    --green-bright: #2a6e51;
+    --green-deep: #133225;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  .mono { font-family: "DM Mono", monospace; font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+  .container { max-width: 1480px; margin: 0 auto; padding: 0 48px; }
+  .container-wide { max-width: 1640px; margin: 0 auto; padding: 0 32px; }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* ───── announcement bar ───── */
+  .announce {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 11px 0;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-align: center;
+  }
+  .announce a {
+    color: var(--paper);
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    padding-bottom: 1px;
+    margin-left: 6px;
+  }
+  .announce a:hover { border-bottom-color: var(--paper); }
+
+  /* ───── header ───── */
+  header.nav {
+    background: var(--paper);
+    border-bottom: 1px solid var(--rule-soft);
+    position: sticky;
+    top: 0;
+    z-index: 80;
+    transition: box-shadow .3s;
+  }
+  .nav-inner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    padding: 22px 48px;
+  }
+  .nav-left { display: flex; gap: 38px; align-items: center; }
+  .nav-right { display: flex; gap: 28px; justify-content: flex-end; align-items: center; }
+  .nav-link {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    padding: 4px 0;
+    position: relative;
+    cursor: pointer;
+  }
+  .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0; right: 0;
+    bottom: -2px;
+    height: 1px;
+    background: var(--green);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .nav-link:hover::after { transform: scaleX(1); }
+
+  .logo {
+    font-family: "Hanken Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.32em;
+    color: var(--ink);
+    padding-right: 0.32em;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo-crown {
+    width: 22px;
+    height: 22px;
+  }
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink);
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background .2s;
+  }
+  .icon-btn:hover { background: var(--paper-2); }
+  .icon-btn svg { width: 18px; height: 18px; }
+  .bag-count {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: var(--green);
+    color: var(--paper);
+    font-size: 9px;
+    font-weight: 600;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .bag-wrap { position: relative; }
+
+  /* ───── hero ───── */
+  .hero {
+    min-height: calc(100vh - 100px);
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-text {
+    padding: clamp(60px, 8vh, 110px) clamp(40px, 5vw, 90px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: var(--paper);
+    position: relative;
+    z-index: 2;
+  }
+  .hero-eyebrow {
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 36px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hero-eyebrow::before {
+    content: "";
+    width: 28px;
+    height: 1px;
+    background: var(--green);
+  }
+  h1.hero-title {
+    font-family: "Hanken Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: clamp(54px, 6.4vw, 108px);
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    color: var(--ink);
+    margin-bottom: 32px;
+  }
+  h1.hero-title .accent { color: var(--green); }
+  h1.hero-title .light { font-weight: 300; color: var(--ink-2); }
+  .hero-desc {
+    color: var(--ink-soft);
+    font-size: 17px;
+    line-height: 1.65;
+    max-width: 460px;
+    margin-bottom: 44px;
+  }
+  .btn-row { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 17px 32px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all .3s cubic-bezier(.2,.7,.2,1);
+    border: 1px solid transparent;
+  }
+  .btn-primary {
+    background: var(--green);
+    color: var(--paper);
+    border-color: var(--green);
+  }
+  .btn-primary:hover { background: var(--green-deep); border-color: var(--green-deep); }
+  .btn-ghost {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--ink);
+  }
+  .btn-ghost:hover { background: var(--ink); color: var(--paper); }
+  .btn svg { width: 12px; height: 12px; transition: transform .3s; }
+  .btn:hover svg { transform: translateX(4px); }
+
+  .hero-meta {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    padding-top: 36px;
+    border-top: 1px solid var(--rule);
+    max-width: 540px;
+  }
+  .hero-meta div span {
+    display: block;
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .hero-meta div b {
+    display: block;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .hero-image {
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 40%, #f8f6ef 0%, #ebe6d5 70%, #d6cfb8 100%);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .hero-image::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle at 50% 100%, rgba(0,0,0,0.25), transparent 60%);
+    pointer-events: none;
+  }
+  .hero-watch {
+    width: 78%;
+    max-width: 620px;
+    height: auto;
+    filter: drop-shadow(0 50px 60px rgba(20, 24, 27, 0.30));
+    animation: floatY 8s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+  }
+  @keyframes floatY {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-14px); }
+  }
+  .img-meta {
+    position: absolute;
+    bottom: 28px;
+    left: 28px;
+    right: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    z-index: 3;
+    color: var(--ink-2);
+  }
+  .img-meta .name {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .img-meta .name small {
+    display: block;
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+  .img-meta .ref {
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    text-align: right;
+  }
+
+  /* ───── section heads ───── */
+  .section { padding: 100px 0; }
+  .section-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 40px;
+    align-items: end;
+    margin-bottom: 56px;
+  }
+  .section-head .label {
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--green);
+  }
+  .section-head h2 {
+    font-family: "Hanken Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: clamp(36px, 4.4vw, 64px);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+  }
+  .section-head h2 .light { font-weight: 300; color: var(--ink-2); }
+  .section-head .view-all {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--ink);
+  }
+  .view-all:hover { color: var(--green); border-bottom-color: var(--green); }
+
+  /* ───── collection grid ───── */
+  .collection-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--rule);
+    border-left: 1px solid var(--rule);
+  }
+  .model {
+    border-right: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 36px 28px 28px;
+    background: var(--paper);
+    position: relative;
+    cursor: pointer;
+    transition: background .35s;
+    text-align: center;
+  }
+  .model:hover { background: var(--paper-2); }
+  .model .tag {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    font-family: "DM Mono", monospace;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    background: var(--green);
+    color: var(--paper);
+    padding: 4px 7px;
+  }
+  .model .tag.muted { background: var(--ink-soft); }
+  .model .img {
+    aspect-ratio: 1;
+    width: 100%;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .model .img::before {
+    content: "";
+    position: absolute;
+    bottom: 18%;
+    left: 18%;
+    right: 18%;
+    height: 12px;
+    background: radial-gradient(ellipse, rgba(20,24,27,0.16), transparent 70%);
+    filter: blur(6px);
+  }
+  .model .img svg {
+    width: 78%;
+    height: auto;
+    transition: transform .5s cubic-bezier(.2,.7,.2,1);
+    filter: drop-shadow(0 12px 20px rgba(20,24,27,0.16));
+  }
+  .model:hover .img svg { transform: translateY(-6px) scale(1.04); }
+
+  .model .family {
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .model h3 {
+    font-family: "Hanken Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: 21px;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .model .spec {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+  }
+  .model .price {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+    padding-top: 14px;
+    border-top: 1px solid var(--rule);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  .model .price small {
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    color: var(--ink-soft);
+    font-weight: 400;
+    letter-spacing: 0.14em;
+  }
+
+  /* ───── family showcase ───── */
+  .families {
+    background: var(--paper-2);
+    padding: 100px 0;
+  }
+  .family-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .family-card {
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4/5;
+    cursor: pointer;
+  }
+  .family-card .img-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 50%, #f0ebd9 0%, #d8d1b8 100%);
+    transition: transform 1s cubic-bezier(.2,.7,.2,1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .family-card.dark .img-bg {
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, #2a2f33 0%, #14181b 100%);
+  }
+  .family-card.green .img-bg {
+    background: radial-gradient(ellipse 80% 60% at 50% 50%, #2a6e51 0%, #133225 100%);
+  }
+  .family-card .img-bg svg {
+    width: 64%;
+    height: auto;
+    filter: drop-shadow(0 30px 40px rgba(0,0,0,0.25));
+  }
+  .family-card:hover .img-bg { transform: scale(1.05); }
+  .family-card .overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, transparent 40%, rgba(20,24,27,0.7) 100%);
+    pointer-events: none;
+  }
+  .family-card .text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 36px 32px;
+    color: var(--paper);
+    z-index: 2;
+  }
+  .family-card .text .label {
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.7;
+    margin-bottom: 10px;
+  }
+  .family-card .text h3 {
+    font-family: "Hanken Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: 36px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .family-card .text p {
+    font-size: 14px;
+    line-height: 1.5;
+    opacity: 0.85;
+    margin-bottom: 20px;
+    max-width: 320px;
+  }
+  .family-card .text .discover {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--paper);
+  }
+
+  /* ───── tech feature ───── */
+  .tech {
+    padding: 120px 0;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .tech-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .tech .label {
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    margin-bottom: 24px;
+  }
+  .tech h2 {
+    font-family: "Hanken Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: clamp(36px, 4.4vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    margin-bottom: 28px;
+  }
+  .tech h2 .accent { color: var(--green-bright); }
+  .tech h2 .light { font-weight: 300; color: rgba(255,255,255,0.7); }
+  .tech p {
+    color: rgba(255,255,255,0.7);
+    font-size: 17px;
+    line-height: 1.65;
+    margin-bottom: 24px;
+    max-width: 460px;
+  }
+  .tech .specs {
+    margin-top: 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.12);
+    max-width: 520px;
+  }
+  .tech .specs > div {
+    background: var(--ink);
+    padding: 22px 24px;
+  }
+  .tech .specs span {
+    display: block;
+    font-family: "DM Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    margin-bottom: 6px;
+  }
+  .tech .specs b {
+    display: block;
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--paper);
+    letter-spacing: -0.01em;
+  }
+  .tech-vis {
+    position: relative;
+    aspect-ratio: 1;
+    background:
+      radial-gradient(ellipse at 50% 30%, #1f513b 0%, transparent 60%),
+      radial-gradient(circle at 50% 70%, rgba(42, 110, 81, 0.3) 0%, transparent 60%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tech-vis svg {
+    width: 90%;
+    height: auto;
+    filter: drop-shadow(0 30px 40px rgba(0,0,0,0.5));
+  }
+
+  /* ───── service section ───── */
+  .service {
+    padding: 100px 0;
+    background: var(--paper);
+  }
+  .service-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .service .label {
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+    color: var(--green);
+    margin-bottom: 24px;
+  }
+  .service h2 {
+    font-family: "Hanken Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: clamp(36px, 4.4vw, 64px);
+    line-height: 1.05;
+    letter-spacing: -0.025em;
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+  .service h2 .accent { color: var(--green); }
+  .service h2 .light { font-weight: 300; color: var(--ink-2); }
+  .service p {
+    color: var(--ink-soft);
+    font-size: 16px;
+    line-height: 1.65;
+    margin-bottom: 18px;
+    max-width: 460px;
+  }
+  .service-list {
+    margin-top: 36px;
+    border-top: 1px solid var(--rule);
+  }
+  .service-list .row {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--rule);
+    align-items: center;
+  }
+  .service-list .row .n {
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--green);
+    width: 32px;
+  }
+  .service-list .row .name {
+    font-weight: 500;
+    font-size: 16px;
+  }
+  .service-list .row .time {
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+  }
+  .service-vis {
+    background:
+      radial-gradient(ellipse 70% 50% at 50% 40%, #f0ebd9, #d8d1b8);
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .service-vis::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 60%, rgba(20,24,27,0.10));
+  }
+  .service-vis svg {
+    width: 72%;
+    height: auto;
+    filter: drop-shadow(0 30px 40px rgba(20,24,27,0.25));
+    z-index: 2;
+  }
+
+  /* ───── newsletter ───── */
+  .news {
+    background: var(--green-deep);
+    color: var(--paper);
+    padding: 80px 0;
+  }
+  .news-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+  .news h3 {
+    font-family: "Hanken Grotesk", sans-serif;
+    font-weight: 600;
+    font-size: clamp(28px, 3vw, 44px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+  .news p {
+    margin-top: 12px;
+    color: rgba(255,255,255,0.7);
+    font-size: 15px;
+    max-width: 420px;
+  }
+  .news .form {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.4);
+    padding-bottom: 4px;
+    max-width: 480px;
+    margin-left: auto;
+  }
+  .news .form input {
+    flex: 1;
+    background: transparent;
+    border: 0;
+    color: var(--paper);
+    font-family: inherit;
+    font-size: 16px;
+    padding: 18px 4px;
+    outline: none;
+  }
+  .news .form input::placeholder { color: rgba(255,255,255,0.5); }
+  .news .form button {
+    background: transparent;
+    border: 0;
+    color: var(--paper);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0 4px;
+  }
+  .news .form button:hover { color: var(--paper-3); }
+
+  /* ───── footer ───── */
+  footer.foot {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 100px 0 32px;
+  }
+  .foot-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+    gap: 60px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid rgba(255,255,255,0.12);
+  }
+  .foot-logo {
+    font-family: "Hanken Grotesk", sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.32em;
+    margin-bottom: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .foot-logo svg { width: 22px; height: 22px; }
+  .foot p { color: rgba(255,255,255,0.6); font-size: 14px; max-width: 320px; }
+  .foot h4 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--green-bright);
+    margin-bottom: 22px;
+  }
+  .foot a {
+    display: block;
+    padding: 5px 0;
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+    transition: color .25s;
+  }
+  .foot a:hover { color: var(--paper); }
+  .foot-bot {
+    padding-top: 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+  .foot-bot .socials { display: flex; gap: 20px; }
+  .foot-bot .socials a { color: rgba(255,255,255,0.5); }
+  .foot-bot .socials a:hover { color: var(--paper); }
+
+  .style-badge {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 10px 16px;
+    z-index: 100;
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--green);
+  }
+  .style-badge:hover { background: var(--green); }
+
+  @media (max-width: 1100px) {
+    .collection-grid { grid-template-columns: repeat(2, 1fr); }
+    .family-grid { grid-template-columns: 1fr; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 880px) {
+    .hero, .tech-grid, .service-grid, .news-grid { grid-template-columns: 1fr; }
+    .section-head { grid-template-columns: 1fr; }
+    .nav-left { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<a class="style-badge" href="index.html">← STYLE 05 · MODERN</a>
+
+<div class="announce">
+  Complimentary 5-year warranty and worldwide express shipping. <a href="#">Discover</a>
+</div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <nav class="nav-left">
+      <a class="nav-link" href="#">Watches</a>
+      <a class="nav-link" href="#">Collections</a>
+      <a class="nav-link" href="#">Watchmaking</a>
+      <a class="nav-link" href="#">Service</a>
+      <a class="nav-link" href="#">World of Opus</a>
+    </nav>
+    <a class="logo" href="#">
+      <svg class="logo-crown" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M3 9 L7 5 L12 8 L17 5 L21 9 L21 16 L3 16 Z" stroke="#14181b" stroke-width="1.6" stroke-linejoin="round"/>
+        <circle cx="7" cy="9" r="1.2" fill="#14181b"/>
+        <circle cx="12" cy="9" r="1.2" fill="#14181b"/>
+        <circle cx="17" cy="9" r="1.2" fill="#14181b"/>
+      </svg>
+      OPUS
+    </a>
+    <div class="nav-right">
+      <a class="nav-link" href="#">Find a boutique</a>
+      <a class="nav-link" href="#">EN</a>
+      <span class="icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="11" cy="11" r="6"/><line x1="20" y1="20" x2="16" y2="16"/>
+        </svg>
+      </span>
+      <span class="icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <circle cx="12" cy="8" r="4"/><path d="M4 20 C 4 16 8 14 12 14 C 16 14 20 16 20 20"/>
+        </svg>
+      </span>
+      <span class="icon-btn bag-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+          <path d="M6 8 L18 8 L17 20 L7 20 Z"/>
+          <path d="M9 8 V6 a3 3 0 0 1 6 0 V8"/>
+        </svg>
+        <span class="bag-count">1</span>
+      </span>
+    </div>
+  </div>
+</header>
+
+<!-- ───── hero ───── -->
+<section class="hero">
+  <div class="hero-text">
+    <div>
+      <div class="hero-eyebrow">New for 2026 · Sextant 39</div>
+      <h1 class="hero-title">
+        A timepiece<br/>
+        <span class="light">made for the</span><br/>
+        <span class="accent">long view.</span>
+      </h1>
+      <p class="hero-desc">
+        The new Sextant 39 introduces our in-house calibre OP-04, a free-sprung
+        automatic delivering a 72-hour reserve and chronometer-grade precision in
+        every position.
+      </p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="#">
+          Discover the Sextant
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12 H19 M14 6 L19 12 L14 18"/></svg>
+        </a>
+        <a class="btn btn-ghost" href="#">
+          Book a viewing
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12 H19 M14 6 L19 12 L14 18"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-meta">
+      <div><span>Calibre</span><b>OP-04 Automatic</b></div>
+      <div><span>Case</span><b>39 mm · Steel</b></div>
+      <div><span>Reserve</span><b>72 hours</b></div>
+    </div>
+  </div>
+
+  <div class="hero-image">
+    <svg class="hero-watch" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="case05" cx="50%" cy="30%" r="70%">
+          <stop offset="0%" stop-color="#e6e3d8"/>
+          <stop offset="55%" stop-color="#a0a098"/>
+          <stop offset="100%" stop-color="#5a5a52"/>
+        </radialGradient>
+        <radialGradient id="bezel05" cx="50%" cy="30%" r="70%">
+          <stop offset="0%" stop-color="#c8c4b4"/>
+          <stop offset="60%" stop-color="#8a8a82"/>
+          <stop offset="100%" stop-color="#4a4a42"/>
+        </radialGradient>
+        <radialGradient id="dial05" cx="50%" cy="30%" r="80%">
+          <stop offset="0%" stop-color="#2a6e51"/>
+          <stop offset="60%" stop-color="#1f513b"/>
+          <stop offset="100%" stop-color="#0c2a1e"/>
+        </radialGradient>
+        <linearGradient id="strap05" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#a0a098"/>
+          <stop offset="100%" stop-color="#5a5a52"/>
+        </linearGradient>
+        <linearGradient id="reflect05" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.20)"/>
+          <stop offset="45%" stop-color="rgba(255,255,255,0.03)"/>
+          <stop offset="100%" stop-color="rgba(255,255,255,0)"/>
+        </linearGradient>
+      </defs>
+
+      <!-- bracelet top -->
+      <g>
+        <rect x="210" y="40" width="40" height="22" rx="2" fill="url(#strap05)"/>
+        <rect x="260" y="40" width="40" height="22" rx="2" fill="url(#strap05)"/>
+        <rect x="310" y="40" width="40" height="22" rx="2" fill="url(#strap05)"/>
+        <rect x="220" y="66" width="40" height="20" rx="2" fill="url(#strap05)"/>
+        <rect x="270" y="66" width="40" height="20" rx="2" fill="url(#strap05)"/>
+        <rect x="320" y="66" width="40" height="20" rx="2" fill="url(#strap05)"/>
+        <rect x="230" y="90" width="40" height="18" rx="2" fill="url(#strap05)"/>
+        <rect x="280" y="90" width="40" height="18" rx="2" fill="url(#strap05)"/>
+        <rect x="330" y="90" width="40" height="18" rx="2" fill="url(#strap05)"/>
+      </g>
+      <!-- bracelet bottom -->
+      <g>
+        <rect x="210" y="538" width="40" height="22" rx="2" fill="url(#strap05)"/>
+        <rect x="260" y="538" width="40" height="22" rx="2" fill="url(#strap05)"/>
+        <rect x="310" y="538" width="40" height="22" rx="2" fill="url(#strap05)"/>
+        <rect x="220" y="514" width="40" height="20" rx="2" fill="url(#strap05)"/>
+        <rect x="270" y="514" width="40" height="20" rx="2" fill="url(#strap05)"/>
+        <rect x="320" y="514" width="40" height="20" rx="2" fill="url(#strap05)"/>
+        <rect x="230" y="492" width="40" height="18" rx="2" fill="url(#strap05)"/>
+        <rect x="280" y="492" width="40" height="18" rx="2" fill="url(#strap05)"/>
+        <rect x="330" y="492" width="40" height="18" rx="2" fill="url(#strap05)"/>
+      </g>
+
+      <!-- crown -->
+      <g>
+        <rect x="535" y="285" width="14" height="30" fill="url(#case05)" rx="2"/>
+        <rect x="549" y="280" width="22" height="40" rx="3" fill="url(#bezel05)"/>
+        <rect x="552" y="286" width="16" height="28" fill="none" stroke="#3a3a32" stroke-width="0.6"/>
+      </g>
+
+      <!-- crown guards -->
+      <path d="M520 280 L548 280 L548 320 L520 320 Z" fill="url(#case05)"/>
+
+      <!-- case -->
+      <circle cx="300" cy="300" r="240" fill="url(#case05)"/>
+      <circle cx="300" cy="300" r="228" fill="none" stroke="#3a3a32" stroke-width="0.6" opacity="0.5"/>
+
+      <!-- bezel -->
+      <circle cx="300" cy="300" r="210" fill="url(#bezel05)"/>
+      <circle cx="300" cy="300" r="208" fill="none" stroke="#2a2a22" stroke-width="0.6"/>
+
+      <!-- bezel notches -->
+      <g id="bezel-notches"></g>
+
+      <!-- inner -->
+      <circle cx="300" cy="300" r="186" fill="#1a1a14"/>
+
+      <!-- dial -->
+      <circle cx="300" cy="300" r="180" fill="url(#dial05)"/>
+
+      <!-- sunburst lines on dial -->
+      <g id="sunburst"></g>
+
+      <!-- hour markers -->
+      <g id="hour-marks-05"></g>
+
+      <!-- maker text -->
+      <text x="300" y="220" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="20" letter-spacing="6" fill="#e6e3d8" text-anchor="middle">OPUS</text>
+      <text x="300" y="240" font-family="DM Mono, monospace" font-size="8" letter-spacing="4" fill="#a8c9b8" text-anchor="middle">SUPERLATIVE CHRONOMETER</text>
+      <text x="300" y="380" font-family="DM Mono, monospace" font-size="8" letter-spacing="4" fill="#a8c9b8" text-anchor="middle">SEXTANT · CALIBRE 04</text>
+
+      <!-- cyclops date window -->
+      <rect x="345" y="290" width="36" height="22" rx="2" fill="#e6e3d8"/>
+      <text x="363" y="307" font-family="Hanken Grotesk, sans-serif" font-weight="600" font-size="15" fill="#14181b" text-anchor="middle">20</text>
+
+      <!-- hands -->
+      <g transform="rotate(50 300 300)">
+        <polygon points="296,135 304,135 308,290 292,290" fill="#e6e3d8"/>
+        <polygon points="298,135 302,135 304,290 296,290" fill="#1a1a14"/>
+      </g>
+      <g transform="rotate(140 300 300)">
+        <polygon points="296,165 304,165 308,290 292,290" fill="#e6e3d8"/>
+        <polygon points="298,165 302,165 304,290 296,290" fill="#1a1a14"/>
+      </g>
+      <!-- seconds -->
+      <g transform="rotate(220 300 300)">
+        <rect x="299" y="130" width="2" height="200" fill="#a8c9b8"/>
+        <circle cx="300" cy="165" r="6" fill="none" stroke="#a8c9b8" stroke-width="1.2"/>
+      </g>
+
+      <circle cx="300" cy="300" r="10" fill="#e6e3d8"/>
+      <circle cx="300" cy="300" r="3" fill="#1a1a14"/>
+
+      <!-- reflection -->
+      <ellipse cx="240" cy="220" rx="120" ry="80" fill="url(#reflect05)"/>
+    </svg>
+
+    <div class="img-meta">
+      <div class="name">Sextant 39 · Green dial<small>Réf. SXT-39-G · Calibre OP-04</small></div>
+      <div class="ref">CHF 5,400<br/>EUR 5,950</div>
+    </div>
+  </div>
+  <script>
+    (function() {
+      // bezel notches
+      const bn = document.querySelector('#bezel-notches');
+      if (bn) {
+        for (let i = 0; i < 60; i++) {
+          const a = (i/60) * Math.PI * 2 - Math.PI/2;
+          const r1 = 198, r2 = 208;
+          const x1 = 300 + Math.cos(a) * r1, y1 = 300 + Math.sin(a) * r1;
+          const x2 = 300 + Math.cos(a) * r2, y2 = 300 + Math.sin(a) * r2;
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+          line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+          line.setAttribute('stroke', '#1a1a14');
+          line.setAttribute('stroke-width', i % 5 === 0 ? '1.5' : '0.6');
+          bn.appendChild(line);
+        }
+      }
+      // sunburst rays
+      const sb = document.querySelector('#sunburst');
+      if (sb) {
+        for (let i = 0; i < 180; i++) {
+          const a = (i/180) * Math.PI * 2;
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', 300);
+          line.setAttribute('y1', 300);
+          line.setAttribute('x2', 300 + Math.cos(a) * 180);
+          line.setAttribute('y2', 300 + Math.sin(a) * 180);
+          line.setAttribute('stroke', 'rgba(255,255,255,0.05)');
+          line.setAttribute('stroke-width', '0.5');
+          sb.appendChild(line);
+        }
+      }
+      // applied hour indices
+      const hm = document.querySelector('#hour-marks-05');
+      if (hm) {
+        for (let i = 0; i < 12; i++) {
+          if (i === 3) continue; // skip 3 (date window)
+          const a = (i/12) * Math.PI * 2 - Math.PI/2;
+          const r = 152;
+          const x = 300 + Math.cos(a) * r;
+          const y = 300 + Math.sin(a) * r;
+          if (i === 0) {
+            // 12 marker — inverted triangle
+            const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            poly.setAttribute('points', `${x-9},${y-12} ${x+9},${y-12} ${x},${y+8}`);
+            poly.setAttribute('fill', '#e6e3d8');
+            poly.setAttribute('stroke', '#1a1a14');
+            poly.setAttribute('stroke-width', '0.6');
+            hm.appendChild(poly);
+          } else {
+            // rectangular applied baton
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            const w = 7, h = 18;
+            rect.setAttribute('x', x - w/2);
+            rect.setAttribute('y', y - h/2);
+            rect.setAttribute('width', w);
+            rect.setAttribute('height', h);
+            rect.setAttribute('fill', '#e6e3d8');
+            rect.setAttribute('stroke', '#1a1a14');
+            rect.setAttribute('stroke-width', '0.6');
+            rect.setAttribute('transform', `rotate(${(i/12)*360} ${x} ${y})`);
+            hm.appendChild(rect);
+          }
+        }
+        // minute ticks
+        for (let i = 0; i < 60; i++) {
+          if (i % 5 === 0) continue;
+          const a = (i/60) * Math.PI * 2 - Math.PI/2;
+          const r1 = 170, r2 = 174;
+          const x1 = 300 + Math.cos(a) * r1, y1 = 300 + Math.sin(a) * r1;
+          const x2 = 300 + Math.cos(a) * r2, y2 = 300 + Math.sin(a) * r2;
+          const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+          line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+          line.setAttribute('stroke', '#a8c9b8');
+          line.setAttribute('stroke-width', '0.6');
+          hm.appendChild(line);
+        }
+      }
+    })();
+  </script>
+</section>
+
+<!-- ───── bestsellers ───── -->
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="label">— Discover</div>
+      </div>
+      <h2>Our watches<span class="light"> for 2026.</span></h2>
+      <a class="view-all" href="#">View all watches →</a>
+    </div>
+
+    <div class="collection-grid">
+
+      <article class="model">
+        <span class="tag">NEW</span>
+        <div class="img">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="m1a" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="#e6e3d8"/><stop offset="100%" stop-color="#5a5a52"/></radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="92" fill="url(#m1a)"/>
+            <circle cx="100" cy="100" r="80" fill="#1f513b"/>
+            <text x="100" y="78" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="9" letter-spacing="3" fill="#e6e3d8" text-anchor="middle">OPUS</text>
+            <polygon points="96,42 104,42 100,52" fill="#e6e3d8"/>
+            <rect x="135" y="95" width="14" height="10" rx="1" fill="#e6e3d8"/>
+            <g transform="rotate(50 100 100)"><rect x="98" y="50" width="4" height="50" fill="#e6e3d8"/></g>
+            <g transform="rotate(140 100 100)"><rect x="98" y="60" width="4" height="40" fill="#e6e3d8"/></g>
+            <circle cx="100" cy="100" r="4" fill="#e6e3d8"/>
+          </svg>
+        </div>
+        <div class="family">Sextant Collection</div>
+        <h3>Sextant 39</h3>
+        <div class="spec">Green dial · 39 mm steel</div>
+        <div class="price"><small>FROM</small> CHF 5,400</div>
+      </article>
+
+      <article class="model">
+        <div class="img">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="m2a" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="#e6e3d8"/><stop offset="100%" stop-color="#5a5a52"/></radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="92" fill="url(#m2a)"/>
+            <circle cx="100" cy="100" r="80" fill="#0e1d2a"/>
+            <text x="100" y="78" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="9" letter-spacing="3" fill="#e6e3d8" text-anchor="middle">OPUS</text>
+            <polygon points="96,42 104,42 100,52" fill="#e6e3d8"/>
+            <rect x="135" y="95" width="14" height="10" rx="1" fill="#e6e3d8"/>
+            <g transform="rotate(30 100 100)"><rect x="98" y="50" width="4" height="50" fill="#e6e3d8"/></g>
+            <g transform="rotate(110 100 100)"><rect x="98" y="60" width="4" height="40" fill="#e6e3d8"/></g>
+            <circle cx="100" cy="100" r="4" fill="#e6e3d8"/>
+          </svg>
+        </div>
+        <div class="family">Sextant Collection</div>
+        <h3>Sextant 39</h3>
+        <div class="spec">Midnight blue · 39 mm steel</div>
+        <div class="price"><small>FROM</small> CHF 5,400</div>
+      </article>
+
+      <article class="model">
+        <span class="tag muted">CLASSIC</span>
+        <div class="img">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="m3a" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="#f8d68a"/><stop offset="100%" stop-color="#8a6520"/></radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="92" fill="url(#m3a)"/>
+            <circle cx="100" cy="100" r="80" fill="#f5efdc"/>
+            <text x="100" y="78" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="9" letter-spacing="3" fill="#14181b" text-anchor="middle">OPUS</text>
+            <text x="100" y="48" font-family="Hanken Grotesk, sans-serif" font-weight="500" font-size="10" fill="#14181b" text-anchor="middle">XII</text>
+            <text x="152" y="105" font-family="Hanken Grotesk, sans-serif" font-weight="500" font-size="10" fill="#14181b" text-anchor="middle">III</text>
+            <text x="100" y="162" font-family="Hanken Grotesk, sans-serif" font-weight="500" font-size="10" fill="#14181b" text-anchor="middle">VI</text>
+            <text x="48" y="105" font-family="Hanken Grotesk, sans-serif" font-weight="500" font-size="10" fill="#14181b" text-anchor="middle">IX</text>
+            <g transform="rotate(70 100 100)"><rect x="98" y="50" width="4" height="50" fill="#14181b"/></g>
+            <g transform="rotate(160 100 100)"><rect x="98" y="60" width="4" height="40" fill="#14181b"/></g>
+            <circle cx="100" cy="100" r="4" fill="#8a6520"/>
+          </svg>
+        </div>
+        <div class="family">Méridien Collection</div>
+        <h3>Méridien 36</h3>
+        <div class="spec">Champagne dial · 36 mm yellow gold</div>
+        <div class="price"><small>FROM</small> CHF 18,200</div>
+      </article>
+
+      <article class="model">
+        <div class="img">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="m4a" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="#3a3a32"/><stop offset="100%" stop-color="#14181b"/></radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="92" fill="url(#m4a)"/>
+            <circle cx="100" cy="100" r="80" fill="#1a1a14"/>
+            <text x="100" y="78" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="9" letter-spacing="3" fill="#e6e3d8" text-anchor="middle">OPUS</text>
+            <circle cx="70" cy="115" r="14" fill="none" stroke="#a8c9b8" stroke-width="0.5"/>
+            <circle cx="130" cy="115" r="14" fill="none" stroke="#a8c9b8" stroke-width="0.5"/>
+            <polygon points="96,42 104,42 100,52" fill="#a8c9b8"/>
+            <g transform="rotate(85 100 100)"><rect x="98.5" y="50" width="3" height="50" fill="#a8c9b8"/></g>
+            <g transform="rotate(175 100 100)"><rect x="98.5" y="60" width="3" height="40" fill="#a8c9b8"/></g>
+            <circle cx="100" cy="100" r="4" fill="#a8c9b8"/>
+          </svg>
+        </div>
+        <div class="family">Nocturne Collection</div>
+        <h3>Nocturne Chrono</h3>
+        <div class="spec">Black dial · 42 mm steel</div>
+        <div class="price"><small>FROM</small> CHF 8,800</div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ───── families ───── -->
+<section class="families">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <div class="label">— Collections</div>
+      </div>
+      <h2>Three families,<span class="light"> one workshop.</span></h2>
+      <a class="view-all" href="#">All collections →</a>
+    </div>
+
+    <div class="family-grid">
+      <a class="family-card" href="#">
+        <div class="img-bg">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="fc1a" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="#e6e3d8"/><stop offset="100%" stop-color="#5a5a52"/></radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="92" fill="url(#fc1a)"/>
+            <circle cx="100" cy="100" r="80" fill="#1f513b"/>
+            <text x="100" y="78" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="9" letter-spacing="3" fill="#e6e3d8" text-anchor="middle">OPUS</text>
+            <polygon points="96,42 104,42 100,52" fill="#e6e3d8"/>
+            <rect x="135" y="95" width="14" height="10" rx="1" fill="#e6e3d8"/>
+            <g transform="rotate(50 100 100)"><rect x="98" y="50" width="4" height="50" fill="#e6e3d8"/></g>
+            <g transform="rotate(140 100 100)"><rect x="98" y="60" width="4" height="40" fill="#e6e3d8"/></g>
+            <circle cx="100" cy="100" r="4" fill="#e6e3d8"/>
+          </svg>
+        </div>
+        <div class="overlay"></div>
+        <div class="text">
+          <div class="label">Collection · 04 models</div>
+          <h3>Sextant</h3>
+          <p>The everyday automatic. Sport-elegant case, in-house calibre, four dial colourways.</p>
+          <span class="discover">Discover Sextant →</span>
+        </div>
+      </a>
+
+      <a class="family-card dark" href="#">
+        <div class="img-bg">
+          <svg viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="92" fill="#2a2f33"/>
+            <circle cx="100" cy="100" r="80" fill="#0a0a08"/>
+            <text x="100" y="78" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="9" letter-spacing="3" fill="#a8c9b8" text-anchor="middle">OPUS</text>
+            <circle cx="70" cy="115" r="14" fill="none" stroke="#a8c9b8" stroke-width="0.5"/>
+            <circle cx="130" cy="115" r="14" fill="none" stroke="#a8c9b8" stroke-width="0.5"/>
+            <polygon points="96,42 104,42 100,52" fill="#a8c9b8"/>
+            <g transform="rotate(85 100 100)"><rect x="98.5" y="50" width="3" height="50" fill="#a8c9b8"/></g>
+            <g transform="rotate(175 100 100)"><rect x="98.5" y="60" width="3" height="40" fill="#a8c9b8"/></g>
+            <circle cx="100" cy="100" r="4" fill="#a8c9b8"/>
+          </svg>
+        </div>
+        <div class="overlay"></div>
+        <div class="text">
+          <div class="label">Collection · 03 models</div>
+          <h3>Nocturne</h3>
+          <p>The chronograph family. Made for travelers and gentlemen drivers — three sub-dials, no compromise.</p>
+          <span class="discover">Discover Nocturne →</span>
+        </div>
+      </a>
+
+      <a class="family-card green" href="#">
+        <div class="img-bg">
+          <svg viewBox="0 0 200 200">
+            <defs>
+              <radialGradient id="fc3a" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="#f8d68a"/><stop offset="100%" stop-color="#8a6520"/></radialGradient>
+            </defs>
+            <circle cx="100" cy="100" r="92" fill="url(#fc3a)"/>
+            <circle cx="100" cy="100" r="80" fill="#f5efdc"/>
+            <text x="100" y="78" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="9" letter-spacing="3" fill="#14181b" text-anchor="middle">OPUS</text>
+            <text x="100" y="48" font-family="Hanken Grotesk, sans-serif" font-weight="500" font-size="10" fill="#14181b" text-anchor="middle">XII</text>
+            <text x="152" y="105" font-family="Hanken Grotesk, sans-serif" font-weight="500" font-size="10" fill="#14181b" text-anchor="middle">III</text>
+            <text x="100" y="162" font-family="Hanken Grotesk, sans-serif" font-weight="500" font-size="10" fill="#14181b" text-anchor="middle">VI</text>
+            <text x="48" y="105" font-family="Hanken Grotesk, sans-serif" font-weight="500" font-size="10" fill="#14181b" text-anchor="middle">IX</text>
+            <g transform="rotate(70 100 100)"><rect x="98" y="50" width="4" height="50" fill="#14181b"/></g>
+            <g transform="rotate(160 100 100)"><rect x="98" y="60" width="4" height="40" fill="#14181b"/></g>
+            <circle cx="100" cy="100" r="4" fill="#8a6520"/>
+          </svg>
+        </div>
+        <div class="overlay"></div>
+        <div class="text">
+          <div class="label">Collection · 05 models</div>
+          <h3>Méridien</h3>
+          <p>The dress watch. Roman numerals, hand-polished case, in precious metals only.</p>
+          <span class="discover">Discover Méridien →</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ───── tech / movement ───── -->
+<section class="tech">
+  <div class="container">
+    <div class="tech-grid">
+      <div>
+        <div class="label">— Calibre OP-04</div>
+        <h2>Movement,<br/><span class="light">finished by hand</span><br/><span class="accent">at the bench.</span></h2>
+        <p>
+          The OP-04 is our most refined movement to date: a free-sprung balance,
+          a 72-hour reserve and chronometer-grade tolerances in six positions.
+          Bridges are bevelled to a 45° angle and polished by hand.
+        </p>
+        <p>
+          Every calibre is regulated, cased and signed by the watchmaker who
+          completes it, and ships with a dated rate dossier.
+        </p>
+        <div class="btn-row" style="margin-top: 36px;">
+          <a class="btn btn-primary" style="background: var(--green-bright); border-color: var(--green-bright);" href="#">
+            Explore the calibre
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12 H19 M14 6 L19 12 L14 18"/></svg>
+          </a>
+        </div>
+        <div class="specs">
+          <div><span>Frequency</span><b>28,800 vph</b></div>
+          <div><span>Reserve</span><b>72 hours</b></div>
+          <div><span>Jewels</span><b>32</b></div>
+          <div><span>Tolerance</span><b>-2 / +4 s/d</b></div>
+        </div>
+      </div>
+      <div class="tech-vis">
+        <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="mov" cx="50%" cy="40%" r="70%">
+              <stop offset="0%" stop-color="#a0a098"/>
+              <stop offset="60%" stop-color="#6c7278"/>
+              <stop offset="100%" stop-color="#2a2f33"/>
+            </radialGradient>
+            <radialGradient id="rotor" cx="50%" cy="40%" r="50%">
+              <stop offset="0%" stop-color="#c8c4b4"/>
+              <stop offset="100%" stop-color="#5a5a52"/>
+            </radialGradient>
+          </defs>
+          <circle cx="200" cy="200" r="190" fill="url(#mov)"/>
+          <circle cx="200" cy="200" r="180" fill="none" stroke="#1a1a14" stroke-width="0.6"/>
+          <!-- côtes de Genève -->
+          <g id="cotes" stroke="#3a3a32" stroke-width="0.4" fill="none"></g>
+          <!-- jewels -->
+          <circle cx="200" cy="200" r="14" fill="#c8002a"/>
+          <circle cx="200" cy="200" r="6" fill="#5a0014"/>
+          <circle cx="120" cy="160" r="8" fill="#c8002a"/>
+          <circle cx="280" cy="160" r="8" fill="#c8002a"/>
+          <circle cx="120" cy="260" r="8" fill="#c8002a"/>
+          <circle cx="280" cy="260" r="8" fill="#c8002a"/>
+          <!-- rotor (asymmetric) -->
+          <g transform="rotate(40 200 200)">
+            <path d="M200 30 A 170 170 0 0 1 360 220 L 200 200 Z" fill="url(#rotor)" opacity="0.95"/>
+            <text x="280" y="120" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="14" letter-spacing="3" fill="#1a1a14" transform="rotate(45 280 120)">OPUS</text>
+            <text x="290" y="135" font-family="DM Mono, monospace" font-size="7" letter-spacing="2" fill="#1a1a14" transform="rotate(45 290 135)">CAL. OP-04</text>
+          </g>
+          <!-- bridges -->
+          <path d="M80 200 L160 180 L160 220 L80 220 Z" fill="rgba(168,201,184,0.05)" stroke="#1a1a14" stroke-width="0.6"/>
+          <!-- screws -->
+          <circle cx="90" cy="210" r="5" fill="#2a2f33" stroke="#a0a098" stroke-width="0.5"/>
+          <circle cx="150" cy="190" r="5" fill="#2a2f33" stroke="#a0a098" stroke-width="0.5"/>
+        </svg>
+        <script>
+          (function() {
+            const c = document.querySelector('#cotes');
+            if (c) {
+              for (let i = 0; i < 20; i++) {
+                const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                const r = 178;
+                const y = 30 + i * 18;
+                path.setAttribute('d', `M 30 ${y} Q 200 ${y - 30} 370 ${y}`);
+                path.setAttribute('stroke', 'rgba(255,255,255,0.05)');
+                path.setAttribute('stroke-width', '8');
+                path.setAttribute('fill', 'none');
+                c.appendChild(path);
+              }
+            }
+          })();
+        </script>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───── service ───── -->
+<section class="service">
+  <div class="container">
+    <div class="service-grid">
+      <div class="service-vis">
+        <svg viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="svc1" cx="50%" cy="30%" r="70%"><stop offset="0%" stop-color="#e6e3d8"/><stop offset="100%" stop-color="#5a5a52"/></radialGradient>
+          </defs>
+          <!-- watch caseback -->
+          <circle cx="150" cy="150" r="135" fill="url(#svc1)"/>
+          <circle cx="150" cy="150" r="120" fill="#14181b"/>
+          <circle cx="150" cy="150" r="115" fill="none" stroke="#a8c9b8" stroke-width="0.6" stroke-dasharray="2 3"/>
+          <!-- engraving text -->
+          <defs>
+            <path id="engPath" d="M 30 150 A 120 120 0 0 1 270 150"/>
+          </defs>
+          <text font-family="Hanken Grotesk, sans-serif" font-size="11" font-weight="600" letter-spacing="5" fill="#a8c9b8">
+            <textPath href="#engPath" startOffset="50%" text-anchor="middle">OPUS · ANTWERP · SWISS MADE</textPath>
+          </text>
+          <!-- caseback notches -->
+          <g id="svc-notches"></g>
+          <!-- center logo -->
+          <text x="150" y="155" font-family="Hanken Grotesk, sans-serif" font-weight="700" font-size="16" letter-spacing="6" fill="#a8c9b8" text-anchor="middle">OPUS</text>
+          <text x="150" y="172" font-family="DM Mono, monospace" font-size="8" letter-spacing="3" fill="#a8c9b8" text-anchor="middle">№ 042</text>
+        </svg>
+        <script>
+          (function() {
+            const n = document.querySelector('#svc-notches');
+            if (n) {
+              for (let i = 0; i < 24; i++) {
+                const a = (i/24) * Math.PI * 2;
+                const r1 = 122, r2 = 130;
+                const x1 = 150 + Math.cos(a) * r1, y1 = 150 + Math.sin(a) * r1;
+                const x2 = 150 + Math.cos(a) * r2, y2 = 150 + Math.sin(a) * r2;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', x1); line.setAttribute('y1', y1);
+                line.setAttribute('x2', x2); line.setAttribute('y2', y2);
+                line.setAttribute('stroke', '#1a1a14');
+                line.setAttribute('stroke-width', '1.5');
+                n.appendChild(line);
+              }
+            }
+          })();
+        </script>
+      </div>
+      <div>
+        <div class="label">— Service &amp; Repair</div>
+        <h2>Care for your<br/>watch<span class="light">, for</span><br/><span class="accent">a lifetime.</span></h2>
+        <p>
+          Every Opus watch is supported by our atelier for life. Service, restoration
+          and watchmaker consultation are available from our Antwerp and Geneva
+          workshops, and via insured courier worldwide.
+        </p>
+        <div class="service-list">
+          <div class="row"><span class="n">01</span><span class="name">Full service &amp; revision</span><span class="time">5–7 weeks</span></div>
+          <div class="row"><span class="n">02</span><span class="name">Polishing &amp; refinish</span><span class="time">3 weeks</span></div>
+          <div class="row"><span class="n">03</span><span class="name">Vintage restoration</span><span class="time">upon estimate</span></div>
+          <div class="row"><span class="n">04</span><span class="name">Bracelet &amp; strap fitting</span><span class="time">same day</span></div>
+        </div>
+        <div class="btn-row" style="margin-top: 40px;">
+          <a class="btn btn-primary" href="#">
+            Book a service
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12 H19 M14 6 L19 12 L14 18"/></svg>
+          </a>
+          <a class="btn btn-ghost" href="#">Find a workshop</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───── newsletter ───── -->
+<section class="news">
+  <div class="container">
+    <div class="news-grid">
+      <div>
+        <h3>The Opus newsletter.</h3>
+        <p>Be the first to know about new editions, workshop intake windows, and stories from the bench.</p>
+      </div>
+      <div>
+        <div class="form">
+          <input type="email" placeholder="Email address" />
+          <button>Subscribe →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───── footer ───── -->
+<footer class="foot">
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-logo">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 9 L7 5 L12 8 L17 5 L21 9 L21 16 L3 16 Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/>
+            <circle cx="7" cy="9" r="1.2" fill="#fff"/>
+            <circle cx="12" cy="9" r="1.2" fill="#fff"/>
+            <circle cx="17" cy="9" r="1.2" fill="#fff"/>
+          </svg>
+          OPUS
+        </div>
+        <p>Swiss watchmaking, by an independent house. Antwerp &amp; Geneva. Founded 2018.</p>
+      </div>
+      <div>
+        <h4>Watches</h4>
+        <a href="#">All watches</a>
+        <a href="#">Sextant</a>
+        <a href="#">Nocturne</a>
+        <a href="#">Méridien</a>
+        <a href="#">Limited editions</a>
+      </div>
+      <div>
+        <h4>Service</h4>
+        <a href="#">Book a service</a>
+        <a href="#">Restoration</a>
+        <a href="#">Find a workshop</a>
+        <a href="#">Warranty</a>
+        <a href="#">Authenticity</a>
+      </div>
+      <div>
+        <h4>The House</h4>
+        <a href="#">Watchmaking</a>
+        <a href="#">The atelier</a>
+        <a href="#">Journal</a>
+        <a href="#">Press</a>
+        <a href="#">Careers</a>
+      </div>
+      <div>
+        <h4>Visit</h4>
+        <a href="#">Antwerp boutique</a>
+        <a href="#">Geneva atelier</a>
+        <a href="#">Tokyo · Aoyama</a>
+        <a href="#">Book appointment</a>
+        <a href="#">Contact</a>
+      </div>
+    </div>
+    <div class="foot-bot">
+      <div>© Opus 2026 · Swiss Made · All rights reserved</div>
+      <div class="socials">
+        <a href="#">Instagram</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">YouTube</a>
+      </div>
+      <div>Imprint · Privacy · Cookies · Terms</div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
