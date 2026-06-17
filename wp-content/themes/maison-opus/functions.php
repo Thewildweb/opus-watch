@@ -220,3 +220,125 @@ add_action(
 		$query->set( 'tax_query', $tax_query );
 	}
 );
+
+/* ─────────────────────────────────────────────────────────────
+ * Homepage "shop by brand" tiles — image + link per brand.
+ * ───────────────────────────────────────────────────────────── */
+
+/** A representative product image URL for a brand (newest in stock). */
+function opus_brand_image_url( $brand, $size = 'large' ) {
+	if ( ! function_exists( 'wc_get_products' ) ) {
+		return '';
+	}
+	$q = wc_get_products(
+		array(
+			'limit'     => 1,
+			'orderby'   => 'date',
+			'order'     => 'DESC',
+			'return'    => 'objects',
+			'tax_query' => array(
+				array(
+					'taxonomy' => 'product_brand',
+					'field'    => 'name',
+					'terms'    => $brand,
+				),
+			),
+		)
+	);
+	if ( ! $q ) {
+		return '';
+	}
+	$url = wp_get_attachment_image_url( get_post_thumbnail_id( $q[0]->get_id() ), $size );
+	return $url ? $url : '';
+}
+
+/** Archive link for a brand term (falls back to the shop). */
+function opus_brand_term_link( $brand ) {
+	$t = get_term_by( 'name', $brand, 'product_brand' );
+	if ( ! $t ) {
+		return function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' );
+	}
+	$l = get_term_link( $t );
+	return is_wp_error( $l ) ? home_url( '/' ) : $l;
+}
+
+/* ─────────────────────────────────────────────────────────────
+ * Shop mega-menu — brand column (1/6) + recent watches (5/6).
+ * ───────────────────────────────────────────────────────────── */
+function opus_render_shop_mega() {
+	if ( ! function_exists( 'wc_get_products' ) ) {
+		return;
+	}
+	$shop    = wc_get_page_permalink( 'shop' );
+	$brands  = get_terms(
+		array(
+			'taxonomy'   => 'product_brand',
+			'hide_empty' => true,
+			'orderby'    => 'count',
+			'order'      => 'DESC',
+		)
+	);
+	$watches = wc_get_products(
+		array(
+			'status'    => 'publish',
+			'limit'     => 4,
+			'orderby'   => 'date',
+			'order'     => 'DESC',
+			'tax_query' => array(
+				array(
+					'taxonomy' => 'product_cat',
+					'field'    => 'slug',
+					'terms'    => 'watches',
+				),
+			),
+		)
+	);
+	?>
+	<div class="mega-inner">
+		<div class="mega-brands">
+			<p class="mega-label">Merken</p>
+			<a href="<?php echo esc_url( $shop ); ?>">Alle horloges</a>
+			<?php
+			if ( ! is_wp_error( $brands ) ) :
+				foreach ( $brands as $b ) :
+					$bl = get_term_link( $b );
+					?>
+					<a href="<?php echo esc_url( is_wp_error( $bl ) ? $shop : $bl ); ?>">
+						<?php echo esc_html( $b->name ); ?> <span><?php echo (int) $b->count; ?></span>
+					</a>
+				<?php endforeach; endif; ?>
+		</div>
+		<div class="mega-watches">
+			<p class="mega-label">Nieuw binnen</p>
+			<div class="mega-grid">
+				<?php foreach ( $watches as $w ) : ?>
+					<a class="mega-card" href="<?php echo esc_url( get_permalink( $w->get_id() ) ); ?>">
+						<span class="mega-thumb"><?php echo $w->get_image( 'woocommerce_thumbnail' ); ?></span>
+						<span class="mega-cname"><?php echo esc_html( $w->get_name() ); ?></span>
+						<span class="mega-cprice"><?php echo wp_kses_post( $w->get_price_html() ); ?></span>
+					</a>
+				<?php endforeach; ?>
+			</div>
+		</div>
+	</div>
+	<?php
+}
+
+/* ─────────────────────────────────────────────────────────────
+ * Remove product reviews from the storefront (no reviews for now).
+ * Drops the "Beoordelingen" tab and the empty rating/review prompt.
+ * ───────────────────────────────────────────────────────────── */
+add_filter(
+	'woocommerce_product_tabs',
+	function ( $tabs ) {
+		unset( $tabs['reviews'] );
+		return $tabs;
+	},
+	98
+);
+add_action(
+	'init',
+	function () {
+		remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
+	}
+);
