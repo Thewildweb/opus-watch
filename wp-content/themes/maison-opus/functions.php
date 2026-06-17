@@ -35,25 +35,105 @@ function maison_opus_setup() {
 }
 add_action( 'after_setup_theme', 'maison_opus_setup' );
 
+/* ─────────────────────────────────────────────────────────────
+ * Style switcher — toggle between the design directions live.
+ * Each design is self-contained: assets/css/styles/<style>.css plus
+ * template-parts/home-<style>.php. Selection persists via a cookie.
+ * ───────────────────────────────────────────────────────────── */
+
+/** The design directions (key => label). */
+function opus_styles() {
+	return array(
+		'heritage'  => 'Heritage',
+		'editorial' => 'Editorial',
+		'nocturne'  => 'Nocturne',
+		'technical' => 'Technical',
+		'modern'    => 'Modern',
+	);
+}
+
+/** Resolve the active style from ?style=, else cookie, else default. */
+function opus_active_style() {
+	static $style = null;
+	if ( null !== $style ) {
+		return $style;
+	}
+	$allowed = array_keys( opus_styles() );
+
+	if ( isset( $_GET['style'] ) && in_array( $_GET['style'], $allowed, true ) ) {
+		$style = sanitize_key( wp_unslash( $_GET['style'] ) );
+		if ( ! headers_sent() ) {
+			setcookie( 'opus_style', $style, time() + YEAR_IN_SECONDS, defined( 'COOKIEPATH' ) && COOKIEPATH ? COOKIEPATH : '/' );
+		}
+		$_COOKIE['opus_style'] = $style;
+	} elseif ( isset( $_COOKIE['opus_style'] ) && in_array( $_COOKIE['opus_style'], $allowed, true ) ) {
+		$style = sanitize_key( wp_unslash( $_COOKIE['opus_style'] ) );
+	} else {
+		$style = 'heritage';
+	}
+	return $style;
+}
+
+/** Add the active style as a body class (style-heritage, style-modern, …). */
+add_filter(
+	'body_class',
+	function ( $classes ) {
+		$classes[] = 'style-' . opus_active_style();
+		return $classes;
+	}
+);
+
+/** Render the active design's homepage; fall back to heritage if not built. */
+function opus_home() {
+	$style = opus_active_style();
+	if ( locate_template( "template-parts/home-{$style}.php" ) ) {
+		get_template_part( 'template-parts/home', $style );
+	} else {
+		get_template_part( 'template-parts/home', 'heritage' );
+	}
+}
+
 /**
- * Fonts & styles.
+ * Fonts & styles — shared base + the active design's stylesheet.
+ * (Each design @imports its own fonts at the top of its stylesheet.)
  */
 function maison_opus_assets() {
 	wp_enqueue_style(
-		'maison-opus-fonts',
-		'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap',
+		'maison-opus-base',
+		get_template_directory_uri() . '/assets/css/base.css',
 		array(),
-		null
+		MAISON_OPUS_VERSION
 	);
 
+	$style = opus_active_style();
+	$rel   = "/assets/css/styles/{$style}.css";
+	// Fall back to heritage if a design hasn't been built yet.
+	if ( ! file_exists( get_template_directory() . $rel ) ) {
+		$rel = '/assets/css/styles/heritage.css';
+	}
 	wp_enqueue_style(
-		'maison-opus',
-		get_template_directory_uri() . '/assets/css/theme.css',
-		array( 'maison-opus-fonts' ),
+		'maison-opus-skin',
+		get_template_directory_uri() . $rel,
+		array( 'maison-opus-base' ),
 		MAISON_OPUS_VERSION
 	);
 }
 add_action( 'wp_enqueue_scripts', 'maison_opus_assets' );
+
+/** Floating design toggle for client demos (visible on the front end). */
+add_action(
+	'wp_footer',
+	function () {
+		$active = opus_active_style();
+		echo '<div class="style-switcher" role="navigation" aria-label="Design switcher"><span class="ss-label">Design</span>';
+		foreach ( opus_styles() as $key => $label ) {
+			$url = esc_url( add_query_arg( 'style', $key ) );
+			$cls = ( $key === $active ) ? 'ss-opt active' : 'ss-opt';
+			echo '<a class="' . esc_attr( $cls ) . '" href="' . $url . '">' . esc_html( $label ) . '</a>';
+		}
+		echo '</div>';
+	}
+);
 
 /**
  * Swap WooCommerce's default wrappers for ours.

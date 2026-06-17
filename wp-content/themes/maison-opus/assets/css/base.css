@@ -1,0 +1,45 @@
+/* Shared base: minimal reset + the client-demo style switcher.
+   Each design's full look lives in assets/css/styles/<style>.css */
+*, *::before, *::after { box-sizing: border-box; }
+
+/* ── Style switcher (floating toggle for client demos) ── */
+.style-switcher {
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  transform: translateX(-50%);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(18, 13, 8, 0.92);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  padding: 6px 8px;
+  border-radius: 999px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.34);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.style-switcher .ss-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: rgba(244, 236, 224, 0.55);
+  padding: 0 10px 0 8px;
+}
+.style-switcher .ss-opt {
+  color: #e9ddca;
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1;
+  padding: 8px 15px;
+  border-radius: 999px;
+  white-space: nowrap;
+  transition: background .2s, color .2s;
+}
+.style-switcher .ss-opt:hover { background: rgba(255, 255, 255, 0.12); }
+.style-switcher .ss-opt.active { background: #b8945a; color: #18120a; }
+@media (max-width: 720px) {
+  .style-switcher .ss-label { display: none; }
+  .style-switcher .ss-opt { padding: 7px 11px; font-size: 12px; }
+}

@@ -1,0 +1,1173 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════
+   Maison & Opus — MODERN skin. Ported from 05-modern.html.
+   Self-contained: styles the entire storefront (header, mega, home,
+   footer, buttons + full WooCommerce) in a modern brand / corporate
+   luxe language (Rolex/Omega direction). Clean sans, white paper,
+   deep-green accent, dark inverted sections, crisp product cards.
+   ═══════════════════════════════════════════════════════════════ */
+
+body.style-modern {
+  --paper: #ffffff;
+  --paper-2: #f5f4f0;
+  --paper-3: #ebe9e2;
+  --ink: #14181b;
+  --ink-2: #2a2f33;
+  --ink-soft: #6c7278;
+  --rule: #d9d7cf;
+  --rule-soft: #ebe9e2;
+  --green: #1f513b;
+  --green-bright: #2a6e51;
+  --green-deep: #133225;
+}
+
+body.style-modern * { box-sizing: border-box; }
+
+body.style-modern {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+body.style-modern a { color: inherit; text-decoration: none; }
+
+.style-modern .container {
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 0 48px;
+  position: relative;
+}
+.style-modern .section { padding: 100px 0; position: relative; }
+
+.style-modern .mono {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Header
+   ───────────────────────────────────────────────────────────── */
+.style-modern .site-head {
+  background: var(--paper);
+  border-bottom: 1px solid var(--rule-soft);
+  padding: 0;
+  position: sticky;
+  top: 0;
+  z-index: 80;
+}
+.style-modern .site-head .container { max-width: 1640px; padding: 0 40px; }
+
+.style-modern .top-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  border-bottom: 0;
+  padding: 22px 0;
+}
+
+.style-modern .top-row nav { display: flex; gap: 34px; margin: 0; padding: 0; align-items: center; }
+.style-modern .top-row nav.right { justify-content: flex-end; gap: 22px; }
+
+.style-modern .primary-nav,
+.style-modern .top-row nav ul {
+  display: flex;
+  gap: 34px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+.style-modern .primary-nav > li { position: static; }
+
+.style-modern .top-row nav a {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  font-variant: normal;
+  color: var(--ink);
+  position: relative;
+  padding: 4px 0;
+  display: inline-block;
+}
+.style-modern .top-row nav a::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  bottom: -2px;
+  height: 1px;
+  background: var(--green);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .35s cubic-bezier(.2,.7,.2,1);
+}
+.style-modern .top-row nav a:hover { color: var(--ink); }
+.style-modern .top-row nav a:hover::after { transform: scaleX(1); }
+
+/* caret for the mega item */
+.style-modern .has-mega > a::after {
+  content: none;
+}
+.style-modern .has-mega > a {
+  padding-right: 16px;
+}
+.style-modern .has-mega > a::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 5px; height: 5px;
+  border-right: 1.5px solid currentColor;
+  border-bottom: 1.5px solid currentColor;
+  transform: translateY(-70%) rotate(45deg);
+  transition: transform .25s;
+}
+.style-modern .has-mega:hover > a::before { transform: translateY(-30%) rotate(-135deg); }
+
+/* Wordmark */
+.style-modern .wordmark {
+  text-align: center;
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: 0.30em;
+  color: var(--ink);
+  padding-left: 0.30em;
+}
+.style-modern .wordmark .amp { color: var(--green); font-style: normal; font-weight: 700; margin: 0 2px; }
+
+/* Cart */
+.style-modern .cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink);
+  position: relative;
+  transition: color .2s;
+}
+.style-modern .cart-link:hover { color: var(--green); }
+.style-modern .cart-link svg { display: block; width: 19px; height: 19px; }
+.style-modern .cart-count {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  min-width: 1.2em;
+  text-align: center;
+}
+.style-modern .cart-count.has-items { color: var(--green); font-weight: 500; }
+
+/* Meta row → modern announcement-style strip */
+.style-modern .meta-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  padding: 0;
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  font-variant: normal;
+  border-top: 1px solid var(--rule-soft);
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.style-modern .meta-row .italic { font-style: normal !important; color: var(--green); letter-spacing: 0.14em !important; }
+.style-modern .meta-row .right { text-align: right; }
+
+/* ─────────────────────────────────────────────────────────────
+   Page-wide mega menu
+   ───────────────────────────────────────────────────────────── */
+.style-modern .mega {
+  position: absolute;
+  left: 0;
+  width: 100vw;
+  top: 100%;
+  background: var(--paper);
+  border-top: 1px solid var(--rule-soft);
+  border-bottom: 1px solid var(--rule-soft);
+  box-shadow: 0 40px 60px -40px rgba(20, 24, 27, 0.45);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(-8px);
+  transition: opacity .26s ease, transform .26s ease, visibility .26s;
+  z-index: 60;
+}
+.style-modern .mega::before { content: ""; position: absolute; left: 0; right: 0; top: -24px; height: 24px; }
+.style-modern .has-mega:hover .mega,
+.style-modern .has-mega:focus-within .mega {
+  opacity: 1; visibility: visible; pointer-events: auto; transform: translateY(0);
+}
+.style-modern .mega-inner {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  gap: 56px;
+  max-width: 1640px;
+  margin: 0 auto;
+  padding: 44px 40px 48px;
+}
+.style-modern .mega-label {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin: 0 0 18px;
+}
+.style-modern .mega-brands { border-right: 1px solid var(--rule); padding-right: 40px; }
+.style-modern .mega-brands a {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  padding: 9px 0;
+  transition: color .2s;
+}
+.style-modern .mega-brands a:hover { color: var(--green); }
+.style-modern .mega-brands a span {
+  font-family: "DM Mono", monospace;
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.style-modern .mega-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.style-modern .mega-card { display: block; color: inherit; }
+.style-modern .mega-thumb {
+  display: block;
+  aspect-ratio: 1;
+  background: var(--paper-2);
+  border: 1px solid var(--rule-soft);
+  overflow: hidden;
+  transition: border-color .25s;
+}
+.style-modern .mega-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 12%; }
+.style-modern .mega-card:hover .mega-thumb { border-color: var(--green); }
+.style-modern .mega-cname {
+  display: block;
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.25;
+  margin-top: 12px;
+  color: var(--ink);
+}
+.style-modern .mega-cprice {
+  display: block;
+  font-family: "DM Mono", monospace;
+  font-size: 12px;
+  color: var(--green);
+  margin-top: 4px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Buttons / util
+   ───────────────────────────────────────────────────────────── */
+.style-modern .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 30px;
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  border-radius: 0;
+  transition: all .3s cubic-bezier(.2,.7,.2,1);
+}
+.style-modern .btn:hover { background: var(--ink); color: var(--paper); }
+.style-modern .btn svg { width: 12px; height: 12px; transition: transform .3s; }
+.style-modern .btn:hover svg { transform: translateX(4px); }
+
+.style-modern .btn.solid,
+.style-modern .btn.gilt {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--paper);
+}
+.style-modern .btn.solid:hover,
+.style-modern .btn.gilt:hover { background: var(--green-deep); border-color: var(--green-deep); color: var(--paper); }
+
+.style-modern .btn.light {
+  background: transparent;
+  border-color: rgba(255,255,255,0.55);
+  color: var(--paper);
+}
+.style-modern .btn.light:hover { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+
+.style-modern .link-arrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--ink);
+  transition: color .25s, border-color .25s;
+}
+.style-modern .link-arrow:hover { color: var(--green); border-color: var(--green); }
+
+/* ═════════════════════════════════════════════════════════════
+   HOME — modern
+   ═════════════════════════════════════════════════════════════ */
+
+/* ── Announce bar ── */
+.style-modern .m-announce {
+  background: var(--ink);
+  color: var(--paper);
+  text-align: center;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  padding: 11px 0;
+}
+.style-modern .m-announce a {
+  color: var(--paper);
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+  margin-left: 6px;
+  padding-bottom: 1px;
+}
+.style-modern .m-announce a:hover { border-bottom-color: var(--paper); }
+
+/* ── Hero ── */
+.style-modern .m-hero {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  background: var(--paper);
+  min-height: min(82vh, 760px);
+  overflow: hidden;
+}
+.style-modern .m-hero-text {
+  padding: clamp(56px, 7vh, 96px) clamp(40px, 5vw, 84px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 44px;
+}
+.style-modern .m-eyebrow {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin: 0 0 34px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.style-modern .m-eyebrow::before { content: ""; width: 28px; height: 1px; background: var(--green); }
+.style-modern .m-hero-title {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: clamp(46px, 5.4vw, 92px);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0 0 30px;
+}
+.style-modern .m-hero-title .accent { color: var(--green); }
+.style-modern .m-hero-title .light { font-weight: 300; color: var(--ink-2); }
+.style-modern .m-hero-desc {
+  color: var(--ink-soft);
+  font-size: 17px;
+  line-height: 1.65;
+  max-width: 460px;
+  margin: 0 0 40px;
+}
+.style-modern .m-btn-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.style-modern .m-hero-meta {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding-top: 32px;
+  border-top: 1px solid var(--rule);
+  max-width: 560px;
+}
+.style-modern .m-hero-meta span {
+  display: block;
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 6px;
+}
+.style-modern .m-hero-meta b { display: block; font-weight: 500; font-size: 15px; color: var(--ink); }
+
+.style-modern .m-hero-img {
+  position: relative;
+  overflow: hidden;
+  background: var(--paper-2);
+}
+.style-modern .m-hero-img img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.style-modern .m-hero-img .m-img-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 55%, rgba(20,24,27,0.55) 100%);
+}
+.style-modern .m-img-meta {
+  position: absolute;
+  bottom: 28px;
+  left: 28px;
+  right: 28px;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  z-index: 2;
+  color: var(--paper);
+}
+.style-modern .m-img-meta .name { font-size: 14px; font-weight: 600; letter-spacing: 0.02em; }
+.style-modern .m-img-meta .name small {
+  display: block;
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin-top: 4px;
+}
+.style-modern .m-img-meta .ref {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.85);
+  text-align: right;
+}
+
+/* ── Section heads ── */
+.style-modern .m-section-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 40px;
+  align-items: end;
+  margin-bottom: 52px;
+}
+.style-modern .m-section-head .label {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--green);
+}
+.style-modern .m-section-head h2 {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: clamp(34px, 4.2vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0;
+}
+.style-modern .m-section-head h2 .light { font-weight: 300; color: var(--ink-2); }
+
+/* ── Collection grid (uses .piece cards) ── */
+.style-modern .m-collection {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border-top: 1px solid var(--rule);
+  border-left: 1px solid var(--rule);
+}
+@media (max-width: 1100px) { .style-modern .m-collection { grid-template-columns: repeat(2, 1fr); } }
+
+/* ── Feature tiles (image + overlay) ── */
+.style-modern .m-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.style-modern .m-tile {
+  position: relative;
+  overflow: hidden;
+  min-height: 440px;
+  display: flex;
+  align-items: flex-end;
+  color: var(--paper);
+  background: var(--ink);
+}
+.style-modern .m-tile > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .9s cubic-bezier(.2,.7,.2,1);
+}
+.style-modern .m-tile:hover > img { transform: scale(1.05); }
+.style-modern .m-tile-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 35%, rgba(20,24,27,0.78) 100%);
+}
+.style-modern .m-tile-body { position: relative; z-index: 2; padding: 34px; }
+.style-modern .m-tile-eyebrow {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+  margin: 0 0 10px;
+}
+.style-modern .m-tile-title {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: clamp(26px, 2.4vw, 34px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
+  color: var(--paper);
+}
+.style-modern .m-tile-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--paper);
+  border-bottom: 1px solid rgba(255,255,255,0.5);
+  padding-bottom: 4px;
+}
+.style-modern .m-tile:hover .m-tile-link { border-bottom-color: var(--paper); }
+
+.style-modern .m-tile.editorial {
+  background: var(--green-deep);
+  align-items: center;
+}
+.style-modern .m-tile.editorial .m-tile-body { padding: 44px; }
+.style-modern .m-tile.editorial .m-tile-eyebrow { color: var(--green-bright); }
+.style-modern .m-tile.editorial p {
+  color: rgba(255,255,255,0.78);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 18px 0 0;
+  max-width: 40ch;
+}
+
+/* Brand tiles — product shots are light → tinted frame + bottom scrim */
+.style-modern .m-tile-brand { min-height: 480px; background: var(--paper-2); }
+.style-modern .m-tile-brand > img {
+  object-fit: contain;
+  padding: 13% 16% 24%;
+  background: radial-gradient(120% 90% at 50% 35%, #fff 0%, var(--paper-3) 100%);
+}
+.style-modern .m-tile-brand .m-tile-title { color: var(--ink); }
+.style-modern .m-tile-brand .m-tile-eyebrow { color: var(--green); }
+.style-modern .m-tile-brand .m-tile-link { color: var(--ink); border-bottom-color: var(--ink); }
+.style-modern .m-tile-brand .m-tile-scrim {
+  background: linear-gradient(180deg, transparent 58%, rgba(245,244,240,0.9) 100%);
+}
+
+/* ── Families band (light grey) ── */
+.style-modern .m-families { background: var(--paper-2); }
+
+/* ── Tech / movement (dark inverted) ── */
+.style-modern .m-tech {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 120px 0;
+}
+.style-modern .m-tech-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.style-modern .m-tech .label {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+  margin-bottom: 22px;
+}
+.style-modern .m-tech h2 {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: clamp(34px, 4.2vw, 58px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin: 0 0 26px;
+}
+.style-modern .m-tech h2 .accent { color: var(--green-bright); }
+.style-modern .m-tech h2 .light { font-weight: 300; color: rgba(255,255,255,0.7); }
+.style-modern .m-tech p {
+  color: rgba(255,255,255,0.7);
+  font-size: 16px;
+  line-height: 1.65;
+  margin: 0 0 22px;
+  max-width: 460px;
+}
+.style-modern .m-specs {
+  margin-top: 36px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.12);
+  max-width: 520px;
+}
+.style-modern .m-specs > div { background: var(--ink); padding: 22px 24px; }
+.style-modern .m-specs span {
+  display: block;
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+  margin-bottom: 6px;
+}
+.style-modern .m-specs b { display: block; font-weight: 500; font-size: 22px; letter-spacing: -0.01em; }
+.style-modern .m-tech-vis {
+  position: relative;
+  aspect-ratio: 4/5;
+  overflow: hidden;
+  background: var(--ink-2);
+}
+.style-modern .m-tech-vis img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.92; }
+
+/* ── Service (light) ── */
+.style-modern .m-service { background: var(--paper); padding: 100px 0; }
+.style-modern .m-service-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 80px;
+  align-items: center;
+}
+.style-modern .m-service-vis {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--paper-2);
+}
+.style-modern .m-service-vis img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.style-modern .m-service .label {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--green);
+  margin-bottom: 22px;
+}
+.style-modern .m-service h2 {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: clamp(34px, 4.2vw, 58px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  margin: 0 0 26px;
+  color: var(--ink);
+}
+.style-modern .m-service h2 .accent { color: var(--green); }
+.style-modern .m-service h2 .light { font-weight: 300; color: var(--ink-2); }
+.style-modern .m-service p { color: var(--ink-soft); font-size: 16px; line-height: 1.65; margin: 0 0 16px; max-width: 460px; }
+.style-modern .m-service-list { margin-top: 32px; border-top: 1px solid var(--rule); }
+.style-modern .m-service-list .row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+}
+.style-modern .m-service-list .n {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--green);
+  width: 32px;
+}
+.style-modern .m-service-list .name { font-weight: 500; font-size: 16px; color: var(--ink); }
+.style-modern .m-service-list .time {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+/* ── Newsletter (deep green) ── */
+.style-modern .m-news { background: var(--green-deep); color: var(--paper); padding: 80px 0; }
+.style-modern .m-news-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+.style-modern .m-news h3 {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: clamp(26px, 3vw, 42px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+.style-modern .m-news p { margin: 12px 0 0; color: rgba(255,255,255,0.7); font-size: 15px; max-width: 420px; }
+.style-modern .m-news-form {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid rgba(255,255,255,0.4);
+  padding-bottom: 4px;
+  max-width: 480px;
+  margin-left: auto;
+}
+.style-modern .m-news-form input {
+  flex: 1;
+  background: transparent;
+  border: 0;
+  color: var(--paper);
+  font-family: inherit;
+  font-size: 16px;
+  padding: 16px 4px;
+  outline: none;
+}
+.style-modern .m-news-form input::placeholder { color: rgba(255,255,255,0.5); }
+.style-modern .m-news-form button {
+  background: transparent;
+  border: 0;
+  color: var(--paper);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.style-modern .m-news-form button:hover { color: var(--paper-3); }
+
+/* ── Closing line ── */
+.style-modern .m-closing { text-align: center; padding: 110px 0; border-top: 1px solid var(--rule); }
+.style-modern .m-closing p {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 300;
+  font-size: clamp(28px, 3.6vw, 48px);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  margin: 0 auto;
+  max-width: 18ch;
+}
+.style-modern .m-closing p b { font-weight: 600; color: var(--green); }
+
+@media (max-width: 980px) {
+  .style-modern .m-hero,
+  .style-modern .m-tech-grid,
+  .style-modern .m-service-grid,
+  .style-modern .m-news-grid { grid-template-columns: 1fr; }
+  .style-modern .m-section-head { grid-template-columns: 1fr; gap: 14px; }
+  .style-modern .m-tiles { grid-template-columns: 1fr; }
+  .style-modern .m-collection { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ═════════════════════════════════════════════════════════════
+   Product card — .piece (shared on home + shop loop)
+   Crisp white card, photo on paper, clean meta. Modern look.
+   ═════════════════════════════════════════════════════════════ */
+.style-modern .pieces {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.style-modern .piece {
+  display: block;
+  color: inherit;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  padding: 0;
+  transition: box-shadow .35s, transform .35s;
+}
+.style-modern .piece:hover { box-shadow: 0 28px 48px -28px rgba(20,24,27,0.4); transform: translateY(-4px); }
+
+.style-modern .piece-frame {
+  aspect-ratio: 1;
+  background: radial-gradient(120% 90% at 50% 32%, #fff 0%, var(--paper-2) 100%);
+  border: 0;
+  border-bottom: 1px solid var(--rule-soft);
+  position: relative;
+  overflow: hidden;
+}
+.style-modern .piece-frame::before,
+.style-modern .piece-frame::after { content: none; }
+.style-modern .piece-photo {
+  position: absolute;
+  inset: 12%;
+  width: 76%;
+  height: 76%;
+  object-fit: contain;
+  margin: auto;
+  transition: transform .5s cubic-bezier(.2,.7,.2,1);
+}
+.style-modern .piece:hover .piece-photo { transform: scale(1.04) translateY(-4px); }
+.style-modern .piece svg.dial {
+  position: absolute;
+  inset: 0;
+  width: 70%;
+  height: auto;
+  margin: auto;
+  filter: drop-shadow(0 14px 24px rgba(20,24,27,0.18));
+}
+
+.style-modern .piece-meta {
+  padding: 22px 24px 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-top: 0;
+  margin-top: 0;
+  gap: 12px;
+}
+.style-modern .piece-name {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-style: normal;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  line-height: 1.2;
+}
+.style-modern .piece-ref {
+  font-family: "DM Mono", monospace;
+  font-variant: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 10px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.style-modern .piece-line { padding: 4px 24px 0; margin: 0; font-size: 13px; color: var(--ink-soft); }
+.style-modern .piece-price {
+  padding: 14px 24px 22px;
+  margin: 10px 0 0;
+  color: var(--ink);
+  font-style: normal;
+  font-weight: 600;
+  font-size: 15px;
+}
+.style-modern .piece-price del { color: var(--ink-soft); opacity: 0.6; margin-right: 6px; font-weight: 400; }
+.style-modern .piece-price ins { text-decoration: none; color: var(--green); }
+
+@media (max-width: 980px) { .style-modern .pieces { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .style-modern .pieces { grid-template-columns: 1fr; } }
+
+/* ═════════════════════════════════════════════════════════════
+   Footer
+   ═════════════════════════════════════════════════════════════ */
+.style-modern .site-foot {
+  background: var(--ink);
+  color: var(--paper);
+  padding: 96px 0 32px;
+  border-top: 0;
+  margin-top: 0;
+  font-size: 14px;
+}
+.style-modern .site-foot .container { max-width: 1640px; padding: 0 40px; }
+.style-modern .foot-grid {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr 1fr;
+  gap: 56px;
+  padding-bottom: 56px;
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+.style-modern .site-foot .mark {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: 0.28em;
+  color: var(--paper);
+  margin-bottom: 22px;
+}
+.style-modern .site-foot .mark em { color: var(--green-bright); font-style: normal; }
+.style-modern .site-foot p { color: rgba(255,255,255,0.6); font-size: 14px; max-width: 320px; font-style: normal !important; }
+.style-modern .site-foot h4 {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-variant: normal;
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--green-bright);
+  margin: 0 0 20px;
+}
+.style-modern .site-foot a {
+  display: block;
+  padding: 5px 0;
+  color: rgba(255,255,255,0.7);
+  font-style: normal;
+  font-size: 14px;
+  transition: color .25s;
+}
+.style-modern .site-foot a:hover { color: var(--paper); }
+.style-modern .foot-bot {
+  margin-top: 0;
+  padding-top: 28px;
+  border-top: 0;
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-family: "DM Mono", monospace;
+  font-variant: normal;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+}
+
+/* ═════════════════════════════════════════════════════════════
+   WooCommerce — shop archive + single product (modern)
+   ═════════════════════════════════════════════════════════════ */
+.style-modern svg.dial { max-width: 100%; height: auto; }
+.style-modern .opus-dial-placeholder { width: 100%; max-width: 320px; margin: 0 auto; }
+
+.style-modern .wc-main { padding-top: 56px; }
+
+/* Archive header */
+.style-modern .woocommerce-products-header { margin-bottom: 44px; }
+.style-modern .woocommerce-products-header__title,
+.style-modern .woocommerce-products-header h1 {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: clamp(36px, 4.4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+.style-modern .term-description,
+.style-modern .woocommerce-archive-description {
+  color: var(--ink-soft);
+  font-size: 16px;
+  max-width: 60ch;
+}
+
+/* Result count + ordering */
+.style-modern .woocommerce-result-count {
+  color: var(--ink-soft);
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.style-modern .woocommerce-ordering select {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 13px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  color: var(--ink);
+  padding: 9px 14px;
+}
+
+/* Product grid → modern .piece cards */
+.style-modern .woocommerce ul.products,
+.style-modern ul.products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  list-style: none;
+  margin: 0 0 56px;
+  padding: 0;
+}
+.style-modern .woocommerce ul.products li.product,
+.style-modern ul.products li.product {
+  width: auto !important;
+  margin: 0 !important;
+  float: none !important;
+  clear: none !important;
+}
+.style-modern .woocommerce ul.products li.product::before { content: none; }
+@media (max-width: 980px) { .style-modern .woocommerce ul.products, .style-modern ul.products { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 620px) { .style-modern .woocommerce ul.products, .style-modern ul.products { grid-template-columns: 1fr; } }
+
+/* ── Single product ── */
+.style-modern .woocommerce div.product {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+.style-modern .woocommerce div.product .woocommerce-product-gallery {
+  width: 100% !important;
+  margin: 0;
+  border: 1px solid var(--rule);
+  background: radial-gradient(120% 90% at 50% 35%, #fff 0%, var(--paper-2) 100%);
+  padding: 40px;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.style-modern .woocommerce div.product .entry-summary,
+.style-modern .woocommerce div.product .summary { margin: 0; }
+.style-modern .woocommerce div.product .product_title {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: clamp(30px, 3.6vw, 50px);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  margin: 0 0 16px;
+  color: var(--ink);
+}
+.style-modern .woocommerce div.product p.price,
+.style-modern .woocommerce div.product span.price {
+  color: var(--ink);
+  font-weight: 600;
+  font-style: normal;
+  font-size: 24px;
+  margin-bottom: 24px;
+}
+.style-modern .woocommerce div.product p.price del { color: var(--ink-soft); opacity: 0.6; font-weight: 400; }
+.style-modern .woocommerce div.product p.price ins { text-decoration: none; color: var(--green); }
+.style-modern .woocommerce div.product .woocommerce-product-details__short-description {
+  color: var(--ink-soft);
+  font-size: 16px;
+  line-height: 1.65;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 22px 0;
+  margin-bottom: 28px;
+}
+.style-modern .woocommerce div.product .product_meta {
+  margin-top: 28px;
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.style-modern .woocommerce div.product .product_meta a { color: var(--green); }
+
+/* Tabs / related */
+.style-modern .woocommerce-tabs { grid-column: 1 / -1; margin-top: 48px; }
+.style-modern .woocommerce .related.products,
+.style-modern .woocommerce .upsells.products { grid-column: 1 / -1; margin-top: 56px; }
+.style-modern .woocommerce .related.products > h2,
+.style-modern .woocommerce .upsells.products > h2,
+.style-modern .woocommerce-tabs h2 {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-weight: 600;
+  font-size: clamp(28px, 3vw, 40px);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.style-modern .woocommerce-tabs ul.tabs {
+  border-bottom: 1px solid var(--rule);
+  padding: 0 0 0 0;
+}
+.style-modern .woocommerce-tabs ul.tabs li {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+.style-modern .woocommerce-tabs ul.tabs li a { color: var(--ink-soft); }
+.style-modern .woocommerce-tabs ul.tabs li.active a { color: var(--ink); }
+
+/* Buttons — modern green primary */
+.style-modern .woocommerce a.button,
+.style-modern .woocommerce button.button,
+.style-modern .woocommerce .button,
+.style-modern .woocommerce #respond input#submit,
+.style-modern .woocommerce input.button,
+.style-modern .woocommerce button.button.alt,
+.style-modern .single_add_to_cart_button {
+  font-family: "Hanken Grotesk", sans-serif !important;
+  font-weight: 600 !important;
+  font-variant: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 12px !important;
+  padding: 16px 30px !important;
+  border: 1px solid var(--ink) !important;
+  background: transparent !important;
+  color: var(--ink) !important;
+  border-radius: 0 !important;
+  transition: all .3s ease;
+}
+.style-modern .woocommerce button.button.alt,
+.style-modern .woocommerce .single_add_to_cart_button {
+  background: var(--green) !important;
+  border-color: var(--green) !important;
+  color: var(--paper) !important;
+}
+.style-modern .woocommerce a.button:hover,
+.style-modern .woocommerce button.button:hover {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+}
+.style-modern .woocommerce button.button.alt:hover,
+.style-modern .woocommerce .single_add_to_cart_button:hover {
+  background: var(--green-deep) !important;
+  border-color: var(--green-deep) !important;
+  color: var(--paper) !important;
+}
+
+/* Quantity input */
+.style-modern .woocommerce .quantity .qty {
+  border: 1px solid var(--rule);
+  border-radius: 0;
+  padding: 12px 8px;
+  font-family: "Hanken Grotesk", sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+/* Notices */
+.style-modern .woocommerce-message,
+.style-modern .woocommerce-info,
+.style-modern .woocommerce-error {
+  border-top-color: var(--green) !important;
+  background: var(--paper-2);
+  font-style: normal;
+}
+
+@media (max-width: 980px) {
+  .style-modern .woocommerce div.product { grid-template-columns: 1fr; gap: 36px; }
+}
+
+@media (max-width: 880px) {
+  .style-modern .container { padding: 0 24px; }
+  .style-modern .site-head .container,
+  .style-modern .site-foot .container { padding: 0 24px; }
+  .style-modern .foot-grid { grid-template-columns: 1fr 1fr; }
+  .style-modern .top-row nav.left { display: none; }
+  .style-modern .m-hero-text { padding: 48px 24px; }
+}

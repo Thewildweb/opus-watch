@@ -1,0 +1,1089 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Manrope:wght@300;400;500;600&family=JetBrains+Mono:wght@400&display=swap');
+
+/* ═══════════════════════════════════════════════════════════════
+   Maison & Opus — NOCTURNE skin. Ported from 03-nocturne.html.
+   Self-contained: this is the ONLY skin stylesheet loaded for
+   body.style-nocturne, so it styles the whole site for the dark
+   "Aurum Noir" look — obsidian ground, brass leaf, Bodoni serif.
+   ═══════════════════════════════════════════════════════════════ */
+
+body.style-nocturne {
+  --obs: #0a0907;
+  --obs-2: #131110;
+  --obs-3: #1d1a17;
+  --bone: #ebe6dc;
+  --bone-dim: #a8a39a;
+  --brass: #b48a4a;
+  --brass-bright: #d4a865;
+  --brass-deep: #7a5a2a;
+  --rule: rgba(180, 138, 74, 0.28);
+  --rule-dim: rgba(235, 230, 220, 0.10);
+  /* a light card surface so white-background product photos read intentionally */
+  --surface: #f0ece2;
+  --surface-deep: #ddd6c6;
+}
+
+body.style-nocturne * { box-sizing: border-box; }
+
+body.style-nocturne {
+  margin: 0;
+  background: var(--obs);
+  color: var(--bone);
+  font-family: "Manrope", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+.style-nocturne html { background: var(--obs); }
+
+/* Fine film-grain overlay (matches the mockup's noise pass) */
+body.style-nocturne::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.16 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+body.style-nocturne a { color: inherit; }
+
+.style-nocturne .serif { font-family: "Bodoni Moda", serif; }
+.style-nocturne .italic { font-style: italic; }
+
+.style-nocturne .container { max-width: 1400px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 3; }
+.style-nocturne .section { padding: 120px 0; position: relative; }
+
+/* ───── buttons ───── */
+.style-nocturne .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  padding: 22px 40px;
+  border: 1px solid var(--brass);
+  background: transparent;
+  color: var(--bone);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .35s ease;
+}
+.style-nocturne .btn:hover { background: var(--brass); color: var(--obs); letter-spacing: 0.34em; }
+.style-nocturne .btn.solid { background: var(--brass); border-color: var(--brass); color: var(--obs); }
+.style-nocturne .btn.solid:hover { background: var(--brass-bright); border-color: var(--brass-bright); color: var(--obs); }
+.style-nocturne .btn.light { border-color: var(--rule-dim); color: var(--bone); }
+.style-nocturne .btn.light:hover { background: var(--bone); border-color: var(--bone); color: var(--obs); }
+.style-nocturne .btn.gilt { border-color: var(--brass); color: var(--brass-bright); }
+.style-nocturne .btn.gilt:hover { background: var(--brass); color: var(--obs); }
+
+.style-nocturne .link-arrow {
+  color: var(--bone);
+  text-decoration: none;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--brass);
+  padding-bottom: 3px;
+  transition: color .25s;
+}
+.style-nocturne .link-arrow:hover { color: var(--brass-bright); }
+
+/* ═══════════════════════════════════════════════════════════════
+   Header
+   ═══════════════════════════════════════════════════════════════ */
+.style-nocturne .site-head { padding: 28px 0 0; position: relative; z-index: 20; }
+.style-nocturne .top-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  border-bottom: 1px solid var(--rule-dim);
+  padding-bottom: 22px;
+  position: relative;
+}
+.style-nocturne .top-row nav { display: flex; gap: 40px; margin: 0; padding: 0; }
+.style-nocturne .top-row nav.right { justify-content: flex-end; align-items: center; gap: 32px; }
+.style-nocturne .top-row nav a {
+  color: var(--bone-dim);
+  text-decoration: none;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  transition: color .3s;
+}
+.style-nocturne .top-row nav a:hover { color: var(--brass-bright); }
+
+.style-nocturne .primary-nav {
+  display: flex;
+  gap: 40px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+}
+.style-nocturne .primary-nav > li { position: static; }
+.style-nocturne .primary-nav > li > a { display: inline-block; padding: 2px 0; }
+
+.style-nocturne .has-mega > a::after {
+  content: "";
+  display: inline-block;
+  width: 5px; height: 5px;
+  margin-left: 9px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform .25s;
+}
+.style-nocturne .has-mega:hover > a::after { transform: rotate(-135deg) translateY(-1px); }
+
+.style-nocturne .wordmark {
+  text-align: center;
+  font-family: "Bodoni Moda", serif;
+  font-weight: 400;
+  font-size: 30px;
+  letter-spacing: 0.30em;
+  color: var(--bone);
+  text-decoration: none;
+}
+.style-nocturne .wordmark .amp { color: var(--brass); font-style: italic; margin: 0 4px; }
+
+.style-nocturne .cart-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--bone-dim);
+  text-decoration: none;
+  transition: color .3s;
+}
+.style-nocturne .cart-link:hover { color: var(--brass-bright); }
+.style-nocturne .cart-link svg { display: block; }
+.style-nocturne .cart-count {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  min-width: 1.4em;
+  text-align: center;
+}
+.style-nocturne .cart-count.has-items { color: var(--brass-bright); }
+
+.style-nocturne .meta-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  padding: 16px 0 0;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+.style-nocturne .meta-row .right { text-align: right; }
+.style-nocturne .meta-row .italic { font-style: normal !important; letter-spacing: 0.22em !important; color: var(--brass); }
+
+/* ───── Mega menu ───── */
+.style-nocturne .mega {
+  position: absolute;
+  left: 50%;
+  width: 100vw;
+  top: 100%;
+  background: var(--obs-2);
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  box-shadow: 0 40px 80px -40px rgba(0, 0, 0, 0.9);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateX(-50%) translateY(-8px);
+  transition: opacity .28s ease, transform .28s ease, visibility .28s;
+  z-index: 60;
+}
+.style-nocturne .mega::before { content: ""; position: absolute; left: 0; right: 0; top: -26px; height: 26px; }
+.style-nocturne .has-mega:hover .mega,
+.style-nocturne .has-mega:focus-within .mega {
+  opacity: 1; visibility: visible; pointer-events: auto; transform: translateX(-50%);
+}
+.style-nocturne .mega-inner {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+  gap: 56px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 44px 48px 48px;
+}
+.style-nocturne .mega-label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin: 0 0 16px;
+}
+.style-nocturne .mega-brands { border-right: 1px solid var(--rule-dim); padding-right: 40px; }
+.style-nocturne .mega-brands a {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  font-family: "Bodoni Moda", serif;
+  font-size: 22px;
+  color: var(--bone);
+  text-decoration: none;
+  padding: 8px 0;
+  transition: color .25s;
+}
+.style-nocturne .mega-brands a:hover { color: var(--brass-bright); }
+.style-nocturne .mega-brands a span {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  color: var(--bone-dim);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.style-nocturne .mega-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.style-nocturne .mega-card { text-decoration: none; color: inherit; display: block; }
+.style-nocturne .mega-thumb {
+  display: block;
+  aspect-ratio: 1;
+  background: radial-gradient(120% 90% at 50% 35%, #fff, var(--surface-deep));
+  border: 1px solid var(--rule-dim);
+  overflow: hidden;
+  transition: border-color .25s;
+}
+.style-nocturne .mega-thumb img { width: 100%; height: 100%; object-fit: contain; padding: 12%; }
+.style-nocturne .mega-card:hover .mega-thumb { border-color: var(--brass); }
+.style-nocturne .mega-cname {
+  display: block;
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.2;
+  margin-top: 12px;
+  color: var(--bone);
+}
+.style-nocturne .mega-cprice { display: block; color: var(--brass-bright); font-family: "Bodoni Moda", serif; font-size: 15px; margin-top: 4px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Footer
+   ═══════════════════════════════════════════════════════════════ */
+.style-nocturne .site-foot {
+  padding: 100px 0 30px;
+  border-top: 1px solid var(--rule-dim);
+  margin-top: 0;
+  position: relative;
+  z-index: 3;
+  font-size: 14px;
+  color: var(--bone-dim);
+}
+.style-nocturne .foot-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 80px; }
+.style-nocturne .site-foot h4 {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin: 0 0 22px;
+}
+.style-nocturne .site-foot a {
+  display: block;
+  padding: 5px 0;
+  color: var(--bone-dim);
+  text-decoration: none;
+  font-style: normal;
+  font-size: 14px;
+  transition: color .25s;
+}
+.style-nocturne .site-foot a:hover { color: var(--brass-bright); }
+.style-nocturne .site-foot p { color: var(--bone-dim); font-size: 14px; max-width: 320px; font-style: normal !important; }
+.style-nocturne .site-foot .mark {
+  font-family: "Bodoni Moda", serif;
+  font-size: 34px;
+  letter-spacing: 0.26em;
+  color: var(--bone);
+  margin-bottom: 20px;
+}
+.style-nocturne .site-foot .mark em { color: var(--brass); font-style: italic; }
+.style-nocturne .foot-bot {
+  margin-top: 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule-dim);
+  display: flex;
+  justify-content: space-between;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Home — hero
+   ═══════════════════════════════════════════════════════════════ */
+.style-nocturne .nocturne-hero {
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  padding: 120px 0 90px;
+  border-bottom: 1px solid var(--rule-dim);
+}
+.style-nocturne .nocturne-hero .hero-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.34;
+  filter: grayscale(0.2) contrast(1.05) brightness(0.7);
+  z-index: 0;
+}
+.style-nocturne .nocturne-hero::before {
+  content: "";
+  position: absolute;
+  inset: -20% -10%;
+  background:
+    radial-gradient(40% 50% at 50% 42%, rgba(212, 168, 101, 0.26), transparent 60%),
+    radial-gradient(80% 80% at 50% 42%, rgba(180, 138, 74, 0.10), transparent 72%);
+  pointer-events: none;
+  z-index: 1;
+}
+.style-nocturne .nocturne-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 78%, transparent 38%, var(--obs) 82%),
+             linear-gradient(180deg, var(--obs) 0%, transparent 22%, transparent 70%, var(--obs) 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+.style-nocturne .hero-inner { text-align: center; position: relative; z-index: 4; width: 100%; }
+
+.style-nocturne .eyebrow-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 44px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  color: var(--brass);
+}
+.style-nocturne .eyebrow-row .bar { height: 1px; width: 60px; background: var(--brass); }
+.style-nocturne .eyebrow-row .star { font-size: 10px; color: var(--brass-bright); }
+
+.style-nocturne h1.hero-title {
+  font-family: "Bodoni Moda", serif;
+  font-weight: 400;
+  font-size: clamp(54px, 8vw, 150px);
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+  color: var(--bone);
+  margin: 0;
+  text-shadow: 0 0 80px rgba(212, 168, 101, 0.15);
+}
+.style-nocturne h1.hero-title .it {
+  font-style: italic;
+  color: var(--brass-bright);
+  display: block;
+  transform: translateX(0.3em);
+}
+.style-nocturne h1.hero-title .small {
+  display: block;
+  font-size: 0.32em;
+  letter-spacing: 0.04em;
+  color: var(--bone-dim);
+  margin-top: 0.5em;
+  font-style: italic;
+}
+
+.style-nocturne .hero-cta { margin-top: 56px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+
+.style-nocturne .hero-meta {
+  display: flex;
+  justify-content: center;
+  gap: 64px;
+  margin-top: 64px;
+  flex-wrap: wrap;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--bone-dim);
+}
+.style-nocturne .hero-meta div { position: relative; }
+.style-nocturne .hero-meta div + div::before {
+  content: "";
+  position: absolute;
+  left: -32px;
+  top: 6px;
+  width: 1px;
+  height: 14px;
+  background: var(--brass);
+  opacity: 0.5;
+}
+.style-nocturne .hero-meta b {
+  display: block;
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  color: var(--brass-bright);
+  margin-top: 4px;
+}
+
+/* ───── Section head (home + shared) ───── */
+.style-nocturne .section-head,
+.style-nocturne .sect-head {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: end;
+  margin-bottom: 72px;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+.style-nocturne .sect-eyebrow,
+.style-nocturne .section-head .label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin: 0 0 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.style-nocturne .sect-eyebrow::before,
+.style-nocturne .section-head .label::before { content: "\25C6"; font-size: 9px; }
+.style-nocturne .section-head h2,
+.style-nocturne .sect-head h2 {
+  font-family: "Bodoni Moda", serif;
+  font-weight: 400;
+  font-size: clamp(44px, 5.5vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--bone);
+  margin: 0;
+}
+.style-nocturne .section-head h2 em,
+.style-nocturne .sect-head h2 em { font-style: italic; color: var(--brass-bright); }
+.style-nocturne .section-head .lede {
+  max-width: 460px;
+  color: var(--bone-dim);
+  font-size: 17px;
+  line-height: 1.65;
+}
+.style-nocturne .sect-link {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bone);
+  text-decoration: none;
+  border-bottom: 1px solid var(--brass);
+  padding-bottom: 3px;
+  white-space: nowrap;
+  align-self: end;
+  justify-self: end;
+}
+.style-nocturne .sect-link:hover { color: var(--brass-bright); }
+
+/* ═══════════════════════════════════════════════════════════════
+   Pieces / product cards (home + shop archive share .piece)
+   Photos are on white, so the frame is a LIGHT card on the dark page.
+   ═══════════════════════════════════════════════════════════════ */
+.style-nocturne .pieces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.style-nocturne .piece {
+  display: block;
+  text-decoration: none;
+  color: var(--bone);
+  background: var(--obs-2);
+  border: 1px solid var(--rule-dim);
+  padding: 28px 28px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .5s, background .5s, transform .5s cubic-bezier(.2,.7,.2,1);
+}
+.style-nocturne .piece::before {
+  content: "";
+  position: absolute;
+  inset: -50% -10% auto -10%;
+  height: 100%;
+  background: radial-gradient(ellipse at 50% 50%, rgba(212, 168, 101, 0.16), transparent 60%);
+  opacity: 0;
+  transition: opacity .6s;
+  pointer-events: none;
+}
+.style-nocturne .piece:hover::before { opacity: 1; }
+.style-nocturne .piece:hover { background: var(--obs-3); border-color: var(--rule); transform: translateY(-6px); }
+
+.style-nocturne .piece-frame {
+  aspect-ratio: 3/4;
+  background: radial-gradient(130% 100% at 50% 30%, #fff 0%, var(--surface) 70%, var(--surface-deep) 100%);
+  border: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+}
+.style-nocturne .piece-frame::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 40px rgba(40, 27, 16, 0.12);
+  pointer-events: none;
+}
+.style-nocturne .piece-photo {
+  position: absolute;
+  inset: 12%;
+  width: 76%;
+  height: 76%;
+  object-fit: contain;
+  margin: auto;
+}
+.style-nocturne .piece svg.dial {
+  position: absolute;
+  inset: 14% 14% 18%;
+  width: 72%;
+  height: auto;
+  margin: auto;
+  filter: drop-shadow(0 14px 30px rgba(0,0,0,0.3));
+}
+.style-nocturne .piece-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  padding-top: 22px;
+  margin-top: 24px;
+  border-top: 1px solid var(--rule);
+}
+.style-nocturne .piece-name {
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-size: 27px;
+  line-height: 1.05;
+  color: var(--bone);
+}
+.style-nocturne .piece-ref {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--brass);
+  white-space: nowrap;
+}
+.style-nocturne .piece-line { margin-top: 10px; font-size: 14px; color: var(--bone-dim); line-height: 1.55; }
+.style-nocturne .piece-price {
+  margin-top: 14px;
+  font-family: "Bodoni Moda", serif;
+  font-size: 22px;
+  color: var(--brass-bright);
+}
+.style-nocturne .piece-price del { color: var(--bone-dim); opacity: 0.6; margin-right: 6px; }
+.style-nocturne .piece-price ins { text-decoration: none; }
+
+/* ═══════════════════════════════════════════════════════════════
+   Home — feature tiles
+   ═══════════════════════════════════════════════════════════════ */
+.style-nocturne .band { padding: 60px 0; }
+.style-nocturne .band-tint { background: linear-gradient(180deg, var(--obs) 0%, #0d0b08 100%); border-top: 1px solid var(--rule-dim); border-bottom: 1px solid var(--rule-dim); }
+
+.style-nocturne .tiles { display: grid; gap: 4px; }
+.style-nocturne .tiles.cols-3 { grid-template-columns: repeat(3, 1fr); }
+
+.style-nocturne .tile {
+  position: relative;
+  overflow: hidden;
+  min-height: 480px;
+  display: flex;
+  align-items: flex-end;
+  text-decoration: none;
+  color: var(--bone);
+  background: var(--obs-2);
+  border: 1px solid var(--rule-dim);
+}
+.style-nocturne .tile > img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.7;
+  filter: brightness(0.7) contrast(1.05);
+  transition: transform .9s cubic-bezier(.2,.7,.2,1);
+}
+.style-nocturne .tile:hover > img { transform: scale(1.06); }
+.style-nocturne .tile-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,9,7,0.2) 20%, rgba(10,9,7,0.55) 60%, rgba(10,9,7,0.92) 100%);
+}
+.style-nocturne .tile-body { position: relative; z-index: 2; padding: 36px; }
+.style-nocturne .tile-eyebrow {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin: 0 0 14px;
+}
+.style-nocturne .tile-title {
+  font-family: "Bodoni Moda", serif;
+  font-weight: 400;
+  font-size: clamp(30px, 2.6vw, 42px);
+  line-height: 1.04;
+  margin: 0;
+  color: var(--bone);
+}
+.style-nocturne .tile-link {
+  display: inline-block;
+  margin-top: 18px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--bone);
+  border-bottom: 1px solid var(--brass);
+  padding-bottom: 3px;
+  transition: color .25s;
+}
+.style-nocturne .tile:hover .tile-link { color: var(--brass-bright); }
+.style-nocturne .tile-link.gilt { color: var(--brass-bright); }
+
+.style-nocturne .tile.editorial {
+  background:
+    radial-gradient(60% 80% at 80% 30%, rgba(180,138,74,0.14), transparent 70%),
+    var(--obs-2);
+  align-items: center;
+  border: 1px solid var(--rule);
+}
+.style-nocturne .tile.editorial .tile-body { padding: 48px; }
+.style-nocturne .tile.editorial p { color: var(--bone-dim); font-size: 16px; line-height: 1.6; margin: 18px 0 0; max-width: 42ch; }
+
+/* Brand tiles — product shots are light; light card + strong scrim */
+.style-nocturne .tile-brand { min-height: 540px; background: var(--surface); border: 1px solid var(--rule); }
+.style-nocturne .tile-brand > img {
+  object-fit: contain;
+  padding: 12% 14% 24%;
+  opacity: 1;
+  filter: none;
+  background: radial-gradient(120% 90% at 50% 35%, #fff 0%, var(--surface-deep) 100%);
+}
+.style-nocturne .tile-brand .tile-scrim { background: linear-gradient(180deg, rgba(10,9,7,0) 44%, rgba(10,9,7,0.86) 100%); }
+.style-nocturne .tile-brand .tile-title { font-size: clamp(26px, 2.2vw, 36px); }
+
+/* ═══════════════════════════════════════════════════════════════
+   Home — interlude (pull-quote + specsheet)
+   ═══════════════════════════════════════════════════════════════ */
+.style-nocturne .interlude {
+  padding: 140px 0;
+  position: relative;
+  border-top: 1px solid var(--rule-dim);
+  overflow: hidden;
+}
+.style-nocturne .interlude::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(50% 80% at 82% 50%, rgba(180, 138, 74, 0.10), transparent 70%);
+  pointer-events: none;
+}
+.style-nocturne .interlude-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+.style-nocturne .interlude h2 {
+  font-family: "Bodoni Moda", serif;
+  font-weight: 400;
+  font-size: clamp(42px, 5.5vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--bone);
+  margin: 0 0 32px;
+}
+.style-nocturne .interlude h2 em { font-style: italic; color: var(--brass-bright); }
+.style-nocturne .interlude .label {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.30em;
+  text-transform: uppercase;
+  color: var(--brass);
+  margin-bottom: 24px;
+}
+.style-nocturne .interlude .pullquote {
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-size: 26px;
+  line-height: 1.4;
+  color: var(--bone);
+  border-left: 1px solid var(--brass);
+  padding-left: 32px;
+  margin: 40px 0;
+}
+.style-nocturne .interlude .signature {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.24em;
+  color: var(--brass);
+  margin-top: 12px;
+}
+.style-nocturne .specsheet {
+  background: var(--obs-2);
+  border: 1px solid var(--rule);
+  padding: 56px 48px;
+  position: relative;
+}
+.style-nocturne .specsheet::before, .style-nocturne .specsheet::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--brass);
+}
+.style-nocturne .specsheet::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+.style-nocturne .specsheet::after { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+.style-nocturne .specsheet-title { font-family: "Bodoni Moda", serif; font-style: italic; font-size: 32px; margin-bottom: 8px; color: var(--brass-bright); }
+.style-nocturne .specsheet-ref {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+  margin-bottom: 36px;
+}
+.style-nocturne .specsheet table { width: 100%; border-collapse: collapse; }
+.style-nocturne .specsheet td { padding: 14px 0; border-bottom: 1px solid var(--rule-dim); font-size: 14px; vertical-align: top; }
+.style-nocturne .specsheet td:first-child {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+  width: 46%;
+}
+.style-nocturne .specsheet td:last-child {
+  color: var(--bone);
+  text-align: right;
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-size: 18px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Home — service / atelier
+   ═══════════════════════════════════════════════════════════════ */
+.style-nocturne .service,
+.style-nocturne .atelier {
+  background: linear-gradient(180deg, var(--obs) 0%, #0d0b08 100%);
+  position: relative;
+  border-top: 1px solid var(--rule-dim);
+}
+.style-nocturne .service::before,
+.style-nocturne .atelier::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(40% 60% at 50% 16%, rgba(212, 168, 101, 0.14), transparent 60%);
+  pointer-events: none;
+}
+.style-nocturne .service .container { padding-top: 130px; padding-bottom: 120px; position: relative; z-index: 2; }
+.style-nocturne .service-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 80px; align-items: center; }
+.style-nocturne .service-copy h2 {
+  font-family: "Bodoni Moda", serif;
+  font-weight: 400;
+  font-size: clamp(40px, 5vw, 80px);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+  margin: 0 0 28px;
+}
+.style-nocturne .service-copy h2 em { font-style: italic; color: var(--brass-bright); }
+.style-nocturne .service-lead { color: var(--bone-dim); font-size: 17px; line-height: 1.65; max-width: 52ch; margin: 0 0 22px; }
+.style-nocturne .service-copy .btn { margin-top: 18px; }
+.style-nocturne .service-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.style-nocturne .service-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--rule-dim);
+  font-size: 16px;
+}
+.style-nocturne .service-list li span { color: var(--bone); }
+.style-nocturne .service-list li em {
+  color: var(--brass-bright);
+  font-family: "JetBrains Mono", monospace;
+  font-style: normal;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* ───── Closing line ───── */
+.style-nocturne .closing { text-align: center; padding: 150px 0 130px; border-top: 1px solid var(--rule-dim); position: relative; }
+.style-nocturne .closing::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(40% 70% at 50% 50%, rgba(212, 168, 101, 0.12), transparent 65%);
+  pointer-events: none;
+}
+.style-nocturne .closing p {
+  font-family: "Bodoni Moda", serif;
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(32px, 4.4vw, 64px);
+  line-height: 1.15;
+  color: var(--bone);
+  margin: 0 auto;
+  max-width: 16ch;
+  position: relative;
+  z-index: 2;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   WooCommerce — shop archive
+   ═══════════════════════════════════════════════════════════════ */
+.style-nocturne svg.dial { max-width: 100%; height: auto; }
+.style-nocturne .opus-dial-placeholder { width: 100%; max-width: 360px; margin: 0 auto; }
+
+.style-nocturne .wc-main { padding-top: 40px; padding-bottom: 60px; }
+
+.style-nocturne .woocommerce-products-header { margin-bottom: 56px; }
+.style-nocturne .woocommerce-products-header__title,
+.style-nocturne .woocommerce-products-header h1 {
+  font-family: "Bodoni Moda", serif;
+  font-weight: 400;
+  font-size: clamp(44px, 5.5vw, 88px);
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--bone);
+  margin: 0 0 12px;
+}
+.style-nocturne .term-description,
+.style-nocturne .woocommerce-archive-description {
+  color: var(--bone-dim);
+  font-style: italic;
+  max-width: 60ch;
+}
+.style-nocturne .woocommerce-result-count {
+  color: var(--bone-dim);
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+.style-nocturne .woocommerce-ordering select {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--obs-2);
+  border: 1px solid var(--rule);
+  color: var(--bone);
+  padding: 10px 14px;
+}
+
+.style-nocturne .woocommerce ul.products,
+.style-nocturne ul.products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  list-style: none;
+  margin: 0 0 48px;
+  padding: 0;
+}
+.style-nocturne .woocommerce ul.products li.product,
+.style-nocturne ul.products li.product {
+  width: auto !important;
+  margin: 0 !important;
+  float: none !important;
+  clear: none !important;
+}
+.style-nocturne .woocommerce ul.products li.product::before { content: none; }
+
+/* ═══════════════════════════════════════════════════════════════
+   WooCommerce — single product
+   ═══════════════════════════════════════════════════════════════ */
+.style-nocturne .woocommerce div.product {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+.style-nocturne .woocommerce div.product .woocommerce-product-gallery {
+  width: 100% !important;
+  margin: 0;
+  border: 1px solid var(--rule);
+  background: radial-gradient(130% 100% at 50% 30%, #fff 0%, var(--surface) 70%, var(--surface-deep) 100%);
+  padding: 40px;
+  aspect-ratio: 3/4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+}
+.style-nocturne .woocommerce div.product .woocommerce-product-gallery img { mix-blend-mode: multiply; }
+.style-nocturne .woocommerce div.product .entry-summary,
+.style-nocturne .woocommerce div.product .summary { margin: 0; }
+.style-nocturne .woocommerce div.product .product_title {
+  font-family: "Bodoni Moda", serif;
+  font-weight: 400;
+  font-size: clamp(34px, 4vw, 60px);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+  margin: 0 0 16px;
+}
+.style-nocturne .woocommerce div.product p.price,
+.style-nocturne .woocommerce div.product span.price {
+  color: var(--brass-bright);
+  font-family: "Bodoni Moda", serif;
+  font-size: 30px;
+  margin-bottom: 24px;
+}
+.style-nocturne .woocommerce div.product p.price del,
+.style-nocturne .woocommerce div.product span.price del { color: var(--bone-dim); opacity: 0.6; }
+.style-nocturne .woocommerce div.product p.price ins { text-decoration: none; }
+.style-nocturne .woocommerce div.product .woocommerce-product-details__short-description {
+  color: var(--bone-dim);
+  font-size: 17px;
+  line-height: 1.65;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 24px 0;
+  margin-bottom: 28px;
+}
+.style-nocturne .woocommerce div.product form.cart { margin-bottom: 28px; }
+.style-nocturne .woocommerce div.product .quantity input.qty {
+  background: var(--obs-2);
+  border: 1px solid var(--rule);
+  color: var(--bone);
+  padding: 12px;
+  font-family: "JetBrains Mono", monospace;
+}
+.style-nocturne .woocommerce div.product .product_meta {
+  margin-top: 28px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+.style-nocturne .woocommerce div.product .product_meta a { color: var(--brass-bright); text-decoration: none; }
+
+/* Tabs / related */
+.style-nocturne .woocommerce-tabs { grid-column: 1 / -1; margin-top: 56px; border-top: 1px solid var(--rule-dim); padding-top: 40px; }
+.style-nocturne .woocommerce-tabs ul.tabs { padding: 0; margin: 0 0 28px; list-style: none; display: flex; gap: 28px; }
+.style-nocturne .woocommerce-tabs ul.tabs li {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+.style-nocturne .woocommerce-tabs ul.tabs li.active,
+.style-nocturne .woocommerce-tabs ul.tabs li a:hover { color: var(--brass-bright); }
+.style-nocturne .woocommerce-tabs ul.tabs li a { color: inherit; text-decoration: none; }
+.style-nocturne .woocommerce-Tabs-panel { color: var(--bone-dim); }
+.style-nocturne .woocommerce-Tabs-panel h2 { color: var(--bone); }
+
+.style-nocturne .woocommerce .related.products,
+.style-nocturne .woocommerce .upsells.products { grid-column: 1 / -1; margin-top: 56px; }
+.style-nocturne .woocommerce .related.products > h2,
+.style-nocturne .woocommerce-tabs h2 {
+  font-family: "Bodoni Moda", serif;
+  font-weight: 400;
+  font-size: 38px;
+  color: var(--bone);
+  margin-bottom: 32px;
+}
+
+/* WooCommerce buttons */
+.style-nocturne .woocommerce a.button,
+.style-nocturne .woocommerce button.button,
+.style-nocturne .woocommerce .button,
+.style-nocturne .woocommerce #respond input#submit,
+.style-nocturne .woocommerce input.button,
+.style-nocturne .woocommerce button.button.alt,
+.style-nocturne .single_add_to_cart_button {
+  font-family: "JetBrains Mono", monospace !important;
+  font-size: 11px !important;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  padding: 20px 36px !important;
+  border: 1px solid var(--brass) !important;
+  background: transparent !important;
+  color: var(--bone) !important;
+  border-radius: 0 !important;
+  font-weight: 400 !important;
+  transition: all .35s ease;
+}
+.style-nocturne .woocommerce button.button.alt,
+.style-nocturne .single_add_to_cart_button {
+  background: var(--brass) !important;
+  color: var(--obs) !important;
+}
+.style-nocturne .woocommerce a.button:hover,
+.style-nocturne .woocommerce button.button:hover,
+.style-nocturne .woocommerce button.button.alt:hover,
+.style-nocturne .single_add_to_cart_button:hover {
+  background: var(--brass-bright) !important;
+  border-color: var(--brass-bright) !important;
+  color: var(--obs) !important;
+  letter-spacing: 0.30em;
+}
+
+/* Notices */
+.style-nocturne .woocommerce-message,
+.style-nocturne .woocommerce-info,
+.style-nocturne .woocommerce-error {
+  border-top-color: var(--brass) !important;
+  background: var(--obs-2);
+  color: var(--bone);
+  font-style: italic;
+}
+.style-nocturne .woocommerce-message a,
+.style-nocturne .woocommerce-info a { color: var(--brass-bright); }
+
+/* ═══════════════════════════════════════════════════════════════
+   Responsive
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .style-nocturne .container { padding: 0 24px; }
+  .style-nocturne .pieces,
+  .style-nocturne .tiles.cols-3,
+  .style-nocturne .foot-grid,
+  .style-nocturne .woocommerce ul.products,
+  .style-nocturne ul.products { grid-template-columns: 1fr; }
+  .style-nocturne .section-head,
+  .style-nocturne .sect-head,
+  .style-nocturne .interlude-grid,
+  .style-nocturne .service-grid,
+  .style-nocturne .woocommerce div.product { grid-template-columns: 1fr; gap: 40px; }
+  .style-nocturne .hero-meta { flex-direction: column; gap: 24px; align-items: center; }
+  .style-nocturne .hero-meta div + div::before { display: none; }
+  .style-nocturne .top-row nav.left { display: none; }
+  .style-nocturne .foot-grid { gap: 40px; }
+  .style-nocturne .foot-bot { flex-direction: column; gap: 12px; }
+  .style-nocturne .tile { min-height: 380px; }
+  .style-nocturne .tile-brand { min-height: 440px; }
+}
