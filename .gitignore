@@ -1,0 +1,10 @@
+# Local secrets / env
+.env
+
+# WordPress core & plugins live in the wp_data Docker volume, not in git.
+# Only our own theme + mu-plugins are tracked (see wp-content/).
+
+# OS / editor noise
+.DS_Store
+*.log
+node_modules/

@@ -1,0 +1,645 @@
+/* Maison & Opus — heritage storefront. Ported from 01-heritage.html.
+   This is the foundation layer (tokens + shell). Page templates and
+   WooCommerce overrides build on top of these. */
+
+:root {
+  --paper: #f4ece0;
+  --paper-deep: #ebe0cd;
+  --ink: #281b10;
+  --ink-soft: #4a3522;
+  --gilt: #9c7536;
+  --gilt-bright: #b8945a;
+  --rule: #c8b89a;
+  --shadow: rgba(40, 27, 16, 0.12);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "EB Garamond", "Georgia", serif;
+  font-size: 18px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Paper grain + ambient gradients */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(1200px 800px at 20% 0%, rgba(184, 148, 90, 0.10), transparent 60%),
+    radial-gradient(900px 600px at 100% 100%, rgba(40, 27, 16, 0.06), transparent 60%);
+}
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.22;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.16  0 0 0 0 0.11  0 0 0 0 0.06  0 0 0 0.13 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.display { font-family: "Cormorant Garamond", "Didot", serif; font-weight: 400; }
+.italic { font-style: italic; }
+.small-caps { font-variant: all-small-caps; letter-spacing: 0.18em; }
+
+.container { max-width: 1240px; margin: 0 auto; padding: 0 48px; position: relative; z-index: 2; }
+.section { padding: 80px 0; position: relative; }
+
+a { color: inherit; }
+
+/* ───── header ───── */
+.site-head { padding: 28px 0 0; position: relative; z-index: 5; }
+.top-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 22px;
+}
+.top-row nav { display: flex; gap: 38px; font-size: 16.5px; margin: 0; padding: 0; }
+.top-row nav ul { display: flex; gap: 38px; list-style: none; margin: 0; padding: 0; }
+.top-row nav a {
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-variant: all-small-caps;
+  letter-spacing: 0.15em;
+  transition: color .2s;
+}
+.top-row nav a:hover { color: var(--gilt); }
+.top-row nav.right { justify-content: flex-end; }
+
+.wordmark {
+  text-align: center;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 32px;
+  letter-spacing: 0.22em;
+  color: var(--ink);
+  text-decoration: none;
+}
+.wordmark .amp { color: var(--gilt); font-style: italic; font-weight: 500; margin: 0 4px; }
+
+.meta-row {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  padding: 16px 0 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+  font-variant: all-small-caps;
+  letter-spacing: 0.2em;
+}
+.meta-row .right { text-align: right; }
+
+/* ───── buttons / links ───── */
+.btn {
+  display: inline-block;
+  font-family: "EB Garamond", serif;
+  font-variant: all-small-caps;
+  letter-spacing: 0.24em;
+  font-size: 13px;
+  padding: 16px 28px;
+  border: 1px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all .35s ease;
+}
+.btn:hover { background: var(--ink); color: var(--paper); letter-spacing: 0.30em; }
+.btn.gilt { border-color: var(--gilt); color: var(--gilt); }
+.btn.gilt:hover { background: var(--gilt); color: var(--paper); }
+
+/* ───── ornament ───── */
+.ornament {
+  text-align: center;
+  margin: 40px 0;
+  color: var(--gilt);
+  font-size: 22px;
+  letter-spacing: 1em;
+  padding-left: 1em;
+}
+
+/* ───── footer ───── */
+.site-foot {
+  padding: 80px 0 60px;
+  border-top: 1px solid var(--rule);
+  margin-top: 80px;
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+.foot-grid { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 48px; }
+.site-foot h4 {
+  font-variant: all-small-caps;
+  letter-spacing: 0.26em;
+  font-size: 11px;
+  color: var(--ink);
+  margin: 0 0 18px;
+}
+.site-foot a { display: block; padding: 4px 0; color: var(--ink-soft); text-decoration: none; font-style: italic; }
+.site-foot a:hover { color: var(--gilt); }
+.site-foot .mark {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 32px;
+  letter-spacing: 0.22em;
+  color: var(--ink);
+  margin-bottom: 18px;
+}
+.site-foot .mark em { color: var(--gilt); font-style: italic; }
+.foot-bot {
+  margin-top: 60px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+  display: flex;
+  justify-content: space-between;
+  font-variant: all-small-caps;
+  letter-spacing: 0.24em;
+  font-size: 11px;
+}
+
+/* ───── hero ───── */
+.hero { padding: 96px 0 80px; position: relative; }
+.hero-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 64px; align-items: center; }
+.hero-eyebrow {
+  font-variant: all-small-caps;
+  letter-spacing: 0.32em;
+  font-size: 12px;
+  color: var(--gilt);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.hero-eyebrow::before, .hero-eyebrow::after { content: ""; height: 1px; background: var(--gilt); flex: 0 0 40px; }
+.hero-eyebrow::after { flex: 1; }
+
+h1.hero-title {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 300;
+  font-size: clamp(56px, 7vw, 104px);
+  line-height: 0.96;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin: 0;
+}
+h1.hero-title .row-2 { display: block; font-style: italic; color: var(--gilt); padding-left: 1.4em; }
+h1.hero-title .row-3 { display: block; letter-spacing: -0.02em; }
+
+.hero-desc { margin-top: 36px; max-width: 460px; font-size: 18px; line-height: 1.65; color: var(--ink-soft); }
+.hero-desc::first-letter {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 64px;
+  line-height: 0.85;
+  float: left;
+  padding: 6px 12px 0 0;
+  color: var(--gilt);
+  font-style: italic;
+}
+
+.cta-row { margin-top: 44px; display: flex; gap: 28px; align-items: center; flex-wrap: wrap; }
+.link-arrow {
+  color: var(--ink);
+  text-decoration: none;
+  font-style: italic;
+  font-size: 17px;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 2px;
+  transition: border-color .25s, color .25s;
+}
+.link-arrow:hover { color: var(--gilt); border-color: var(--gilt); }
+
+.watch-wrap { position: relative; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
+.watch-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 5%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side at 50% 40%, rgba(184,148,90,0.18), transparent 70%);
+  filter: blur(20px);
+}
+.watch-svg {
+  width: 92%;
+  height: auto;
+  filter: drop-shadow(0 30px 60px rgba(40, 27, 16, 0.25));
+  animation: opus-hover 8s ease-in-out infinite;
+}
+@keyframes opus-hover { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+.watch-caption {
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 15px;
+  white-space: nowrap;
+}
+.watch-caption span { color: var(--gilt); }
+.side-mark {
+  position: absolute;
+  right: -16px;
+  top: 40px;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: "Cormorant Garamond", serif;
+  font-size: 13px;
+  letter-spacing: 0.5em;
+  color: var(--gilt);
+  font-variant: all-small-caps;
+}
+
+/* ───── section heading ───── */
+.section-head { display: grid; grid-template-columns: auto 1fr auto; gap: 36px; align-items: end; margin-bottom: 64px; }
+.section-head h2 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 300;
+  font-size: clamp(40px, 5vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.section-head h2 em { color: var(--gilt); font-weight: 400; font-style: italic; }
+.section-head .num { font-family: "Cormorant Garamond", serif; font-style: italic; font-size: 22px; color: var(--gilt); }
+
+/* ───── pieces / product cards ───── */
+.pieces { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px; }
+.piece { cursor: pointer; text-decoration: none; color: inherit; display: block; }
+.piece-frame {
+  aspect-ratio: 3/4;
+  background: linear-gradient(180deg, var(--paper-deep), var(--paper));
+  border: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+  transition: transform .6s cubic-bezier(.2,.7,.2,1);
+}
+.piece-frame::before { content: ""; position: absolute; inset: 16px; border: 1px solid var(--rule); pointer-events: none; }
+.piece-frame::after {
+  content: "";
+  position: absolute;
+  inset: 22px;
+  background: radial-gradient(closest-side, transparent 65%, rgba(184,148,90,0.10) 100%);
+  pointer-events: none;
+}
+.piece:hover .piece-frame { transform: translateY(-6px); box-shadow: 0 40px 60px -30px rgba(40,27,16,0.45); }
+.piece svg.dial {
+  position: absolute;
+  inset: 14% 14% 18%;
+  width: 72%;
+  height: auto;
+  margin: auto;
+  filter: drop-shadow(0 14px 30px rgba(40,27,16,0.22));
+}
+.piece-photo { position: absolute; inset: 14%; width: 72%; height: 72%; object-fit: contain; margin: auto; }
+.piece-meta {
+  padding: 24px 4px 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border-top: 1px solid var(--rule);
+  margin-top: 22px;
+}
+.piece-name { font-family: "Cormorant Garamond", serif; font-style: italic; font-size: 26px; }
+.piece-ref { font-variant: all-small-caps; letter-spacing: 0.22em; font-size: 11px; color: var(--ink-soft); }
+.piece-line { margin-top: 8px; font-size: 15px; color: var(--ink-soft); }
+.piece-price { margin-top: 4px; color: var(--gilt); font-style: italic; font-size: 17px; }
+.piece-price del { color: var(--ink-soft); opacity: 0.6; margin-right: 6px; }
+.piece-price ins { text-decoration: none; }
+
+/* ───── atelier / service ───── */
+.atelier { background: var(--ink); color: var(--paper); margin-top: 40px; position: relative; overflow: hidden; }
+.atelier .container { padding-top: 110px; padding-bottom: 110px; }
+.atelier::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(700px 500px at 20% 30%, rgba(184,148,90,0.18), transparent 60%),
+    radial-gradient(500px 400px at 90% 90%, rgba(184,148,90,0.10), transparent 60%);
+}
+.atelier-grid { display: grid; grid-template-columns: 1fr 1.1fr; gap: 80px; align-items: center; position: relative; }
+.atelier h2 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 300;
+  font-size: clamp(48px, 6vw, 88px);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+.atelier h2 em { color: var(--gilt-bright); font-style: italic; }
+.atelier .eyebrow { font-variant: all-small-caps; letter-spacing: 0.36em; font-size: 12px; color: var(--gilt-bright); margin-bottom: 22px; }
+.atelier p { margin-top: 28px; color: rgba(244, 236, 224, 0.72); max-width: 460px; font-size: 18px; }
+.atelier .services { margin-top: 36px; columns: 2; column-gap: 32px; }
+.atelier .services div {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(244,236,224,0.18);
+  font-size: 15px;
+  break-inside: avoid;
+  display: flex;
+  justify-content: space-between;
+}
+.atelier .services span { color: var(--gilt-bright); font-style: italic; }
+.atelier-card {
+  border: 1px solid rgba(184,148,90,0.4);
+  padding: 56px 48px;
+  background: linear-gradient(180deg, rgba(184,148,90,0.06), transparent 80%);
+  position: relative;
+}
+.atelier-card::before, .atelier-card::after { content: ""; position: absolute; width: 24px; height: 24px; border: 1px solid var(--gilt-bright); }
+.atelier-card::before { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+.atelier-card::after { bottom: 12px; right: 12px; border-left: none; border-top: none; }
+.atelier-card h3 { font-family: "Cormorant Garamond", serif; font-weight: 300; font-style: italic; font-size: 38px; margin: 0 0 24px; color: var(--gilt-bright); }
+.atelier-card .signature { margin-top: 32px; font-family: "Cormorant Garamond", serif; font-style: italic; font-size: 30px; color: var(--paper); }
+.atelier-card .signature span {
+  display: block;
+  font-style: normal;
+  font-variant: all-small-caps;
+  letter-spacing: 0.3em;
+  font-size: 12px;
+  margin-top: 6px;
+  color: rgba(244,236,224,0.5);
+}
+
+@media (max-width: 880px) {
+  .container { padding: 0 24px; }
+  .foot-grid { grid-template-columns: 1fr 1fr; }
+  .top-row nav.left { display: none; }
+  .hero-grid, .atelier-grid { grid-template-columns: 1fr; }
+  .pieces { grid-template-columns: 1fr; }
+  .section-head { grid-template-columns: 1fr; gap: 12px; }
+}
+
+/* ═════════════════════════════════════════════════════════════
+   WooCommerce — shop archive, single product, buttons
+   ═════════════════════════════════════════════════════════════ */
+
+/* Base dial sizing (the .piece override above keeps it absolute in cards) */
+svg.dial { max-width: 100%; height: auto; }
+.opus-dial-placeholder { width: 100%; max-width: 360px; margin: 0 auto; }
+
+.wc-main { padding-top: 40px; }
+
+/* Archive header */
+.woocommerce-products-header__title,
+.woocommerce-products-header h1 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 300;
+  font-size: clamp(40px, 5vw, 72px);
+  line-height: 1;
+  margin: 0 0 8px;
+}
+.woocommerce-products-header { margin-bottom: 48px; }
+.term-description, .woocommerce-archive-description { color: var(--ink-soft); font-style: italic; max-width: 60ch; }
+
+/* Result count + ordering */
+.woocommerce-result-count { color: var(--ink-soft); font-style: italic; font-size: 14px; }
+.woocommerce-ordering select {
+  font-family: "EB Garamond", serif;
+  background: transparent;
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  padding: 8px 12px;
+}
+
+/* Product grid → heritage pieces */
+.woocommerce ul.products,
+ul.products {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+  list-style: none;
+  margin: 0 0 48px;
+  padding: 0;
+}
+.woocommerce ul.products li.product,
+ul.products li.product {
+  width: auto !important;
+  margin: 0 !important;
+  float: none !important;
+  clear: none !important;
+}
+.woocommerce ul.products li.product::before { content: none; }
+
+/* ── Single product ── */
+.woocommerce div.product {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: start;
+}
+.woocommerce div.product .woocommerce-product-gallery {
+  width: 100% !important;
+  margin: 0;
+  border: 1px solid var(--rule);
+  background: linear-gradient(180deg, var(--paper-deep), var(--paper));
+  padding: 32px;
+  aspect-ratio: 3/4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.woocommerce div.product .entry-summary,
+.woocommerce div.product .summary { margin: 0; }
+.woocommerce div.product .product_title {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 300;
+  font-size: clamp(34px, 4vw, 56px);
+  line-height: 1.02;
+  margin: 0 0 16px;
+}
+.woocommerce div.product p.price,
+.woocommerce div.product span.price {
+  color: var(--gilt);
+  font-style: italic;
+  font-size: 28px;
+  margin-bottom: 24px;
+}
+.woocommerce div.product .woocommerce-product-details__short-description {
+  color: var(--ink-soft);
+  font-size: 18px;
+  line-height: 1.6;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  padding: 22px 0;
+  margin-bottom: 28px;
+}
+.woocommerce div.product .product_meta {
+  margin-top: 28px;
+  font-size: 13px;
+  font-variant: all-small-caps;
+  letter-spacing: 0.14em;
+  color: var(--ink-soft);
+}
+.woocommerce div.product .product_meta a { color: var(--gilt); text-decoration: none; }
+
+/* Tabs / related */
+.woocommerce-tabs { grid-column: 1 / -1; margin-top: 40px; }
+.woocommerce .related.products,
+.woocommerce .upsells.products { grid-column: 1 / -1; margin-top: 40px; }
+.woocommerce .related.products > h2,
+.woocommerce-tabs h2 {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 300;
+  font-size: 36px;
+}
+
+/* Buttons — match the heritage .btn */
+.woocommerce a.button,
+.woocommerce button.button,
+.woocommerce .button,
+.woocommerce #respond input#submit,
+.woocommerce input.button,
+.woocommerce button.button.alt,
+.single_add_to_cart_button {
+  font-family: "EB Garamond", serif !important;
+  font-variant: all-small-caps;
+  letter-spacing: 0.24em;
+  font-size: 13px !important;
+  padding: 16px 28px !important;
+  border: 1px solid var(--ink) !important;
+  background: transparent !important;
+  color: var(--ink) !important;
+  border-radius: 0 !important;
+  text-transform: none;
+  transition: all .35s ease;
+  font-weight: 400 !important;
+}
+.woocommerce a.button:hover,
+.woocommerce button.button:hover,
+.woocommerce button.button.alt:hover,
+.single_add_to_cart_button:hover {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+  letter-spacing: 0.30em;
+}
+
+/* Notices */
+.woocommerce-message,
+.woocommerce-info,
+.woocommerce-error {
+  border-top-color: var(--gilt) !important;
+  background: var(--paper-deep);
+  font-style: italic;
+}
+
+@media (max-width: 880px) {
+  .woocommerce ul.products, ul.products { grid-template-columns: 1fr; }
+  .woocommerce div.product { grid-template-columns: 1fr; gap: 32px; }
+}
+
+/* ═════════════════════════════════════════════════════════════
+   Homepage v2 — photographic hero, trust strip, service
+   (replaces the "style study" hero; heritage feel, business shape)
+   ═════════════════════════════════════════════════════════════ */
+
+/* Button variants for the photographic hero / dark sections */
+.btn.solid { background: var(--gilt); border-color: var(--gilt); color: var(--paper); }
+.btn.solid:hover { background: var(--gilt-bright); border-color: var(--gilt-bright); color: var(--ink); letter-spacing: 0.30em; }
+.btn.light { border-color: rgba(244, 236, 224, 0.55); color: var(--paper); background: transparent; }
+.btn.light:hover { background: var(--paper); border-color: var(--paper); color: var(--ink); letter-spacing: 0.30em; }
+
+/* ── Hero ── */
+.lede {
+  position: relative;
+  z-index: 2;
+  min-height: min(86vh, 780px);
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+  background: var(--ink);
+}
+.lede-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 74%; /* feature the working hands + watch (lower-centre of the portrait) */
+}
+.lede-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(20,14,8,0.10) 0%, rgba(20,14,8,0.28) 42%, rgba(20,14,8,0.86) 100%),
+    linear-gradient(90deg, rgba(20,14,8,0.60), transparent 62%);
+}
+.lede-inner { position: relative; z-index: 2; padding-top: 140px; padding-bottom: 76px; color: var(--paper); }
+.lede-eyebrow {
+  font-variant: all-small-caps;
+  letter-spacing: 0.34em;
+  font-size: 13px;
+  color: var(--gilt-bright);
+  margin: 0 0 20px;
+}
+.lede-title {
+  font-family: "Cormorant Garamond", serif;
+  font-weight: 300;
+  font-size: clamp(44px, 6vw, 90px);
+  line-height: 1.0;
+  letter-spacing: -0.012em;
+  color: var(--paper);
+  margin: 0;
+}
+.lede-title em { font-style: italic; color: var(--gilt-bright); }
+.lede-sub { margin-top: 26px; max-width: 540px; font-size: 18px; line-height: 1.6; color: rgba(244,236,224,0.82); }
+.lede-cta { margin-top: 38px; display: flex; gap: 18px; flex-wrap: wrap; }
+
+/* ── Trust strip ── */
+.marks { border-bottom: 1px solid var(--rule); }
+.marks-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
+.mark-item { padding: 56px 44px 56px 0; }
+.mark-item + .mark-item { padding-left: 44px; border-left: 1px solid var(--rule); }
+.mark-label { font-variant: all-small-caps; letter-spacing: 0.24em; font-size: 13px; color: var(--gilt); margin-bottom: 12px; }
+.mark-item p { color: var(--ink-soft); font-size: 16px; line-height: 1.55; max-width: 34ch; margin: 0; }
+
+/* ── Cleaner section header ── */
+.sect-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: 56px;
+}
+.sect-eyebrow { font-variant: all-small-caps; letter-spacing: 0.28em; font-size: 12px; color: var(--gilt); margin: 0 0 10px; }
+.sect-eyebrow.gilt { color: var(--gilt-bright); }
+.sect-head h2 { font-family: "Cormorant Garamond", serif; font-weight: 300; font-size: clamp(34px, 4vw, 56px); line-height: 1; margin: 0; }
+.sect-link { font-style: italic; font-size: 16px; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 3px; white-space: nowrap; }
+.sect-link:hover { color: var(--gilt); border-color: var(--gilt); }
+
+/* ── Service ── */
+.service { background: var(--ink); color: var(--paper); position: relative; z-index: 2; }
+.service .container { padding-top: 100px; padding-bottom: 100px; }
+.service-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 72px; align-items: center; }
+.service-copy h2 { font-family: "Cormorant Garamond", serif; font-weight: 300; font-size: clamp(40px, 5vw, 72px); line-height: 1.0; margin: 0 0 24px; }
+.service-lead { color: rgba(244,236,224,0.74); font-size: 18px; line-height: 1.65; max-width: 52ch; margin: 0 0 18px; }
+.service-copy .btn { margin-top: 18px; }
+.service-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid rgba(244,236,224,0.18); }
+.service-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(244,236,224,0.18);
+  font-size: 17px;
+}
+.service-list li span { color: var(--paper); }
+.service-list li em { color: var(--gilt-bright); font-style: italic; font-size: 13px; font-variant: all-small-caps; letter-spacing: 0.12em; }
+
+@media (max-width: 880px) {
+  .lede-inner { padding-top: 120px; padding-bottom: 56px; }
+  .marks-grid { grid-template-columns: 1fr; }
+  .mark-item, .mark-item + .mark-item { padding: 30px 0; border-left: none; }
+  .mark-item + .mark-item { border-top: 1px solid var(--rule); }
+  .service-grid { grid-template-columns: 1fr; gap: 40px; }
+  .service .container { padding-top: 64px; padding-bottom: 64px; }
+  .sect-head { flex-direction: column; align-items: flex-start; }
+}
