@@ -73,6 +73,9 @@ services:
       - wp_data:/var/www/html
       - ./wp-content/themes/maison-opus:/var/www/html/wp-content/themes/maison-opus
       - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+      # Same PHP limits as the web container: wp-cli runs the whole of
+      # WordPress and exhausted the default 128M on `wp plugin list`.
+      - ./php-uploads.ini:/usr/local/etc/php/conf.d/uploads.ini:ro
     entrypoint: wp
     command: ["--info"]
 
