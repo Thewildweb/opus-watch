@@ -59,6 +59,33 @@ else
 fi
 
 # ─────────────────────────────────────────────────────────────────
+say "E-mail — afzender op het geauthenticeerde domein"
+# DKIM only aligns when the From address sits on the domain Brevo authenticated.
+# Order mail was going out as erik@datadepartment.io, which fails DMARC.
+set_option woocommerce_email_from_name    "Opus Watches"
+set_option woocommerce_email_from_address "info@opus.watches"
+set_option woocommerce_stock_email_recipient "info@opus.watches"
+
+read -r -d '' MAIL_PHP <<'PHP' || true
+// Store-facing notifications go to the shop, not to whoever built it.
+foreach ( array( 'new_order', 'cancelled_order', 'failed_order' ) as $email ) {
+	$key      = 'woocommerce_' . $email . '_settings';
+	$settings = get_option( $key, array() );
+	if ( ! is_array( $settings ) ) {
+		$settings = array();
+	}
+	if ( isset( $settings['recipient'] ) && 'info@opus.watches' === $settings['recipient'] ) {
+		WP_CLI::log( '    ' . str_pad( $email, 28 ) . ' = info@opus.watches (unchanged)' );
+		continue;
+	}
+	$settings['recipient'] = 'info@opus.watches';
+	update_option( $key, $settings );
+	WP_CLI::log( '    ' . str_pad( $email, 28 ) . ' : -> info@opus.watches' );
+}
+PHP
+$WP eval "$MAIL_PHP"
+
+# ─────────────────────────────────────────────────────────────────
 say "Order attribution — uit, want het zet trackingcookies"
 # WooCommerce's order attribution loads sourcebuster.js, which drops seven
 # first-party cookies (sbjs_first, sbjs_current, sbjs_udata, …) recording

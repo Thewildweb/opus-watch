@@ -18,6 +18,7 @@
     content: |
       MYSQL_ROOT_PASSWORD={{ mysql_root_password }}
       MYSQL_PASSWORD={{ mysql_wordpress_password }}
+      BREVO_API_KEY={{ brevo_api_key }}
     owner: erik
     group: erik
     mode: "0600"

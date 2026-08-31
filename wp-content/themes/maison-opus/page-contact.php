@@ -87,7 +87,7 @@ $intro    = trim( wp_strip_all_tags( get_the_content() ) );
 			<div class="contact-block">
 				<h3><?php esc_html_e( 'Bereikbaar', 'maison-opus' ); ?></h3>
 				<p>
-					<a href="mailto:info@opuswatches.nl">info@opuswatches.nl</a><br/>
+					<a href="mailto:info@opus.watches">info@opus.watches</a><br/>
 					<a href="tel:+31202614827">+31 20 261 4827</a>
 				</p>
 			</div>
