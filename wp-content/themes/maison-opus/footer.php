@@ -52,7 +52,32 @@
 		</div>
 		<div class="foot-bot">
 			<div>© <?php echo esc_html( gmdate( 'Y' ) ); ?> Opus Watches · <?php esc_html_e( 'Onafhankelijk horlogehuis', 'maison-opus' ); ?> · KvK 93934866</div>
-			<div><?php esc_html_e( 'Colofon', 'maison-opus' ); ?> &nbsp;·&nbsp; <?php esc_html_e( 'Privacy', 'maison-opus' ); ?> &nbsp;·&nbsp; <?php esc_html_e( 'Voorwaarden', 'maison-opus' ); ?></div>
+			<div class="foot-legal">
+				<?php
+				// These were plain text, which is no use to a customer looking
+				// for the terms they just agreed to. Only published pages are
+				// linked — the legal pages start life as drafts.
+				$opus_legal = array(
+					'contact'              => __( 'Colofon', 'maison-opus' ),
+					'privacyverklaring'    => __( 'Privacy', 'maison-opus' ),
+					'algemene-voorwaarden' => __( 'Voorwaarden', 'maison-opus' ),
+				);
+				$opus_legal_out = array();
+				foreach ( $opus_legal as $opus_slug => $opus_label ) {
+					$opus_page = get_page_by_path( $opus_slug );
+					if ( ! $opus_page || 'publish' !== $opus_page->post_status ) {
+						continue;
+					}
+					$opus_tid         = apply_filters( 'wpml_object_id', $opus_page->ID, 'page', true );
+					$opus_legal_out[] = sprintf(
+						'<a href="%s">%s</a>',
+						esc_url( get_permalink( $opus_tid ) ),
+						esc_html( $opus_label )
+					);
+				}
+				echo implode( ' &nbsp;·&nbsp; ', $opus_legal_out ); // phpcs:ignore WordPress.Security.EscapeOutput -- built from escaped parts.
+				?>
+			</div>
 		</div>
 	</div>
 	<?php wp_footer(); ?>
