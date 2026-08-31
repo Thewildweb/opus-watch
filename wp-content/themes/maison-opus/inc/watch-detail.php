@@ -1,14 +1,15 @@
 <?php
 /**
  * Watch database — single reference detail view.
- * Loaded via template_include for /database/watch/{id}/ (see watchdb.php).
+ * Loaded via template_include for /database/{brand}/{name}-{ref}-{id}/
+ * (see watchdb.php for the route, watchdb-seo.php for the URL and metadata).
  *
  * @package maison-opus
  */
 
 defined( 'ABSPATH' ) || exit;
 
-$watch = opus_watch_get( (int) get_query_var( 'opus_watch_id' ) );
+$watch = opus_watch_current();
 
 if ( ! $watch ) {
 	status_header( 404 );
@@ -56,6 +57,7 @@ get_header();
 	<nav class="wdetail-crumb">
 		<a href="<?php echo esc_url( home_url( '/' ) ); ?>">Home</a> /
 		<a href="<?php echo esc_url( $db_url ); ?>">Database</a> /
+		<a href="<?php echo esc_url( home_url( '/database/' . sanitize_title( $watch['brand'] ) . '/' ) ); ?>"><?php echo esc_html( $watch['brand'] ); ?></a> /
 		<span><?php echo esc_html( $watch['name'] ); ?></span>
 	</nav>
 

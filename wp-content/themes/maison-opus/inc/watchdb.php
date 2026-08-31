@@ -202,9 +202,21 @@ function opus_watch_facets() {
 	return $facets;
 }
 
-/** Detail-page URL for a watch row. */
-function opus_watch_permalink( $id ) {
-	return home_url( '/database/watch/' . (int) $id . '/' );
+/**
+ * Detail-page URL for a watch.
+ *
+ * Accepts a row (cheap — the caller usually has one) or an id, which costs a
+ * lookup because the readable slug is built from brand, name and reference.
+ * See opus_watch_slug() in watchdb-seo.php.
+ */
+function opus_watch_permalink( $watch ) {
+	if ( ! is_array( $watch ) ) {
+		$watch = opus_watch_get( (int) $watch );
+	}
+	if ( ! $watch ) {
+		return home_url( '/database/' );
+	}
+	return home_url( '/database/' . opus_watch_slug( $watch ) . '/' );
 }
 
 /** Render a single result card (used for the server-rendered first page). */
@@ -224,7 +236,7 @@ function opus_watch_card_html( $it ) {
 	}
 	ob_start();
 	?>
-	<a class="wdb-card" href="<?php echo esc_url( opus_watch_permalink( $it['id'] ) ); ?>">
+	<a class="wdb-card" href="<?php echo esc_url( opus_watch_permalink( $it ) ); ?>">
 		<?php if ( ! empty( $it['limited'] ) ) : ?><span class="wdb-badge"><?php esc_html_e( 'Gelimiteerd', 'maison-opus' ); ?></span><?php endif; ?>
 		<span class="wdb-card-brand"><?php echo esc_html( $it['brand'] ); ?></span>
 		<span class="wdb-card-name"><?php echo esc_html( $it['name'] ); ?></span>
@@ -291,7 +303,7 @@ add_action(
 					);
 					// Decorate items with their detail URL.
 					foreach ( $result['items'] as &$it ) {
-						$it['permalink'] = opus_watch_permalink( $it['id'] );
+						$it['permalink'] = opus_watch_permalink( $it );
 					}
 					return rest_ensure_response( $result );
 				},
@@ -389,7 +401,9 @@ function opus_db_brand_url( $term ) {
 add_filter(
 	'template_include',
 	function ( $template ) {
-		if ( get_query_var( 'opus_watch_id' ) ) {
+		// Either route: the readable slug, or the legacy numeric id that
+		// template_redirect sends on to it.
+		if ( get_query_var( 'opus_watch_id' ) || get_query_var( 'opus_watch_slug' ) ) {
 			$detail = get_template_directory() . '/inc/watch-detail.php';
 			if ( file_exists( $detail ) ) {
 				return $detail;
