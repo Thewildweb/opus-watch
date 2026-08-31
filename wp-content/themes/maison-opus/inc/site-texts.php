@@ -467,13 +467,46 @@ function opus_site_texts_save() {
  * Admin screen.
  * ───────────────────────────────────────────────────────────── */
 
+/**
+ * URL of the WPML screen that rescans the theme for new strings.
+ *
+ * The slug has moved between WPML versions — `theme-string-localization`
+ * 403s on 4.9 — so find it in the registered menu rather than hardcoding,
+ * and fall back to String Translation, then to the WPML menu itself.
+ * Returns '' when WPML is not active, and the note is then not shown.
+ */
+function opus_wpml_localization_url() {
+	if ( ! defined( 'ICL_SITEPRESS_VERSION' ) ) {
+		return '';
+	}
+
+	// Verified on WPML 4.9. Older versions used `theme-string-localization`,
+	// which 403s here, so check the menu for either before falling back.
+	global $submenu;
+	foreach ( (array) $submenu as $items ) {
+		foreach ( (array) $items as $item ) {
+			$slug = $item[2] ?? '';
+			if ( false !== stripos( $slug, 'theme-localization.php' )
+				|| false !== stripos( $slug, 'theme-string-localization' ) ) {
+				return admin_url( 'admin.php?page=' . $slug );
+			}
+		}
+	}
+
+	return admin_url( 'admin.php?page=sitepress-multilingual-cms/menu/theme-localization.php' );
+}
+
 function opus_site_texts_menu() {
-	$hook = add_theme_page(
-		'Thema-instellingen',
-		'Thema-instellingen',
+	// Top level rather than tucked under Weergave: this is the screen the shop
+	// uses most, and nobody looks for site copy under "Appearance".
+	$hook = add_menu_page(
+		'Teksten & afbeeldingen',
+		'Teksten & afbeeldingen',
 		'edit_theme_options',
 		'opus-site-texts',
-		'opus_site_texts_render'
+		'opus_site_texts_render',
+		'dashicons-edit-page',
+		3 // directly under Dashboard, above the Woo/posts block.
 	);
 	add_action( 'load-' . $hook, function () {
 		wp_enqueue_media();
@@ -505,7 +538,7 @@ function opus_site_texts_admin_bar( $bar ) {
 	$bar->add_node( array(
 		'id'    => 'opus-site-texts',
 		'title' => 'Teksten bewerken',
-		'href'  => admin_url( 'themes.php?page=opus-site-texts&tab=' . $tab ),
+		'href'  => admin_url( 'admin.php?page=opus-site-texts&tab=' . $tab ),
 	) );
 }
 add_action( 'admin_bar_menu', 'opus_site_texts_admin_bar', 90 );
@@ -548,11 +581,23 @@ function opus_site_texts_render() {
 	$search    = isset( $_GET['zoek'] ) ? trim( (string) wp_unslash( $_GET['zoek'] ) ) : '';
 	$active    = isset( $_GET['tab'] ) && ( isset( $sections[ $_GET['tab'] ] ) || 'afbeeldingen' === $_GET['tab'] )
 		? sanitize_key( $_GET['tab'] ) : 'algemeen';
-	$base_url  = admin_url( 'themes.php?page=opus-site-texts' );
+	$base_url  = admin_url( 'admin.php?page=opus-site-texts' );
 	?>
 	<div class="wrap">
 		<h1>Thema-instellingen</h1>
 		<p>Alle vaste teksten en afbeeldingen van de website, per onderdeel. Een tekstaanpassing geldt overal waar de tekst voorkomt. Leeg laten of leegmaken = standaard gebruiken.</p>
+
+		<?php $opus_wpml_url = opus_wpml_localization_url(); ?>
+		<?php if ( $opus_wpml_url ) : ?>
+			<div class="notice notice-info inline" style="margin: 12px 0;">
+				<p>
+					<strong>Mist u een tekst?</strong>
+					Teksten die later aan de website zijn toegevoegd verschijnen hier pas nadat WPML het thema opnieuw heeft doorzocht.
+					Ga daarvoor naar <a href="<?php echo esc_url( $opus_wpml_url ); ?>">WPML &rsaquo; Thema- en pluginlokalisatie</a>
+					en klik daar op <em>Strings scannen in thema&rsquo;s, plugins en WordPress</em>. Daarna staat de nieuwe tekst in de lijst hieronder.
+				</p>
+			</div>
+		<?php endif; ?>
 
 		<?php foreach ( $notices as $notice ) : ?>
 			<div class="notice <?php echo strpos( $notice, 'niet opgeslagen' ) !== false || strpos( $notice, 'kon niet' ) !== false ? 'notice-error' : 'notice-success'; ?>"><p><?php echo wp_kses_post( $notice ); ?></p></div>
