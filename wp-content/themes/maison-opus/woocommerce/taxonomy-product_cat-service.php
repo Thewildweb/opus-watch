@@ -30,7 +30,8 @@ do_action( 'woocommerce_before_main_content' );
 		<a class="btn solid svc-intro__cta" href="#svcform"><?php esc_html_e( 'Onderhoud aanvragen', 'maison-opus' ); ?></a>
 	</div>
 	<figure class="svc-intro__media">
-		<img src="<?php echo esc_url( opus_theme_image_url( 'diensten_image', 'assets/images/watch-speedmaster.jpg' ) ); ?>"
+		<?php $opus_img = opus_theme_image( 'diensten_image', 'assets/images/watch-speedmaster.webp' ); ?>
+		<img src="<?php echo esc_url( $opus_img['url'] ); ?>" <?php echo opus_image_dims( $opus_img ); // phpcs:ignore WordPress.Security.EscapeOutput -- integers only. ?>
 			alt="<?php echo esc_attr__( 'Omega Speedmaster Professional chronograaf', 'maison-opus' ); ?>" loading="lazy" decoding="async" />
 	</figure>
 </div>

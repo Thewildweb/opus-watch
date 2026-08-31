@@ -332,3 +332,41 @@ form.cart.is-adding { opacity: 0.6; pointer-events: none; }
 .opus-drawer__notices .woocommerce-message::before { display: none; }
 .opus-drawer__notices li { list-style: none; }
 .opus-drawer__notices li + li { margin-top: 8px; }
+
+/* ── Dismissible notices ──
+   JS wraps each WooCommerce notice so the close button has somewhere valid
+   to live: an error is rendered as a <ul>, which cannot hold a <button>. */
+.opus-notice {
+  position: relative;
+  transition: opacity .3s ease, transform .3s ease;
+}
+.opus-notice.is-dismissed { opacity: 0; transform: translateY(-6px); }
+.opus-notice > .woocommerce-message,
+.opus-notice > .woocommerce-error,
+.opus-notice > .woocommerce-info { padding-right: 46px; }
+.opus-notice__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  opacity: 0.55;
+  cursor: pointer;
+  transition: opacity .2s;
+}
+.opus-notice__close:hover { opacity: 1; }
+.opus-notice__close:focus-visible {
+  outline: 2px solid var(--gilt, #9c7536);
+  outline-offset: 2px;
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .opus-notice { transition: none; }
+}

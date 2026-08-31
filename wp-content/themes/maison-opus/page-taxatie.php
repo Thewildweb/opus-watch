@@ -30,7 +30,8 @@ $goals     = array( __( 'Verkoop', 'maison-opus' ), __( 'Verzekering', 'maison-o
 				<a class="btn solid" href="#taxform"><?php esc_html_e( 'Vraag een taxatie aan', 'maison-opus' ); ?></a>
 			</div>
 			<div class="zoek-hero-media">
-				<img src="<?php echo esc_url( opus_theme_image_url( 'taxatie_image', 'assets/images/hero-rolex.jpg' ) ); ?>"
+				<?php $opus_img = opus_theme_image( 'taxatie_image', 'assets/images/hero-rolex.webp' ); ?>
+				<img src="<?php echo esc_url( $opus_img['url'] ); ?>" <?php echo opus_image_dims( $opus_img ); // phpcs:ignore WordPress.Security.EscapeOutput -- integers only. ?>
 					alt="<?php echo esc_attr__( 'Horloge onder loep in het atelier', 'maison-opus' ); ?>" loading="eager" decoding="async" />
 			</div>
 		</div>

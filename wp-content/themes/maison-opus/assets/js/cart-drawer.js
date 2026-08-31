@@ -131,6 +131,11 @@
 			} );
 			noticeSlot.insertAdjacentHTML( 'beforeend', node.outerHTML );
 		} );
+
+		// Same close button and five-second timer as the ones in the page.
+		if ( window.opusNotices ) {
+			window.opusNotices.enhance( noticeSlot );
+		}
 	}
 
 	$( document.body ).on( 'wc_fragments_refreshed wc_fragments_loaded', function () {

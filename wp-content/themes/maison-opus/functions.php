@@ -133,14 +133,70 @@ function maison_opus_cart_assets() {
 	}
 
 	wp_enqueue_script(
+		'maison-opus-notices',
+		get_template_directory_uri() . '/assets/js/notices.js',
+		array(),
+		maison_opus_asset_ver( '/assets/js/notices.js' ),
+		true
+	);
+
+	wp_enqueue_script(
 		'maison-opus-cart-drawer',
 		get_template_directory_uri() . '/assets/js/cart-drawer.js',
-		array( 'jquery', 'wc-cart-fragments' ),
+		array( 'jquery', 'wc-cart-fragments', 'maison-opus-notices' ),
 		maison_opus_asset_ver( '/assets/js/cart-drawer.js' ),
 		true
 	);
 }
 add_action( 'wp_enqueue_scripts', 'maison_opus_cart_assets', 20 );
+
+/**
+ * Drop WooCommerce assets that the page in front of the visitor cannot use.
+ *
+ * wc-blocks.css (14 KB) styles the cart and checkout *blocks*, and was loading
+ * on the homepage, the database and every page besides. The classic templates
+ * this theme uses never touch it.
+ *
+ * Filtering the tag rather than dequeuing: WooCommerce enqueues these after
+ * both wp_enqueue_scripts and the wp_print_styles action have run, so at no
+ * point that a theme can hook is the handle actually in the queue.
+ *
+ * Note what is deliberately left alone: wc-cart-fragments, because the header
+ * count and the mini-cart drawer are on every page, and the woocommerce-*
+ * stylesheets, because the homepage renders product tiles.
+ */
+function maison_opus_trim_assets( $tag, $handle ) {
+	$block_styles = array( 'wc-blocks-style', 'wc-blocks-style-cart', 'wc-blocks-style-checkout' );
+
+	if ( ! in_array( $handle, $block_styles, true ) ) {
+		return $tag;
+	}
+	if ( ! function_exists( 'is_cart' ) ) {
+		return $tag;
+	}
+	if ( is_cart() || is_checkout() || is_account_page() ) {
+		return $tag;
+	}
+	return '';
+}
+add_filter( 'style_loader_tag', 'maison_opus_trim_assets', 10, 2 );
+
+/**
+ * jquery-migrate exists to keep pre-3.0 jQuery code working. Nothing here
+ * needs it, and it is a request on every page.
+ */
+add_action(
+	'wp_default_scripts',
+	function ( $scripts ) {
+		if ( is_admin() || empty( $scripts->registered['jquery'] ) ) {
+			return;
+		}
+		$scripts->registered['jquery']->deps = array_diff(
+			$scripts->registered['jquery']->deps,
+			array( 'jquery-migrate' )
+		);
+	}
+);
 
 /** The drawer lives at the top of the body, outside the footer element. */
 add_action(
@@ -437,7 +493,7 @@ function opus_brand_image_url( $brand, $size = 'large' ) {
  */
 function opus_brand_logo_url( $slug ) {
 	$dir = get_template_directory() . '/assets/images/brands/';
-	foreach ( array( 'svg', 'png', 'webp' ) as $ext ) {
+	foreach ( array( 'svg', 'webp', 'png' ) as $ext ) {
 		if ( file_exists( $dir . $slug . '.' . $ext ) ) {
 			return maison_opus_asset_uri( 'assets/images/brands/' . $slug . '.' . $ext );
 		}
@@ -453,7 +509,7 @@ function opus_brand_logo_url( $slug ) {
  */
 function opus_brand_hero_url( $term ) {
 	$dir = get_template_directory() . '/assets/images/heroes/';
-	foreach ( array( 'jpg', 'webp', 'png' ) as $ext ) {
+	foreach ( array( 'webp', 'jpg', 'png' ) as $ext ) {
 		if ( file_exists( $dir . $term->slug . '.' . $ext ) ) {
 			return maison_opus_asset_uri( 'assets/images/heroes/' . $term->slug . '.' . $ext );
 		}

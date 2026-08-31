@@ -59,6 +59,20 @@ else
 fi
 
 # ─────────────────────────────────────────────────────────────────
+say "Order attribution — uit, want het zet trackingcookies"
+# WooCommerce's order attribution loads sourcebuster.js, which drops seven
+# first-party cookies (sbjs_first, sbjs_current, sbjs_udata, …) recording
+# referrer, campaign and UTM data on the very first page view, before anyone
+# consents to anything. That is non-essential tracking: keep it and the site
+# legally needs a cookie banner.
+#
+# The trade-off is losing the "how did this customer find us" field on orders.
+# Umami already answers that at an aggregate level. If the customer would
+# rather have per-order attribution, set this back to yes AND add a consent
+# banner — the two go together.
+set_option woocommerce_feature_order_attribution_enabled no
+
+# ─────────────────────────────────────────────────────────────────
 say "Verzending — placeholder rates, to be confirmed by the customer"
 # The wc CLI can only *list* zone locations, so the zone is built through
 # WooCommerce's own API instead.

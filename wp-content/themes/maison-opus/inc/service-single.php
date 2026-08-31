@@ -20,7 +20,7 @@ $video      = get_post_meta( $pid, '_opus_video_url', true );
 // Fallback image for the lead slot when there is no video.
 $lead_img = has_post_thumbnail( $pid )
 	? get_the_post_thumbnail_url( $pid, 'large' )
-	: opus_theme_image_url( 'service_fallback', 'assets/images/hero-rolex.jpg' );
+	: opus_theme_image_url( 'service_fallback', 'assets/images/hero-rolex.webp' );
 
 $gallery_ids = $product->get_gallery_image_ids();
 ?>

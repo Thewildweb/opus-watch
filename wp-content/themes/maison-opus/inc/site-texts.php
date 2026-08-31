@@ -59,17 +59,57 @@ add_filter( 'gettext_maison-opus', 'opus_text_override', 20, 3 );
  * the bundled theme asset as default.
  *
  * @param string $key         Image key (see opus_theme_image_fields()).
- * @param string $default_rel Theme-relative default, e.g. 'assets/images/hero-rolex.jpg'.
+ * @param string $default_rel Theme-relative default, e.g. 'assets/images/hero-rolex.webp'.
  */
 function opus_theme_image_url( $key, $default_rel ) {
+	$image = opus_theme_image( $key, $default_rel );
+	return $image['url'];
+}
+
+/**
+ * The same image, with its dimensions.
+ *
+ * Templates need width and height on the tag or the page reflows once the
+ * photo loads. Returns array( url, width, height ); width and height are 0
+ * when they cannot be determined, and the caller then omits the attributes.
+ *
+ * @param string $key         Image key (see opus_theme_image_fields()).
+ * @param string $default_rel Theme-relative default, e.g. 'assets/images/hero-rolex.webp'.
+ */
+function opus_theme_image( $key, $default_rel ) {
 	$images = get_option( 'opus_theme_images', array() );
+
 	if ( ! empty( $images[ $key ] ) ) {
-		$url = wp_get_attachment_image_url( (int) $images[ $key ], 'full' );
-		if ( $url ) {
-			return $url;
+		$src = wp_get_attachment_image_src( (int) $images[ $key ], 'full' );
+		if ( $src ) {
+			return array(
+				'url'    => $src[0],
+				'width'  => (int) $src[1],
+				'height' => (int) $src[2],
+			);
 		}
 	}
-	return maison_opus_asset_uri( $default_rel );
+
+	static $sizes = array();
+	if ( ! isset( $sizes[ $default_rel ] ) ) {
+		$path                   = get_template_directory() . '/' . ltrim( $default_rel, '/' );
+		$size                   = file_exists( $path ) ? getimagesize( $path ) : false;
+		$sizes[ $default_rel ] = $size ? array( (int) $size[0], (int) $size[1] ) : array( 0, 0 );
+	}
+
+	return array(
+		'url'    => maison_opus_asset_uri( $default_rel ),
+		'width'  => $sizes[ $default_rel ][0],
+		'height' => $sizes[ $default_rel ][1],
+	);
+}
+
+/** `width="1920" height="1280"`, or '' when the size is unknown. */
+function opus_image_dims( $image ) {
+	if ( empty( $image['width'] ) || empty( $image['height'] ) ) {
+		return '';
+	}
+	return sprintf( 'width="%d" height="%d"', $image['width'], $image['height'] );
 }
 
 /* ─────────────────────────────────────────────────────────────
@@ -123,37 +163,37 @@ function opus_theme_image_fields() {
 	return array(
 		'home_hero'        => array(
 			'label'   => 'Homepage — hero',
-			'default' => 'assets/images/hero-heritage.jpg',
+			'default' => 'assets/images/hero-heritage.webp',
 			'hint'    => 'De grote afbeelding bovenaan de homepage.',
 		),
 		'home_tile_service' => array(
 			'label'   => 'Homepage — tegel onderhoud',
-			'default' => 'assets/images/tile-movement.jpg',
+			'default' => 'assets/images/tile-movement.webp',
 			'hint'    => 'Afbeelding bij het blok "Onderhoud & restauratie".',
 		),
 		'home_tile_buy'    => array(
 			'label'   => 'Homepage — tegel inkoop',
-			'default' => 'assets/images/tile-buy.jpg',
+			'default' => 'assets/images/tile-buy.webp',
 			'hint'    => 'Afbeelding bij het blok "Wij kopen ook uw horloge".',
 		),
 		'taxatie_image'    => array(
 			'label'   => 'Taxatie — paginafoto',
-			'default' => 'assets/images/hero-rolex.jpg',
+			'default' => 'assets/images/hero-rolex.webp',
 			'hint'    => 'De foto naast de introductie op de taxatiepagina.',
 		),
 		'zoekopdracht_image' => array(
 			'label'   => 'Zoekopdracht — paginafoto',
-			'default' => 'assets/images/hero-rolex.jpg',
+			'default' => 'assets/images/hero-rolex.webp',
 			'hint'    => 'De foto naast de introductie op de zoekopdrachtpagina.',
 		),
 		'diensten_image'   => array(
 			'label'   => 'Diensten — paginafoto',
-			'default' => 'assets/images/watch-speedmaster.jpg',
+			'default' => 'assets/images/watch-speedmaster.webp',
 			'hint'    => 'De foto naast de introductie op de dienstenpagina.',
 		),
 		'service_fallback' => array(
 			'label'   => 'Dienst — standaardafbeelding',
-			'default' => 'assets/images/hero-rolex.jpg',
+			'default' => 'assets/images/hero-rolex.webp',
 			'hint'    => 'Gebruikt op een dienstpagina zonder eigen video of afbeelding.',
 		),
 	);

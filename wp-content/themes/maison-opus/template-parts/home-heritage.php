@@ -19,7 +19,8 @@ $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 
 <!-- ── HERO ──────────────────────────────────────────────── -->
 <section class="lede">
-	<img class="lede-img" src="<?php echo esc_url( opus_theme_image_url( 'home_hero', 'assets/images/hero-heritage.jpg' ) ); ?>"
+	<?php $opus_hero = opus_theme_image( 'home_hero', 'assets/images/hero-heritage.webp' ); ?>
+	<img class="lede-img" src="<?php echo esc_url( $opus_hero['url'] ); ?>" <?php echo opus_image_dims( $opus_hero ); // phpcs:ignore WordPress.Security.EscapeOutput -- integers only. ?>
 		alt="<?php esc_attr_e( 'Een chique gouden horloge met groene wijzerplaat', 'maison-opus' ); ?>" fetchpriority="high" decoding="async" />
 	<div class="lede-scrim"></div>
 	<div class="container lede-inner">
@@ -39,7 +40,8 @@ $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 	<div class="container">
 		<div class="tiles cols-3">
 			<a class="tile" href="<?php echo esc_url( $shop_url ); ?>">
-				<img src="<?php echo esc_url( opus_theme_image_url( 'home_tile_service', 'assets/images/tile-movement.jpg' ) ); ?>" alt="" loading="lazy" />
+				<?php $opus_tile = opus_theme_image( 'home_tile_service', 'assets/images/tile-movement.webp' ); ?>
+				<img src="<?php echo esc_url( $opus_tile['url'] ); ?>" <?php echo opus_image_dims( $opus_tile ); // phpcs:ignore WordPress.Security.EscapeOutput -- integers only. ?> alt="" loading="lazy" decoding="async" />
 				<div class="tile-scrim"></div>
 				<div class="tile-body">
 					<h3 class="tile-title"><?php esc_html_e( 'Bijzondere horloges,', 'maison-opus' ); ?><br/><?php esc_html_e( 'op voorraad.', 'maison-opus' ); ?></h3>
@@ -55,7 +57,8 @@ $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 			</a>
 
 			<a class="tile" href="<?php echo esc_url( $service_url ); ?>">
-				<img src="<?php echo esc_url( opus_theme_image_url( 'home_tile_buy', 'assets/images/tile-buy.jpg' ) ); ?>" alt="" loading="lazy" />
+				<?php $opus_tile = opus_theme_image( 'home_tile_buy', 'assets/images/tile-buy.webp' ); ?>
+				<img src="<?php echo esc_url( $opus_tile['url'] ); ?>" <?php echo opus_image_dims( $opus_tile ); // phpcs:ignore WordPress.Security.EscapeOutput -- integers only. ?> alt="" loading="lazy" decoding="async" />
 				<div class="tile-scrim"></div>
 				<div class="tile-body">
 					<h3 class="tile-title"><?php esc_html_e( 'Onderhoud &', 'maison-opus' ); ?><br/><?php esc_html_e( 'restauratie.', 'maison-opus' ); ?></h3>

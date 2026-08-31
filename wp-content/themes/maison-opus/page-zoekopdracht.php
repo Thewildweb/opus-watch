@@ -27,7 +27,8 @@ $states    = array( __( 'Maakt niet uit', 'maison-opus' ), __( 'Nieuw', 'maison-
 				<a class="btn solid" href="#zoekform"><?php esc_html_e( 'Plaats een zoekopdracht', 'maison-opus' ); ?></a>
 			</div>
 			<div class="zoek-hero-media">
-				<img src="<?php echo esc_url( opus_theme_image_url( 'zoekopdracht_image', 'assets/images/hero-rolex.jpg' ) ); ?>"
+				<?php $opus_img = opus_theme_image( 'zoekopdracht_image', 'assets/images/hero-rolex.webp' ); ?>
+				<img src="<?php echo esc_url( $opus_img['url'] ); ?>" <?php echo opus_image_dims( $opus_img ); // phpcs:ignore WordPress.Security.EscapeOutput -- integers only. ?>
 					alt="<?php echo esc_attr__( 'Bijzonder horloge', 'maison-opus' ); ?>" loading="eager" decoding="async" />
 			</div>
 		</div>
