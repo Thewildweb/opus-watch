@@ -83,15 +83,18 @@ function maison_opus_assets() {
 }
 
 /**
- * Asset version string. In a local environment we use the file's mtime so
- * edits bust the browser cache immediately; elsewhere the theme version.
+ * Asset version string — the file's mtime, in every environment.
+ *
+ * This used to fall back to MAISON_OPUS_VERSION outside local, which meant
+ * production served `?ver=0.1.0` forever: a deploy changed the file but not
+ * the URL, so browsers and Cloudflare (max-age 14400) kept handing out the
+ * previous stylesheet. The theme version only changes when someone remembers
+ * to bump it; the mtime changes whenever the file does.
  */
 function maison_opus_asset_ver( $rel ) {
-	if ( 'local' === wp_get_environment_type() ) {
-		$path = get_template_directory() . $rel;
-		if ( file_exists( $path ) ) {
-			return (string) filemtime( $path );
-		}
+	$path = get_template_directory() . $rel;
+	if ( file_exists( $path ) ) {
+		return (string) filemtime( $path );
 	}
 	return MAISON_OPUS_VERSION;
 }
