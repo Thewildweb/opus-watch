@@ -1,11 +1,27 @@
 #!/usr/bin/env bash
-# Migrate the local dev site (docker compose in repo root) to production.
+#
+# ONE-TIME SEED of production from the local dev site. Read this before running.
+#
+# This DROPS the production database and replaces it with the local one. It was
+# the right tool for go-live, on an empty shop. It is now the wrong tool: from
+# the moment the customer added their first watch, order or page in wp-admin,
+# production is the source of truth and this destroys it.
+#
+# The routine deploy is:  ansible-playbook playbooks/site.yml
+# That rsyncs the theme and mu-plugins from the repo and touches no content.
+#
 # - Exports the local DB and wp-content (plugins/uploads/languages; theme and
 #   mu-plugins are synced from the repo by Ansible instead).
 # - Imports on the server, then runs a serialized-data-safe URL rewrite
 #   (wp search-replace) from the local URL to https://opus.watches.
-# Idempotent: safe to re-run (it overwrites DB + files on the server).
 set -euo pipefail
+
+if [ "${I_UNDERSTAND_THIS_WIPES_PRODUCTION:-}" != "yes" ]; then
+	echo "Refusing to run: this replaces the production database with the local one."
+	echo "If that is genuinely what you want:"
+	echo "  I_UNDERSTAND_THIS_WIPES_PRODUCTION=yes $0"
+	exit 1
+fi
 
 HOST="${HOST:-erik@85.17.236.215}"
 SITE_DIR="${SITE_DIR:-/opt/opus-watch}"

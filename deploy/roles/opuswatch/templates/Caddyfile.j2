@@ -9,5 +9,32 @@
 	@blocked path /wp-config.php /readme.html /license.txt
 	respond @blocked 403
 
+	header {
+		# One year of HTTPS-only. No `preload` — that ships the domain to a
+		# browser-baked list and is slow and awkward to undo. Note that
+		# includeSubDomains binds any future subdomain to HTTPS as well.
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+
+		# Don't let a browser second-guess a declared content type.
+		X-Content-Type-Options "nosniff"
+
+		# Send the full URL to ourselves, only the origin to anyone else.
+		Referrer-Policy "strict-origin-when-cross-origin"
+
+		# Clickjacking: modern browsers read frame-ancestors, older ones the
+		# legacy header. Deliberately not a full CSP — that needs a proper
+		# audit of WooCommerce and the admin first.
+		X-Frame-Options "SAMEORIGIN"
+		Content-Security-Policy "frame-ancestors 'self'"
+
+		# Nothing here needs a camera, a microphone or a location.
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), interest-cohort=()"
+
+		# Version disclosure: PHP announced 8.3.33 on every response, which is
+		# a free hint about which CVEs to try.
+		-X-Powered-By
+		-Server
+	}
+
 	reverse_proxy wordpress:80
 }

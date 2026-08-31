@@ -3,3 +3,13 @@
   command: docker compose up -d --remove-orphans
   args:
     chdir: "{{ site_dir }}"
+
+# `compose up -d` does not restart a container whose only change is the
+# content of a bind-mounted file, so a Caddyfile edit would sit on disk
+# unread. `caddy reload` adapts the config but was observed not to take
+# effect; a restart is a second of downtime and definitely applies it.
+# Certificates live on a volume, so nothing is re-issued.
+- name: Restart Caddy
+  command: docker compose restart caddy
+  args:
+    chdir: "{{ site_dir }}"

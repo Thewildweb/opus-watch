@@ -23,9 +23,22 @@ ansible-playbook playbooks/bootstrap.yml
 ansible-playbook playbooks/site.yml \
   --become-password-file <(pass projects/ODC-infra/erik-sudo | head -1)
 
-# 3. Migrate content from the local dev stack (DB + plugins/uploads/languages)
-scripts/migrate-from-local.sh
+# 3. ONE TIME ONLY — seed content from the local dev stack. This drops the
+#    production database, so it is only ever correct on an empty shop.
+I_UNDERSTAND_THIS_WIPES_PRODUCTION=yes scripts/DANGER-seed-production.sh
 ```
+
+## Deploying a change
+
+```bash
+ansible-playbook playbooks/site.yml \
+  --become-password-file <(pass projects/ODC-infra/erik-sudo | head -1)
+```
+
+That rsyncs the theme and mu-plugins from the repo and reloads the stack. It
+does not touch content. **Content lives in production**: the customer edits it
+in wp-admin, and the flow for refreshing a development copy is prod → local,
+never local → prod.
 
 Re-running any step is safe (idempotent). Theme + mu-plugins deploy from the
 repo via `site.yml` (rsync) — that is also the routine "deploy a theme change"

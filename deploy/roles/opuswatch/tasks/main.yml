@@ -34,6 +34,16 @@
   args:
     creates: "{{ site_dir }}/wp-salts.env"
 
+# Still 0600, but owned by the deploy user: docker compose resolves every
+# service's env_file up front, so a root-owned salts file made every
+# `docker compose` command fail for erik.
+- name: Salts file owned by the deploy user
+  file:
+    path: "{{ site_dir }}/wp-salts.env"
+    owner: erik
+    group: erik
+    mode: "0600"
+
 - name: PHP upload limits (plugin zips, product images)
   copy:
     dest: "{{ site_dir }}/php-uploads.ini"
@@ -49,7 +59,9 @@
     src: Caddyfile.j2
     dest: "{{ site_dir }}/Caddyfile"
     mode: "0644"
-  notify: Reload compose stack
+  notify:
+    - Reload compose stack
+    - Restart Caddy
 
 - name: docker-compose.yml
   template:
@@ -97,6 +109,13 @@
     state: directory
     recurse: true
     mode: "u=rwX,g=rX,o=rX"
+
+- name: WP-cron every five minutes (wp-cron.php is disabled in wp-config)
+  cron:
+    name: opus-wp-cron
+    minute: "*/5"
+    user: erik
+    job: "curl -fsS -m 60 -o /dev/null https://{{ site_domain }}/wp-cron.php?doing_wp_cron"
 
 - name: Compose stack up
   command: docker compose up -d --remove-orphans

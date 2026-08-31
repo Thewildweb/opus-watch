@@ -34,6 +34,10 @@ services:
         define('WP_HOME', 'https://{{ site_domain }}');
         define('WP_SITEURL', 'https://{{ site_domain }}');
         define('WP_ENVIRONMENT_TYPE', 'production');
+        /* Scheduled tasks run from a real cron (see the opuswatch role), not
+           off the back of a visitor's request — a low-traffic shop otherwise
+           delivers order mail and stock updates whenever someone happens by. */
+        define('DISABLE_WP_CRON', true);
         /* No in-admin file editor; plugin/theme INSTALLS stay possible. */
         define('DISALLOW_FILE_EDIT', true);
         define('FORCE_SSL_ADMIN', true);
