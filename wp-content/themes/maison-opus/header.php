@@ -23,8 +23,8 @@
 			$opus_svc  = get_term_by( 'slug', 'service', 'product_cat' );
 			$opus_svc  = $opus_svc ? get_term_link( $opus_svc ) : $opus_shop;
 			$opus_svc  = is_wp_error( $opus_svc ) ? $opus_shop : $opus_svc;
-			$opus_db   = get_page_by_path( 'database' );
-			$opus_db   = $opus_db ? get_permalink( $opus_db ) : home_url( '/' );
+			$opus_zoek = get_page_by_path( 'zoekopdracht' );
+			$opus_zoek = $opus_zoek ? get_permalink( $opus_zoek ) : home_url( '/zoekopdracht/' );
 			?>
 			<nav class="left" aria-label="<?php esc_attr_e( 'Primary', 'maison-opus' ); ?>">
 				<ul class="primary-nav">
@@ -32,13 +32,13 @@
 						<a href="<?php echo esc_url( $opus_shop ); ?>">Shop</a>
 						<div class="mega"><?php opus_render_shop_mega(); ?></div>
 					</li>
-					<li><a href="<?php echo esc_url( $opus_svc ); ?>">Diensten</a></li>
-					<li><a href="<?php echo esc_url( $opus_db ); ?>">Horlogedatabase</a></li>
+					<li><a href="<?php echo esc_url( $opus_svc ); ?>"><?php esc_html_e( 'Diensten', 'maison-opus' ); ?></a></li>
+					<li><a href="<?php echo esc_url( $opus_zoek ); ?>"><?php esc_html_e( 'Zoekopdracht', 'maison-opus' ); ?></a></li>
 				</ul>
 			</nav>
 
 			<a class="wordmark" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-				MAISON <span class="amp">&amp;</span> OPUS
+				<img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/logo-lockup.svg' ) ); ?>" alt="Opus Watches" width="1520" height="1515" />
 			</a>
 
 			<nav class="right" aria-label="<?php esc_attr_e( 'Utility', 'maison-opus' ); ?>">
@@ -52,7 +52,10 @@
 						)
 					);
 				} else {
-					echo '<a href="#">Over ons</a><a href="#">Contact</a>';
+					?>
+					<a href="#"><?php esc_html_e( 'Over ons', 'maison-opus' ); ?></a>
+					<a href="#"><?php esc_html_e( 'Contact', 'maison-opus' ); ?></a>
+					<?php
 				}
 
 				if ( function_exists( 'WC' ) && WC()->cart ) :
@@ -66,12 +69,14 @@
 						<span class="cart-count<?php echo $opus_count ? ' has-items' : ''; ?>"><?php echo (int) $opus_count; ?></span>
 					</a>
 				<?php endif; ?>
+
+				<?php get_template_part( 'template-parts/language-switcher' ); ?>
 			</nav>
 		</div>
 		<div class="meta-row">
-			<div>Online &amp; op afspraak</div>
-			<div class="italic" style="font-variant: normal; letter-spacing: 0.18em;">Horloges gekocht · verkocht · onderhouden</div>
-			<div class="right">Verzekerde verzending wereldwijd</div>
+			<div><?php esc_html_e( 'Online & op afspraak', 'maison-opus' ); ?></div>
+			<div class="italic" style="font-variant: normal; letter-spacing: 0.18em;"><?php esc_html_e( 'Horloges gekocht · verkocht · onderhouden', 'maison-opus' ); ?></div>
+			<div class="right"><?php esc_html_e( 'Verzekerde verzending wereldwijd', 'maison-opus' ); ?></div>
 		</div>
 	</div>
 </header>

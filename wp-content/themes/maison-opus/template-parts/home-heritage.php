@@ -20,19 +20,17 @@ $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 
 <!-- ── HERO ──────────────────────────────────────────────── -->
 <section class="lede">
-	<img class="lede-img" src="<?php echo esc_url( $theme_uri . '/assets/images/hero-repair.jpg' ); ?>"
-		alt="Een horlogemaker repareert met de hand een horloge aan de werkbank" fetchpriority="high" decoding="async" />
+	<img class="lede-img" src="<?php echo esc_url( opus_theme_image_url( 'home_hero', 'assets/images/hero-heritage.jpg' ) ); ?>"
+		alt="<?php esc_attr_e( 'Een chique gouden horloge met groene wijzerplaat', 'maison-opus' ); ?>" fetchpriority="high" decoding="async" />
 	<div class="lede-scrim"></div>
 	<div class="container lede-inner">
-		<p class="lede-eyebrow">Onafhankelijk horlogehuis</p>
-		<h1 class="lede-title">Horloges —<br/>gekocht, verkocht en<br/><em>met de hand hersteld.</em></h1>
+		<h1 class="lede-title"><?php esc_html_e( 'Horloges —', 'maison-opus' ); ?><br/><?php esc_html_e( 'gekocht, verkocht en', 'maison-opus' ); ?><br/><em><?php esc_html_e( 'met de hand hersteld.', 'maison-opus' ); ?></em></h1>
 		<p class="lede-sub">
-			Opus biedt een zorgvuldig samengestelde selectie bijzondere horloges, en
-			volledig onderhoud en restauratie in eigen atelier.
+			<?php esc_html_e( 'Opus biedt een zorgvuldig samengestelde selectie bijzondere horloges, en volledig onderhoud en restauratie in eigen atelier.', 'maison-opus' ); ?>
 		</p>
 		<div class="lede-cta">
-			<a class="btn solid" href="<?php echo esc_url( $shop_url ); ?>">Bekijk de collectie</a>
-			<a class="btn light" href="<?php echo esc_url( $service_url ); ?>">Onderhoud aanvragen</a>
+			<a class="btn solid" href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Bekijk de collectie', 'maison-opus' ); ?></a>
+			<a class="btn light" href="<?php echo esc_url( $service_url ); ?>"><?php esc_html_e( 'Onderhoud aanvragen', 'maison-opus' ); ?></a>
 		</div>
 	</div>
 </section>
@@ -42,32 +40,27 @@ $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 	<div class="container">
 		<div class="tiles cols-3">
 			<a class="tile" href="<?php echo esc_url( $shop_url ); ?>">
-				<img src="<?php echo esc_url( $theme_uri . '/assets/images/tile-movement.jpg' ); ?>" alt="" loading="lazy" />
+				<img src="<?php echo esc_url( opus_theme_image_url( 'home_tile_service', 'assets/images/tile-movement.jpg' ) ); ?>" alt="" loading="lazy" />
 				<div class="tile-scrim"></div>
 				<div class="tile-body">
-					<p class="tile-eyebrow">De collectie</p>
-					<h3 class="tile-title">Bijzondere horloges,<br/>op voorraad.</h3>
-					<span class="tile-link">Bekijk alles →</span>
+					<h3 class="tile-title"><?php esc_html_e( 'Bijzondere horloges,', 'maison-opus' ); ?><br/><?php esc_html_e( 'op voorraad.', 'maison-opus' ); ?></h3>
+					<span class="tile-link"><?php esc_html_e( 'Bekijk alles →', 'maison-opus' ); ?></span>
 				</div>
 			</a>
 
-			<div class="tile editorial">
+			<a class="tile editorial" href="<?php echo esc_url( $service_url ); ?>">
 				<div class="tile-body">
-					<p class="tile-eyebrow">Inkoop &amp; taxatie</p>
-					<h3 class="tile-title">Wij kopen ook<br/>uw horloge.</h3>
-					<p>Een mooi horloge te verkopen? Wij taxeren vrijblijvend en kopen
-						rechtstreeks in — eerlijk, snel en discreet.</p>
-					<a class="tile-link gilt" href="<?php echo esc_url( $service_url ); ?>">Vraag een taxatie aan →</a>
+					<h3 class="tile-title"><?php esc_html_e( 'Wij kopen ook', 'maison-opus' ); ?><br/><?php esc_html_e( 'uw horloge.', 'maison-opus' ); ?></h3>
+					<span class="tile-link gilt"><?php esc_html_e( 'Vraag een taxatie aan →', 'maison-opus' ); ?></span>
 				</div>
-			</div>
+			</a>
 
 			<a class="tile" href="<?php echo esc_url( $service_url ); ?>">
-				<img src="<?php echo esc_url( $theme_uri . '/assets/images/tile-buy.jpg' ); ?>" alt="" loading="lazy" />
+				<img src="<?php echo esc_url( opus_theme_image_url( 'home_tile_buy', 'assets/images/tile-buy.jpg' ) ); ?>" alt="" loading="lazy" />
 				<div class="tile-scrim"></div>
 				<div class="tile-body">
-					<p class="tile-eyebrow">Atelier</p>
-					<h3 class="tile-title">Onderhoud &amp;<br/>restauratie.</h3>
-					<span class="tile-link">Onze diensten →</span>
+					<h3 class="tile-title"><?php esc_html_e( 'Onderhoud &', 'maison-opus' ); ?><br/><?php esc_html_e( 'restauratie.', 'maison-opus' ); ?></h3>
+					<span class="tile-link"><?php esc_html_e( 'Onze diensten →', 'maison-opus' ); ?></span>
 				</div>
 			</a>
 		</div>
@@ -77,12 +70,12 @@ $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 <!-- ── COLLECTION ────────────────────────────────────────── -->
 <section class="section" id="collection">
 	<div class="container">
+		<?php opus_fleuron(); ?>
 		<div class="sect-head">
 			<div>
-				<p class="sect-eyebrow">De collectie</p>
-				<h2>Nu op voorraad</h2>
+				<h2><?php esc_html_e( 'Nu op voorraad', 'maison-opus' ); ?></h2>
 			</div>
-			<a class="sect-link" href="<?php echo esc_url( $shop_url ); ?>">Bekijk alle horloges →</a>
+			<a class="sect-link" href="<?php echo esc_url( $shop_url ); ?>"><?php esc_html_e( 'Bekijk alle horloges →', 'maison-opus' ); ?></a>
 		</div>
 		<div class="pieces">
 			<?php
@@ -93,7 +86,7 @@ $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 					opus_product_piece( $product, $i++ );
 				}
 			} else {
-				echo '<p class="italic">De collectie wordt voorbereid.</p>';
+				echo '<p class="italic">' . esc_html__( 'De collectie wordt voorbereid.', 'maison-opus' ) . '</p>';
 			}
 			?>
 		</div>
@@ -105,27 +98,38 @@ $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 	<div class="container">
 		<div class="sect-head">
 			<div>
-				<p class="sect-eyebrow">Merken</p>
-				<h2>Shop op merk</h2>
+				<h2><?php esc_html_e( 'Shop op merk', 'maison-opus' ); ?></h2>
 			</div>
 		</div>
-		<div class="tiles cols-3">
+		<div class="brand-wall">
 			<?php
-			foreach ( array( 'Rolex', 'Patek Philippe', 'Audemars Piguet' ) as $brand ) :
-				$img  = opus_brand_image_url( $brand );
-				$link = opus_brand_term_link( $brand );
-				?>
-				<a class="tile tile-brand" href="<?php echo esc_url( $link ); ?>">
-					<?php if ( $img ) : ?>
-						<img src="<?php echo esc_url( $img ); ?>" alt="<?php echo esc_attr( $brand ); ?>" loading="lazy" />
-					<?php endif; ?>
-					<div class="tile-scrim"></div>
-					<div class="tile-body">
-						<h3 class="tile-title"><?php echo esc_html( $brand ); ?></h3>
-						<span class="tile-link">Ontdek →</span>
-					</div>
-				</a>
-			<?php endforeach; ?>
+			$brand_terms = get_terms(
+				array(
+					'taxonomy'   => 'product_brand',
+					'hide_empty' => false,
+					'orderby'    => 'count',
+					'order'      => 'DESC',
+				)
+			);
+			if ( ! is_wp_error( $brand_terms ) ) :
+				foreach ( $brand_terms as $bt ) :
+					$link = get_term_link( $bt );
+					if ( is_wp_error( $link ) ) {
+						continue;
+					}
+					$logo = opus_brand_logo_url( $bt->slug );
+					?>
+					<a class="brand-logo" href="<?php echo esc_url( $link ); ?>" aria-label="<?php echo esc_attr( $bt->name ); ?>">
+						<?php if ( $logo ) : ?>
+							<img src="<?php echo esc_url( $logo ); ?>" alt="<?php echo esc_attr( $bt->name ); ?>" loading="lazy" />
+						<?php else : ?>
+							<span class="brand-wordmark"><?php echo esc_html( $bt->name ); ?></span>
+						<?php endif; ?>
+					</a>
+					<?php
+				endforeach;
+			endif;
+			?>
 		</div>
 	</div>
 </section>
@@ -134,34 +138,22 @@ $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 <section class="service" id="service">
 	<div class="container service-grid">
 		<div class="service-copy">
-			<p class="sect-eyebrow gilt">Onderhoud &amp; restauratie</p>
-			<h2>Breng uw horloge<br/>naar de werkbank.</h2>
+			<h2><?php esc_html_e( 'Breng uw horloge', 'maison-opus' ); ?><br/><?php esc_html_e( 'naar de werkbank.', 'maison-opus' ); ?></h2>
 			<p class="service-lead">
-				Een groot deel van ons werk is de zorg voor horloges — die van ons en van
-				andere merken, vintage en modern. Junior, onze horlogemaker, onderzoekt uw
-				horloge en brengt een offerte uit voordat er iets gebeurt.
+				<?php esc_html_e( 'Een groot deel van ons werk is de zorg voor horloges — die van ons en van andere merken, vintage en modern. Junior, onze horlogemaker, onderzoekt uw horloge en brengt een offerte uit voordat er iets gebeurt.', 'maison-opus' ); ?>
 			</p>
 			<p class="service-lead">
-				Wanneer wij een horloge innemen, ontvangt u op uw telefoon een innamepagina:
-				foto's, een omschrijving van het werk en onze voorwaarden. U leest het en
-				gaat akkoord — en uw akkoord wordt vastgelegd voordat het werk begint.
+				<?php esc_html_e( 'Wanneer wij een horloge innemen, ontvangt u op uw telefoon een innamepagina: foto\'s, een omschrijving van het werk en onze voorwaarden. U leest het en gaat akkoord — en uw akkoord wordt vastgelegd voordat het werk begint.', 'maison-opus' ); ?>
 			</p>
-			<a class="btn solid" href="<?php echo esc_url( $service_url ); ?>">Bekijk onze diensten</a>
+			<a class="btn solid" href="<?php echo esc_url( $service_url ); ?>"><?php esc_html_e( 'Bekijk onze diensten', 'maison-opus' ); ?></a>
 		</div>
 		<ul class="service-list">
-			<li><span>Volledige revisie</span><em>op offerte</em></li>
-			<li><span>Polijsten &amp; afwerken</span><em>op offerte</em></li>
-			<li><span>Glas &amp; afdichting</span><em>10 dagen</em></li>
-			<li><span>Bandje plaatsen</span><em>dezelfde dag</em></li>
-			<li><span>Batterij &amp; afdichting</span><em>dezelfde dag</em></li>
+			<li><span><?php esc_html_e( 'Volledige revisie', 'maison-opus' ); ?></span><em><?php esc_html_e( 'op offerte', 'maison-opus' ); ?></em></li>
+			<li><span><?php esc_html_e( 'Polijsten & afwerken', 'maison-opus' ); ?></span><em><?php esc_html_e( 'op offerte', 'maison-opus' ); ?></em></li>
+			<li><span><?php esc_html_e( 'Glas & afdichting', 'maison-opus' ); ?></span><em><?php esc_html_e( '10 dagen', 'maison-opus' ); ?></em></li>
+			<li><span><?php esc_html_e( 'Bandje plaatsen', 'maison-opus' ); ?></span><em><?php esc_html_e( 'dezelfde dag', 'maison-opus' ); ?></em></li>
+			<li><span><?php esc_html_e( 'Batterij & afdichting', 'maison-opus' ); ?></span><em><?php esc_html_e( 'dezelfde dag', 'maison-opus' ); ?></em></li>
 		</ul>
-	</div>
-</section>
-
-<!-- ── CLOSING ───────────────────────────────────────────── -->
-<section class="closing">
-	<div class="container">
-		<p>De beste dag om een mooi horloge te kopen is vandaag.</p>
 	</div>
 </section>
 

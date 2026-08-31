@@ -8,3 +8,12 @@
 .DS_Store
 *.log
 node_modules/
+
+# Personal Claude Code permissions (not shared)
+.claude/settings.local.json
+
+# Watch database import transit data (regenerated from watchbase.db)
+wp-content/themes/maison-opus/data/watches.json
+
+# Cached OSM tiles for scripts/build-map-image.py — the built images are committed.
+scripts/.tile-cache/

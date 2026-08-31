@@ -9,7 +9,6 @@
 services:
   db:
     image: mariadb:11
-    restart: unless-stopped
     environment:
       MARIADB_DATABASE: ${MYSQL_DATABASE}
       MARIADB_USER: ${MYSQL_USER}
@@ -25,7 +24,6 @@ services:
 
   wordpress:
     image: wordpress:php8.3-apache
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -39,8 +37,10 @@ services:
       WORDPRESS_TABLE_PREFIX: ${WP_TABLE_PREFIX}
       WORDPRESS_DEBUG: ${WP_DEBUG}
       WORDPRESS_CONFIG_EXTRA: |
-        define('WP_HOME', '${WP_URL}');
-        define('WP_SITEURL', '${WP_URL}');
+        # Follow the request host so the site also works via the LAN IP.
+        $$host = $$_SERVER['HTTP_HOST'] ?? 'localhost:${WP_PORT}';
+        define('WP_HOME', "http://$$host");
+        define('WP_SITEURL', "http://$$host");
         define('WP_ENVIRONMENT_TYPE', 'local');
     volumes:
       - wp_data:/var/www/html
@@ -71,7 +71,6 @@ services:
 
   phpmyadmin:
     image: phpmyadmin:5
-    restart: unless-stopped
     depends_on:
       db:
         condition: service_healthy
@@ -87,7 +86,6 @@ services:
   elasticsearch:
     image: elasticsearch:7.17.22
     profiles: ["search"]
-    restart: unless-stopped
     environment:
       discovery.type: single-node
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"

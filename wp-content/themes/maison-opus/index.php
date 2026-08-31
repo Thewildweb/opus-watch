@@ -27,7 +27,7 @@ get_header();
 			the_posts_pagination();
 		else :
 			?>
-			<p class="italic">Hier staat nog niets.</p>
+			<p class="italic"><?php esc_html_e( 'Hier staat nog niets.', 'maison-opus' ); ?></p>
 		<?php endif; ?>
 	</div>
 </main>

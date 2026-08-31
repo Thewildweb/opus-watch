@@ -11,10 +11,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'MAISON_OPUS_VERSION', '0.1.0' );
 
+/** Watch database — custom-table reference catalogue (table, importer, REST, detail route). */
+require_once get_template_directory() . '/inc/watchdb.php';
+
+/** Service / onderhoud — inquiry form, submissions, per-product video field. */
+require_once get_template_directory() . '/inc/service-inquiry.php';
+
+/** Contact — general contact form + submissions. */
+require_once get_template_directory() . '/inc/contact.php';
+
+/** Shop filters — watch type taxonomy + type/merk/bouwjaar/prijs filtering. */
+require_once get_template_directory() . '/inc/shop-filters.php';
+
+/** Taxatie — appraisal request form + submissions. */
+require_once get_template_directory() . '/inc/taxatie.php';
+
+/** Site teksten — backend editor for all frontend theme strings (NL + EN). */
+require_once get_template_directory() . '/inc/site-texts.php';
+
 /**
  * Theme supports.
  */
 function maison_opus_setup() {
+	load_theme_textdomain( 'maison-opus', get_template_directory() . '/languages' );
+
 	add_theme_support( 'title-tag' );
 	add_theme_support( 'post-thumbnails' );
 	add_theme_support( 'custom-logo' );
@@ -35,105 +55,152 @@ function maison_opus_setup() {
 }
 add_action( 'after_setup_theme', 'maison_opus_setup' );
 
-/* ─────────────────────────────────────────────────────────────
- * Style switcher — toggle between the design directions live.
- * Each design is self-contained: assets/css/styles/<style>.css plus
- * template-parts/home-<style>.php. Selection persists via a cookie.
- * ───────────────────────────────────────────────────────────── */
-
-/** The design directions (key => label). */
-function opus_styles() {
-	return array(
-		'heritage'  => 'Heritage',
-		'editorial' => 'Editorial',
-		'nocturne'  => 'Nocturne',
-		'technical' => 'Technical',
-		'modern'    => 'Modern',
-	);
-}
-
-/** Resolve the active style from ?style=, else cookie, else default. */
-function opus_active_style() {
-	static $style = null;
-	if ( null !== $style ) {
-		return $style;
-	}
-	$allowed = array_keys( opus_styles() );
-
-	if ( isset( $_GET['style'] ) && in_array( $_GET['style'], $allowed, true ) ) {
-		$style = sanitize_key( wp_unslash( $_GET['style'] ) );
-		if ( ! headers_sent() ) {
-			setcookie( 'opus_style', $style, time() + YEAR_IN_SECONDS, defined( 'COOKIEPATH' ) && COOKIEPATH ? COOKIEPATH : '/' );
-		}
-		$_COOKIE['opus_style'] = $style;
-	} elseif ( isset( $_COOKIE['opus_style'] ) && in_array( $_COOKIE['opus_style'], $allowed, true ) ) {
-		$style = sanitize_key( wp_unslash( $_COOKIE['opus_style'] ) );
-	} else {
-		$style = 'heritage';
-	}
-	return $style;
-}
-
-/** Add the active style as a body class (style-heritage, style-modern, …). */
-add_filter(
-	'body_class',
-	function ( $classes ) {
-		$classes[] = 'style-' . opus_active_style();
-		return $classes;
-	}
-);
-
-/** Render the active design's homepage; fall back to heritage if not built. */
-function opus_home() {
-	$style = opus_active_style();
-	if ( locate_template( "template-parts/home-{$style}.php" ) ) {
-		get_template_part( 'template-parts/home', $style );
-	} else {
-		get_template_part( 'template-parts/home', 'heritage' );
-	}
-}
-
 /**
- * Fonts & styles — shared base + the active design's stylesheet.
- * (Each design @imports its own fonts at the top of its stylesheet.)
+ * Fonts & styles — shared base + the heritage stylesheet.
+ * (Heritage @imports its own fonts at the top of its stylesheet.)
  */
 function maison_opus_assets() {
+	wp_enqueue_style(
+		'maison-opus-fonts',
+		get_template_directory_uri() . '/assets/css/fonts.css',
+		array(),
+		maison_opus_asset_ver( '/assets/css/fonts.css' )
+	);
+
 	wp_enqueue_style(
 		'maison-opus-base',
 		get_template_directory_uri() . '/assets/css/base.css',
 		array(),
-		MAISON_OPUS_VERSION
+		maison_opus_asset_ver( '/assets/css/base.css' )
 	);
 
-	$style = opus_active_style();
-	$rel   = "/assets/css/styles/{$style}.css";
-	// Fall back to heritage if a design hasn't been built yet.
-	if ( ! file_exists( get_template_directory() . $rel ) ) {
-		$rel = '/assets/css/styles/heritage.css';
-	}
 	wp_enqueue_style(
 		'maison-opus-skin',
-		get_template_directory_uri() . $rel,
-		array( 'maison-opus-base' ),
-		MAISON_OPUS_VERSION
+		get_template_directory_uri() . '/assets/css/styles/heritage.css',
+		array( 'maison-opus-fonts', 'maison-opus-base' ),
+		maison_opus_asset_ver( '/assets/css/styles/heritage.css' )
 	);
+}
+
+/**
+ * Asset version string. In a local environment we use the file's mtime so
+ * edits bust the browser cache immediately; elsewhere the theme version.
+ */
+function maison_opus_asset_ver( $rel ) {
+	if ( 'local' === wp_get_environment_type() ) {
+		$path = get_template_directory() . $rel;
+		if ( file_exists( $path ) ) {
+			return (string) filemtime( $path );
+		}
+	}
+	return MAISON_OPUS_VERSION;
 }
 add_action( 'wp_enqueue_scripts', 'maison_opus_assets' );
 
-/** Floating design toggle for client demos (visible on the front end). */
-add_action(
-	'wp_footer',
-	function () {
-		$active = opus_active_style();
-		echo '<div class="style-switcher" role="navigation" aria-label="Design switcher"><span class="ss-label">Design</span>';
-		foreach ( opus_styles() as $key => $label ) {
-			$url = esc_url( add_query_arg( 'style', $key ) );
-			$cls = ( $key === $active ) ? 'ss-opt active' : 'ss-opt';
-			echo '<a class="' . esc_attr( $cls ) . '" href="' . $url . '">' . esc_html( $label ) . '</a>';
-		}
-		echo '</div>';
+/**
+ * Mini-cart drawer — script + markup.
+ *
+ * Depends on wc-cart-fragments so WooCommerce owns the fragment refresh and
+ * the session storage that goes with it; the drawer only reacts to it.
+ */
+function maison_opus_cart_assets() {
+	if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+		return;
 	}
+
+	wp_enqueue_script(
+		'maison-opus-cart-drawer',
+		get_template_directory_uri() . '/assets/js/cart-drawer.js',
+		array( 'jquery', 'wc-cart-fragments' ),
+		maison_opus_asset_ver( '/assets/js/cart-drawer.js' ),
+		true
+	);
+}
+add_action( 'wp_enqueue_scripts', 'maison_opus_cart_assets', 20 );
+
+/** The drawer lives at the top of the body, outside the footer element. */
+add_action(
+	'wp_body_open',
+	function () {
+		get_template_part( 'template-parts/cart-drawer' );
+	},
+	20
 );
+
+/**
+ * Cart fragments — the header count and the drawer contents, so both update
+ * without a page reload. The header count is custom markup, so WooCommerce
+ * does not know about it unless we say so here.
+ */
+function maison_opus_cart_fragments( $fragments ) {
+	if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
+		return $fragments;
+	}
+
+	$count = WC()->cart->get_cart_contents_count();
+
+	ob_start();
+	?>
+	<span class="cart-count<?php echo $count ? ' has-items' : ''; ?>"><?php echo (int) $count; ?></span>
+	<?php
+	$fragments['span.cart-count'] = trim( ob_get_clean() );
+
+	ob_start();
+	echo '<div class="opus-mini-cart">';
+	woocommerce_mini_cart();
+	echo '</div>';
+	$fragments['div.opus-mini-cart'] = ob_get_clean();
+
+	return $fragments;
+}
+add_filter( 'woocommerce_add_to_cart_fragments', 'maison_opus_cart_fragments' );
+
+/**
+ * Fleuron — the logo's rosette between two hairlines, as a section ornament.
+ * Inlined so it inherits currentColor (gilt on paper, gilt-bright on dark).
+ */
+function opus_fleuron() {
+	static $svg = null;
+	if ( null === $svg ) {
+		$file = get_template_directory() . '/assets/images/logo-icon.svg';
+		$svg  = file_exists( $file ) ? (string) file_get_contents( $file ) : '';
+		$svg  = preg_replace( '/<style>.*?<\/style>/s', '', $svg );
+		$svg  = str_replace( '<g ', '<g fill="currentColor" ', $svg );
+	}
+	if ( $svg ) {
+		echo '<div class="fleuron" aria-hidden="true">' . $svg . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput -- static theme asset.
+	}
+}
+
+/**
+ * Preload the two faces that set the first paint — body text and headings.
+ * The rest resolve from fonts.css as they are needed.
+ */
+function maison_opus_preload_fonts() {
+	$faces = array(
+		'eb-garamond-400-normal-latin.woff2',
+		'cormorant-garamond-400-normal-latin.woff2',
+	);
+	foreach ( $faces as $face ) {
+		printf(
+			'<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin />' . "\n",
+			esc_url( get_theme_file_uri( 'assets/fonts/' . $face ) )
+		);
+	}
+}
+add_action( 'wp_head', 'maison_opus_preload_fonts', 4 );
+
+/**
+ * Favicons — rosette from the logo; the SVG flips to paper on dark browser UIs.
+ */
+function maison_opus_favicons() {
+	$base = get_theme_file_uri( 'assets/images' );
+	echo '<link rel="icon" href="' . esc_url( $base . '/logo-icon.svg' ) . '" type="image/svg+xml" />' . "\n";
+	echo '<link rel="icon" href="' . esc_url( $base . '/favicon-32.png' ) . '" type="image/png" sizes="32x32" />' . "\n";
+	echo '<link rel="icon" href="' . esc_url( $base . '/favicon-192.png' ) . '" type="image/png" sizes="192x192" />' . "\n";
+	echo '<link rel="apple-touch-icon" href="' . esc_url( $base . '/apple-touch-icon.png' ) . '" />' . "\n";
+}
+add_action( 'wp_head', 'maison_opus_favicons', 5 );
 
 /**
  * Swap WooCommerce's default wrappers for ours.
@@ -223,7 +290,7 @@ function opus_dial_svg( $seed = 0 ) {
 		<?php foreach ( $numerals as $n ) : ?>
 			<text x="<?php echo (int) $n[0]; ?>" y="<?php echo (int) $n[1]; ?>" font-family="Cormorant Garamond, serif" font-size="13" text-anchor="middle" fill="<?php echo esc_attr( $p['ink'] ); ?>"><?php echo esc_html( $n[2] ); ?></text>
 		<?php endforeach; ?>
-		<text x="100" y="92" font-family="Cormorant Garamond, serif" font-style="italic" font-size="7" fill="<?php echo esc_attr( $p['mark'] ); ?>" text-anchor="middle">Maison &amp; Opus</text>
+		<text x="100" y="92" font-family="Cormorant Garamond, serif" font-style="italic" font-size="7" fill="<?php echo esc_attr( $p['mark'] ); ?>" text-anchor="middle">Opus Watches</text>
 		<g transform="rotate(<?php echo (int) ( -40 + $seed * 47 ); ?> 100 100)"><rect x="99" y="50" width="2" height="55" fill="<?php echo esc_attr( $p['ink'] ); ?>" /></g>
 		<g transform="rotate(<?php echo (int) ( 110 + $seed * 31 ); ?> 100 100)"><rect x="99" y="60" width="2" height="45" fill="<?php echo esc_attr( $p['ink'] ); ?>" /></g>
 		<circle cx="100" cy="100" r="3" fill="<?php echo esc_attr( $p['mark'] ); ?>" />
@@ -255,8 +322,8 @@ function opus_product_piece( $product, $seed = 0 ) {
 			?>
 		</div>
 		<div class="piece-meta">
-			<div class="piece-name"><?php echo esc_html( $product->get_name() ); ?></div>
 			<?php if ( $brand ) : ?><div class="piece-ref"><?php echo esc_html( $brand ); ?></div><?php endif; ?>
+			<div class="piece-name"><?php echo esc_html( $product->get_name() ); ?></div>
 		</div>
 		<?php if ( $desc ) : ?>
 			<div class="piece-line"><?php echo esc_html( $desc ); ?></div>
@@ -294,7 +361,7 @@ add_action(
 		$tax_query[] = array(
 			'taxonomy' => 'product_cat',
 			'field'    => 'slug',
-			'terms'    => array( 'service' ),
+			'terms'    => array( 'service', 'servicing' ),
 			'operator' => 'NOT IN',
 		);
 		$query->set( 'tax_query', $tax_query );
@@ -332,6 +399,39 @@ function opus_brand_image_url( $brand, $size = 'large' ) {
 	return $url ? $url : '';
 }
 
+/**
+ * Logo file URL for a brand, if one has been added to the theme.
+ * Drop a file at assets/images/brands/<term-slug>.svg (or .png/.webp) and it
+ * is used automatically; otherwise the homepage falls back to a wordmark.
+ */
+function opus_brand_logo_url( $slug ) {
+	$dir = get_template_directory() . '/assets/images/brands/';
+	$uri = get_template_directory_uri() . '/assets/images/brands/';
+	foreach ( array( 'svg', 'png', 'webp' ) as $ext ) {
+		if ( file_exists( $dir . $slug . '.' . $ext ) ) {
+			return $uri . $slug . '.' . $ext;
+		}
+	}
+	return '';
+}
+
+/**
+ * Hero image URL for a brand archive. Priority:
+ *  1. curated file at assets/images/heroes/<term-slug>.<jpg|webp|png>
+ *  2. the brand's newest product photo
+ *  3. '' — the template then renders a text-only header.
+ */
+function opus_brand_hero_url( $term ) {
+	$dir = get_template_directory() . '/assets/images/heroes/';
+	$uri = get_template_directory_uri() . '/assets/images/heroes/';
+	foreach ( array( 'jpg', 'webp', 'png' ) as $ext ) {
+		if ( file_exists( $dir . $term->slug . '.' . $ext ) ) {
+			return $uri . $term->slug . '.' . $ext;
+		}
+	}
+	return opus_brand_image_url( $term->name );
+}
+
 /** Archive link for a brand term (falls back to the shop). */
 function opus_brand_term_link( $brand ) {
 	$t = get_term_by( 'name', $brand, 'product_brand' );
@@ -341,6 +441,94 @@ function opus_brand_term_link( $brand ) {
 	$l = get_term_link( $t );
 	return is_wp_error( $l ) ? home_url( '/' ) : $l;
 }
+
+/* ─────────────────────────────────────────────────────────────
+ * Single product — spec sheet parsed from the imported description.
+ * The importer bakes a <table> of specs into the product description;
+ * we lift it out into a clean label=>value map (Dutch labels) and keep
+ * the remaining prose separately so the template can style each.
+ * ───────────────────────────────────────────────────────────── */
+function opus_product_spec_data( $product ) {
+	$html  = (string) $product->get_description();
+	$specs = array();
+	$prose = $html;
+
+	if ( $html && preg_match( '/<table[^>]*>.*?<\/table>/is', $html, $m ) ) {
+		$table = $m[0];
+		$prose = str_replace( $table, '', $html );
+
+		$labels = array(
+			'brand'             => __( 'Merk', 'maison-opus' ),
+			'model'             => __( 'Model', 'maison-opus' ),
+			'reference number'  => __( 'Referentie', 'maison-opus' ),
+			'reference'         => __( 'Referentie', 'maison-opus' ),
+			'condition'         => __( 'Staat', 'maison-opus' ),
+			'year'              => __( 'Bouwjaar', 'maison-opus' ),
+			'box'               => __( 'Doos', 'maison-opus' ),
+			'papers'            => __( 'Papieren', 'maison-opus' ),
+			'case size'         => __( 'Kastmaat', 'maison-opus' ),
+			'movement'          => __( 'Uurwerk', 'maison-opus' ),
+			'case material'     => __( 'Kastmateriaal', 'maison-opus' ),
+			'bracelet material' => __( 'Bandmateriaal', 'maison-opus' ),
+			'dial color'        => __( 'Wijzerplaat', 'maison-opus' ),
+			'dial'              => __( 'Wijzerplaat', 'maison-opus' ),
+			'clasp'             => __( 'Sluiting', 'maison-opus' ),
+			'gender'            => __( 'Voor', 'maison-opus' ),
+			'water resistance'  => __( 'Waterdichtheid', 'maison-opus' ),
+		);
+		$values = array(
+			'yes'    => __( 'Ja', 'maison-opus' ),
+			'no'     => __( 'Nee', 'maison-opus' ),
+			'as new' => __( 'Zo goed als nieuw', 'maison-opus' ),
+			'new'    => __( 'Nieuw', 'maison-opus' ),
+			'unworn' => __( 'Ongedragen', 'maison-opus' ),
+		);
+
+		$dom = new DOMDocument();
+		libxml_use_internal_errors( true );
+		$dom->loadHTML( '<?xml encoding="utf-8" ?>' . $table );
+		libxml_clear_errors();
+
+		foreach ( $dom->getElementsByTagName( 'tr' ) as $tr ) {
+			$cells = $tr->getElementsByTagName( 'td' );
+			if ( $cells->length < 2 ) {
+				continue;
+			}
+			$label = trim( $cells->item( 0 )->textContent );
+			$value = trim( $cells->item( 1 )->textContent );
+			if ( '' === $label || '' === $value ) {
+				continue;
+			}
+			$lkey  = strtolower( $label );
+			$vkey  = strtolower( $value );
+			$label = isset( $labels[ $lkey ] ) ? $labels[ $lkey ] : $label;
+			$value = isset( $values[ $vkey ] ) ? $values[ $vkey ] : $value;
+			$specs[ $label ] = $value;
+		}
+	}
+
+	// Tidy the leftover prose: collapse <br> runs into paragraph breaks.
+	$prose = preg_replace( '/(?:<br\s*\/?>\s*)+/i', "\n\n", (string) $prose );
+	$prose = trim( $prose );
+	if ( '' === trim( wp_strip_all_tags( $prose ) ) ) {
+		$prose = '';
+	}
+
+	return array(
+		'specs' => $specs,
+		'prose' => $prose,
+	);
+}
+
+/** Keep related products to a clean single row of three. */
+add_filter(
+	'woocommerce_output_related_products_args',
+	function ( $args ) {
+		$args['posts_per_page'] = 3;
+		$args['columns']       = 3;
+		return $args;
+	}
+);
 
 /* ─────────────────────────────────────────────────────────────
  * Shop mega-menu — brand column (1/6) + recent watches (5/6).
@@ -368,7 +556,7 @@ function opus_render_shop_mega() {
 				array(
 					'taxonomy' => 'product_cat',
 					'field'    => 'slug',
-					'terms'    => 'watches',
+					'terms'    => array( 'watches', 'watches-en' ),
 				),
 			),
 		)
@@ -376,8 +564,8 @@ function opus_render_shop_mega() {
 	?>
 	<div class="mega-inner">
 		<div class="mega-brands">
-			<p class="mega-label">Merken</p>
-			<a href="<?php echo esc_url( $shop ); ?>">Alle horloges</a>
+			<p class="mega-label"><?php esc_html_e( 'Merken', 'maison-opus' ); ?></p>
+			<a href="<?php echo esc_url( $shop ); ?>"><?php esc_html_e( 'Alle horloges', 'maison-opus' ); ?></a>
 			<?php
 			if ( ! is_wp_error( $brands ) ) :
 				foreach ( $brands as $b ) :
@@ -389,7 +577,7 @@ function opus_render_shop_mega() {
 				<?php endforeach; endif; ?>
 		</div>
 		<div class="mega-watches">
-			<p class="mega-label">Nieuw binnen</p>
+			<p class="mega-label"><?php esc_html_e( 'Nieuw binnen', 'maison-opus' ); ?></p>
 			<div class="mega-grid">
 				<?php foreach ( $watches as $w ) : ?>
 					<a class="mega-card" href="<?php echo esc_url( get_permalink( $w->get_id() ) ); ?>">
@@ -422,3 +610,132 @@ add_action(
 		remove_action( 'woocommerce_single_product_summary', 'woocommerce_template_single_rating', 10 );
 	}
 );
+
+/**
+ * Every watch is one of a kind — sell one at a time. This removes the
+ * quantity selector on product pages and caps each line item at 1.
+ */
+add_filter( 'woocommerce_is_sold_individually', '__return_true' );
+
+/**
+ * Show the product description as plain content — drop the tabbed UI
+ * (the lone "Beschrijving" tab) and just render the description below
+ * the product summary.
+ */
+remove_action( 'woocommerce_after_single_product_summary', 'woocommerce_output_product_data_tabs', 10 );
+add_action(
+	'woocommerce_after_single_product_summary',
+	function () {
+		global $product;
+		if ( ! $product ) {
+			return;
+		}
+		$content = $product->get_description();
+		if ( ! $content ) {
+			return;
+		}
+		echo '<div class="opus-product-description">' . apply_filters( 'the_content', wp_kses_post( $content ) ) . '</div>';
+	},
+	10
+);
+
+/* ─────────────────────────────────────────────────────────────
+ * Zoekopdracht — "find me this watch" search requests.
+ * Submissions are stored as a private CPT (visible in wp-admin) and
+ * a notification is e-mailed to the shop. Posts to admin-post.php.
+ * ───────────────────────────────────────────────────────────── */
+
+/** Private post type so the shop can review incoming search requests. */
+add_action(
+	'init',
+	function () {
+		register_post_type(
+			'opus_search_request',
+			array(
+				'labels'       => array(
+					'name'          => 'Zoekopdrachten',
+					'singular_name' => 'Zoekopdracht',
+					'menu_name'     => 'Zoekopdrachten',
+				),
+				'public'       => false,
+				'show_ui'      => true,
+				'show_in_menu' => true,
+				'menu_icon'    => 'dashicons-search',
+				'supports'     => array( 'title' ),
+				'capability_type' => 'post',
+			)
+		);
+	}
+);
+
+/** Fields we accept, with their human labels (used for storage + e-mail). */
+function opus_search_request_fields() {
+	return array(
+		'naam'       => 'Naam',
+		'email'      => 'E-mailadres',
+		'telefoon'   => 'Telefoon',
+		'merk'       => 'Merk',
+		'model'      => 'Model',
+		'referentie' => 'Referentienummer',
+		'staat'      => 'Gewenste staat',
+		'budget'     => 'Budget',
+		'bericht'    => 'Toelichting',
+	);
+}
+
+/** Handle the zoekopdracht form submission. */
+function opus_handle_search_request() {
+	$back = wp_get_referer() ? wp_get_referer() : home_url( '/zoekopdracht/' );
+
+	if ( ! isset( $_POST['opus_zoek_nonce'] ) || ! wp_verify_nonce( wp_unslash( $_POST['opus_zoek_nonce'] ), 'opus_zoekopdracht' ) ) {
+		wp_safe_redirect( add_query_arg( 'zoek', 'error', $back ) );
+		exit;
+	}
+
+	$fields = opus_search_request_fields();
+	$data   = array();
+	foreach ( $fields as $key => $label ) {
+		$raw = isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : '';
+		$data[ $key ] = ( 'bericht' === $key ) ? sanitize_textarea_field( $raw ) : sanitize_text_field( $raw );
+	}
+
+	// Minimal validation: name, a valid e-mail, and a brand.
+	if ( '' === $data['naam'] || ! is_email( $data['email'] ) || '' === $data['merk'] ) {
+		wp_safe_redirect( add_query_arg( 'zoek', 'error', $back ) );
+		exit;
+	}
+
+	$title = sprintf( '%s — %s %s', $data['naam'], $data['merk'], $data['model'] );
+	$post_id = wp_insert_post(
+		array(
+			'post_type'   => 'opus_search_request',
+			'post_status' => 'private',
+			'post_title'  => wp_strip_all_tags( $title ),
+		)
+	);
+
+	if ( $post_id && ! is_wp_error( $post_id ) ) {
+		foreach ( $data as $key => $value ) {
+			update_post_meta( $post_id, '_opus_' . $key, $value );
+		}
+
+		// Best-effort notification to the shop.
+		$lines = array( 'Nieuwe zoekopdracht via de website:', '' );
+		foreach ( $fields as $key => $label ) {
+			if ( '' !== $data[ $key ] ) {
+				$lines[] = $label . ': ' . $data[ $key ];
+			}
+		}
+		wp_mail(
+			get_option( 'admin_email' ),
+			'Nieuwe zoekopdracht — ' . $data['merk'] . ' ' . $data['model'],
+			implode( "\n", $lines ),
+			array( 'Reply-To: ' . $data['naam'] . ' <' . $data['email'] . '>' )
+		);
+	}
+
+	wp_safe_redirect( add_query_arg( 'zoek', 'ok', remove_query_arg( 'zoek', $back ) ) . '#zoekform' );
+	exit;
+}
+add_action( 'admin_post_opus_zoekopdracht', 'opus_handle_search_request' );
+add_action( 'admin_post_nopriv_opus_zoekopdracht', 'opus_handle_search_request' );
