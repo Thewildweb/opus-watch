@@ -10,6 +10,14 @@ to a third party before they have consented to anything.
 This downloads the woff2 files once into assets/fonts/ and writes
 assets/css/fonts.css with the matching @font-face rules.
 
+The faces are emitted `font-display: optional`, not `swap`. With swap the
+browser paints a fallback and then re-renders in the real face, which moves
+the page — visibly, on the homepage hero. With optional it gives the font a
+short window (it is same-origin and preloaded, so it normally wins) and
+otherwise keeps the fallback for that page load without ever swapping. The
+cost is that a slow first visit renders in Georgia; the gain is that nothing
+ever jumps.
+
     python3 scripts/fetch-fonts.py
 
 Both families are open source (SIL Open Font License), so redistributing the
@@ -91,6 +99,8 @@ def fallback_face(family: str, sample: pathlib.Path) -> str:
 
 def main() -> int:
     url = f"https://fonts.googleapis.com/css2?family={FAMILIES}&display=swap"
+    # (the &display on the request only affects Google's own CSS, which we
+    # rewrite below; ours is emitted as `optional`.)
     css = requests.get(url, headers={"User-Agent": UA}, timeout=30).text
 
     FONT_DIR.mkdir(parents=True, exist_ok=True)
@@ -127,7 +137,7 @@ def main() -> int:
             f"  font-family: '{family}';",
             f"  font-style: {style};",
             f"  font-weight: {weight};",
-            "  font-display: swap;",
+            "  font-display: optional;",
             f"  src: url('../fonts/{name}') format('woff2');",
         ]
         if urange:
