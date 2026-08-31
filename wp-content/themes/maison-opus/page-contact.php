@@ -116,8 +116,8 @@ $intro    = trim( wp_strip_all_tags( get_the_content() ) );
 		<div class="contact-map">
 			<picture>
 				<source media="(max-width: 880px)" width="1000" height="750"
-					srcset="<?php echo esc_url( get_theme_file_uri( 'assets/images/map-contact-narrow.webp' ) ); ?>" />
-				<img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/map-contact-wide.webp' ) ); ?>"
+					srcset="<?php echo esc_url( maison_opus_asset_uri( 'assets/images/map-contact-narrow.webp' ) ); ?>" />
+				<img src="<?php echo esc_url( maison_opus_asset_uri( 'assets/images/map-contact-wide.webp' ) ); ?>"
 					width="1680" height="720" loading="lazy" decoding="async"
 					alt="<?php esc_attr_e( 'Kaart met de locatie van Opus Watches aan De Entree 201 in Amsterdam', 'maison-opus' ); ?>" />
 			</picture>

@@ -310,3 +310,25 @@ body.opus-drawer-open { overflow: hidden; }
 .opus-drawer__foot .btn { width: 100%; text-align: center; }
 
 form.cart.is-adding { opacity: 0.6; pointer-events: none; }
+
+/* Notices lifted into the drawer from the add-to-cart response. */
+.opus-drawer__notices:empty { display: none; }
+.opus-drawer__notices { flex: none; padding: 18px 26px 0; }
+.opus-drawer__notices .woocommerce-error,
+.opus-drawer__notices .woocommerce-info,
+.opus-drawer__notices .woocommerce-message {
+  margin: 0;
+  padding: 14px 16px;
+  list-style: none;
+  border: 1px solid var(--rule, rgba(20, 24, 27, 0.14));
+  border-top: 2px solid var(--gilt, #9c7536);
+  background: var(--paper-deep, rgba(20, 24, 27, 0.03));
+  font-size: 0.95rem;
+  line-height: 1.5;
+  font-style: italic;
+}
+.opus-drawer__notices .woocommerce-error::before,
+.opus-drawer__notices .woocommerce-info::before,
+.opus-drawer__notices .woocommerce-message::before { display: none; }
+.opus-drawer__notices li { list-style: none; }
+.opus-drawer__notices li + li { margin-top: 8px; }

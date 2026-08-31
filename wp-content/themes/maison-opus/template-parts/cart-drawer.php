@@ -33,6 +33,8 @@ if ( ! function_exists( 'WC' ) || ! WC()->cart ) {
 			</button>
 		</header>
 
+		<div class="opus-drawer__notices" aria-live="polite"></div>
+
 		<div class="opus-mini-cart"><?php woocommerce_mini_cart(); ?></div>
 
 		<footer class="opus-drawer__foot">

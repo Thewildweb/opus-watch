@@ -69,7 +69,7 @@ function opus_theme_image_url( $key, $default_rel ) {
 			return $url;
 		}
 	}
-	return get_template_directory_uri() . '/' . ltrim( $default_rel, '/' );
+	return maison_opus_asset_uri( $default_rel );
 }
 
 /* ─────────────────────────────────────────────────────────────

@@ -11,7 +11,6 @@
  */
 
 
-$theme_uri   = get_template_directory_uri();
 $shop_url    = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' );
 $service_cat = get_term_by( 'slug', 'service', 'product_cat' );
 $service_url = $service_cat ? get_term_link( $service_cat ) : $shop_url;

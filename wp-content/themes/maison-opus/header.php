@@ -38,7 +38,7 @@
 			</nav>
 
 			<a class="wordmark" href="<?php echo esc_url( home_url( '/' ) ); ?>">
-				<img src="<?php echo esc_url( get_theme_file_uri( 'assets/images/logo-lockup.svg' ) ); ?>" alt="Opus Watches" width="1520" height="1515" />
+				<img src="<?php echo esc_url( maison_opus_asset_uri( 'assets/images/logo-lockup.svg' ) ); ?>" alt="Opus Watches" width="1520" height="1515" />
 			</a>
 
 			<nav class="right" aria-label="<?php esc_attr_e( 'Utility', 'maison-opus' ); ?>">

@@ -8,7 +8,6 @@
 
 get_header();
 
-$theme_uri = get_template_directory_uri();
 $status    = isset( $_GET['zoek'] ) ? sanitize_key( wp_unslash( $_GET['zoek'] ) ) : '';
 $brands    = array( 'Rolex', 'Patek Philippe', 'Audemars Piguet', 'Cartier', 'Omega', 'Tudor', 'IWC', 'Vacheron Constantin', 'Ander merk' );
 $states    = array( __( 'Maakt niet uit', 'maison-opus' ), __( 'Nieuw', 'maison-opus' ), __( 'Ongedragen', 'maison-opus' ), __( 'Zo goed als nieuw', 'maison-opus' ), __( 'Gedragen', 'maison-opus' ) );

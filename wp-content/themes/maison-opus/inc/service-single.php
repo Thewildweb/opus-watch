@@ -16,7 +16,6 @@ $pid        = $product->get_id();
 $short      = $product->get_short_description();
 $full       = $product->get_description();
 $video      = get_post_meta( $pid, '_opus_video_url', true );
-$theme_uri  = get_template_directory_uri();
 
 // Fallback image for the lead slot when there is no video.
 $lead_img = has_post_thumbnail( $pid )

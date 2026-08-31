@@ -106,6 +106,32 @@
 	// Set while our own add-to-cart is in flight, so the drawer opens on the
 	// fragment refresh that follows it and not on the routine ones.
 	var pendingOpen = false;
+	var noticeSlot = drawer.querySelector( '.opus-drawer__notices' );
+
+	/**
+	 * Lift WooCommerce's notices out of the response and show them in the
+	 * drawer. Without this they stay queued in the session and turn up later
+	 * on whatever page prints notices next — which is how "u heeft dit horloge
+	 * al in uw winkelwagen" ended up appearing out of nowhere.
+	 *
+	 * The success message is dropped on purpose: the drawer opening with the
+	 * watch in it says the same thing, better.
+	 */
+	function showNotices( html ) {
+		if ( ! noticeSlot ) {
+			return;
+		}
+		noticeSlot.innerHTML = '';
+
+		var doc = new DOMParser().parseFromString( html, 'text/html' );
+		doc.querySelectorAll( '.woocommerce-error, .woocommerce-info' ).forEach( function ( node ) {
+			// The drawer already offers "bekijk winkelwagen" and "afrekenen".
+			node.querySelectorAll( 'a.button' ).forEach( function ( a ) {
+				a.remove();
+			} );
+			noticeSlot.insertAdjacentHTML( 'beforeend', node.outerHTML );
+		} );
+	}
 
 	$( document.body ).on( 'wc_fragments_refreshed wc_fragments_loaded', function () {
 		if ( pendingOpen ) {
@@ -154,8 +180,14 @@
 				if ( ! res.ok ) {
 					throw new Error( 'add-to-cart failed' );
 				}
+				return res.text();
+			} )
+			.then( function ( html ) {
 				form.classList.remove( 'is-adding' );
 				button.disabled = false;
+				// Rendering the response server-side already cleared the notice
+				// queue; this puts what it said in front of the customer.
+				showNotices( html );
 				// Let WooCommerce refresh its own fragments — it owns the
 				// session storage and cart hash that go with them.
 				pendingOpen = true;

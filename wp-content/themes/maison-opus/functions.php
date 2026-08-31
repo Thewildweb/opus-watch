@@ -56,8 +56,7 @@ function maison_opus_setup() {
 add_action( 'after_setup_theme', 'maison_opus_setup' );
 
 /**
- * Fonts & styles — shared base + the heritage stylesheet.
- * (Heritage @imports its own fonts at the top of its stylesheet.)
+ * Fonts & styles — self-hosted faces, shared base, then the heritage skin.
  */
 function maison_opus_assets() {
 	wp_enqueue_style(
@@ -92,11 +91,27 @@ function maison_opus_assets() {
  * to bump it; the mtime changes whenever the file does.
  */
 function maison_opus_asset_ver( $rel ) {
-	$path = get_template_directory() . $rel;
+	$path = get_template_directory() . '/' . ltrim( $rel, '/' );
 	if ( file_exists( $path ) ) {
 		return (string) filemtime( $path );
 	}
 	return MAISON_OPUS_VERSION;
+}
+
+/**
+ * URL for a bundled theme file, carrying the same mtime cache buster.
+ *
+ * Stylesheets and scripts get a version from wp_enqueue_*; images are
+ * referenced straight from the templates, so without this they keep their
+ * URL forever and a replaced logo or hero sits in browser and Cloudflare
+ * caches until the max-age runs out.
+ *
+ * Not used for the preloaded woff2 files: fonts.css requests those without
+ * a query string, and a preload only counts if the two URLs match exactly.
+ */
+function maison_opus_asset_uri( $rel ) {
+	$rel = '/' . ltrim( $rel, '/' );
+	return add_query_arg( 'ver', maison_opus_asset_ver( $rel ), get_theme_file_uri( $rel ) );
 }
 add_action( 'wp_enqueue_scripts', 'maison_opus_assets' );
 
@@ -197,11 +212,10 @@ add_action( 'wp_head', 'maison_opus_preload_fonts', 4 );
  * Favicons — rosette from the logo; the SVG flips to paper on dark browser UIs.
  */
 function maison_opus_favicons() {
-	$base = get_theme_file_uri( 'assets/images' );
-	echo '<link rel="icon" href="' . esc_url( $base . '/logo-icon.svg' ) . '" type="image/svg+xml" />' . "\n";
-	echo '<link rel="icon" href="' . esc_url( $base . '/favicon-32.png' ) . '" type="image/png" sizes="32x32" />' . "\n";
-	echo '<link rel="icon" href="' . esc_url( $base . '/favicon-192.png' ) . '" type="image/png" sizes="192x192" />' . "\n";
-	echo '<link rel="apple-touch-icon" href="' . esc_url( $base . '/apple-touch-icon.png' ) . '" />' . "\n";
+	echo '<link rel="icon" href="' . esc_url( maison_opus_asset_uri( 'assets/images/logo-icon.svg' ) ) . '" type="image/svg+xml" />' . "\n";
+	echo '<link rel="icon" href="' . esc_url( maison_opus_asset_uri( 'assets/images/favicon-32.png' ) ) . '" type="image/png" sizes="32x32" />' . "\n";
+	echo '<link rel="icon" href="' . esc_url( maison_opus_asset_uri( 'assets/images/favicon-192.png' ) ) . '" type="image/png" sizes="192x192" />' . "\n";
+	echo '<link rel="apple-touch-icon" href="' . esc_url( maison_opus_asset_uri( 'assets/images/apple-touch-icon.png' ) ) . '" />' . "\n";
 }
 add_action( 'wp_head', 'maison_opus_favicons', 5 );
 
@@ -215,6 +229,14 @@ add_action(
 	'woocommerce_before_main_content',
 	function () {
 		echo '<main class="container wc-main"><div class="section">';
+
+		// WooCommerce normally prints notices from woocommerce_before_single_product
+		// and woocommerce_before_shop_loop, but this theme replaces those content
+		// templates and never fires either hook — so add-to-cart messages and
+		// errors were queueing in the session invisibly and then surfacing on
+		// whatever page happened to print notices next (cart, account). Printing
+		// here covers every WooCommerce page and clears the queue.
+		woocommerce_output_all_notices();
 	},
 	10
 );
@@ -409,10 +431,9 @@ function opus_brand_image_url( $brand, $size = 'large' ) {
  */
 function opus_brand_logo_url( $slug ) {
 	$dir = get_template_directory() . '/assets/images/brands/';
-	$uri = get_template_directory_uri() . '/assets/images/brands/';
 	foreach ( array( 'svg', 'png', 'webp' ) as $ext ) {
 		if ( file_exists( $dir . $slug . '.' . $ext ) ) {
-			return $uri . $slug . '.' . $ext;
+			return maison_opus_asset_uri( 'assets/images/brands/' . $slug . '.' . $ext );
 		}
 	}
 	return '';
@@ -426,10 +447,9 @@ function opus_brand_logo_url( $slug ) {
  */
 function opus_brand_hero_url( $term ) {
 	$dir = get_template_directory() . '/assets/images/heroes/';
-	$uri = get_template_directory_uri() . '/assets/images/heroes/';
 	foreach ( array( 'jpg', 'webp', 'png' ) as $ext ) {
 		if ( file_exists( $dir . $term->slug . '.' . $ext ) ) {
-			return $uri . $term->slug . '.' . $ext;
+			return maison_opus_asset_uri( 'assets/images/heroes/' . $term->slug . '.' . $ext );
 		}
 	}
 	return opus_brand_image_url( $term->name );
