@@ -3,6 +3,26 @@
    visitor IP sent to Google, and one less round-trip before text can paint.
    Cormorant Garamond and EB Garamond are both SIL Open Font License. */
 
+/* Metric-matched fallback for Cormorant Garamond, so the swap moves nothing. */
+@font-face {
+  font-family: 'Cormorant Garamond Fallback';
+  src: local('Georgia'), local('Times New Roman'), local('Liberation Serif'), local('Nimbus Roman');
+  size-adjust: 93.01%;
+  ascent-override: 99.34%;
+  descent-override: 30.86%;
+  line-gap-override: 0.00%;
+}
+
+/* Metric-matched fallback for EB Garamond, so the swap moves nothing. */
+@font-face {
+  font-family: 'EB Garamond Fallback';
+  src: local('Georgia'), local('Times New Roman'), local('Liberation Serif'), local('Nimbus Roman');
+  size-adjust: 91.12%;
+  ascent-override: 110.52%;
+  descent-override: 32.70%;
+  line-gap-override: 0.00%;
+}
+
 @font-face {
   font-family: 'Cormorant Garamond';
   font-style: italic;

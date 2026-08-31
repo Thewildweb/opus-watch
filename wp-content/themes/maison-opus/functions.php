@@ -257,9 +257,11 @@ function opus_fleuron() {
  * The rest resolve from fonts.css as they are needed.
  */
 function maison_opus_preload_fonts() {
+	// Body text, and the weight the big display headings actually use — the
+	// homepage hero is Cormorant 300, which was arriving late and reflowing.
 	$faces = array(
 		'eb-garamond-400-normal-latin.woff2',
-		'cormorant-garamond-400-normal-latin.woff2',
+		'cormorant-garamond-300-normal-latin.woff2',
 	);
 	foreach ( $faces as $face ) {
 		printf(
