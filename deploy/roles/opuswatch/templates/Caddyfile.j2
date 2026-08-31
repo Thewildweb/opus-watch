@@ -1,0 +1,13 @@
+{{ site_domain }}, www.{{ site_domain }} {
+	encode gzip
+
+	# xmlrpc is a brute-force/amplification magnet and unused here.
+	@xmlrpc path /xmlrpc.php
+	respond @xmlrpc 403
+
+	# No directory listing of sensitive paths via WP; block direct hits on config-ish files.
+	@blocked path /wp-config.php /readme.html /license.txt
+	respond @blocked 403
+
+	reverse_proxy wordpress:80
+}

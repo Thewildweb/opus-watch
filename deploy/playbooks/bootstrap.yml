@@ -1,0 +1,36 @@
+---
+# First run on a freshly reimaged server, while root SSH still works:
+#   ansible-playbook playbooks/bootstrap.yml
+# Creates the operator user; after this, run site.yml (as erik) which
+# hardens SSH and closes root login.
+- name: Bootstrap fresh server
+  hosts: all
+  remote_user: root
+  become: false
+  vars:
+    ansible_user: root
+  tasks:
+    - name: Wait for apt/dpkg locks (cloud-init may still be running)
+      raw: while fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1; do sleep 3; done
+      changed_when: false
+
+    - name: Update apt cache
+      apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Create operator users
+      user:
+        name: "{{ item.name }}"
+        shell: "{{ item.shell }}"
+        groups: "{{ item.groups | reject('eq', 'docker') | list }}"  # docker group added after docker role
+        append: true
+        password: "{{ item.password_hash }}"
+        update_password: on_create
+      loop: "{{ operator_users }}"
+
+    - name: Install SSH keys
+      authorized_key:
+        user: "{{ item.0.name }}"
+        key: "{{ item.1 }}"
+      loop: "{{ operator_users | subelements('ssh_keys') }}"

@@ -1,0 +1,10 @@
+---
+# Full server provisioning (idempotent). Run after bootstrap.yml:
+#   ansible-playbook playbooks/site.yml --become-password-file <(pass projects/ODC-infra/erik-sudo | head -1)
+- name: Provision opus.watches production server
+  hosts: all
+  roles:
+    - users
+    - hardening
+    - docker
+    - opuswatch

@@ -1,0 +1,5 @@
+---
+- name: Reload compose stack
+  command: docker compose up -d --remove-orphans
+  args:
+    chdir: "{{ site_dir }}"

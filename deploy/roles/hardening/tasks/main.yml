@@ -1,0 +1,69 @@
+---
+- name: Install security packages
+  apt:
+    name: [ufw, fail2ban, unattended-upgrades]
+    state: present
+
+- name: Harden sshd (no root login, keys only)
+  copy:
+    dest: /etc/ssh/sshd_config.d/99-hardening.conf
+    content: |
+      PermitRootLogin no
+      PasswordAuthentication no
+      KbdInteractiveAuthentication no
+      PubkeyAuthentication yes
+      MaxAuthTries 4
+      X11Forwarding no
+      AllowTcpForwarding yes
+    mode: "0644"
+  notify: Restart sshd
+
+- name: Remove root authorized_keys (bootstrap leftover)
+  file:
+    path: /root/.ssh/authorized_keys
+    state: absent
+
+- name: UFW — default deny incoming
+  ufw:
+    direction: incoming
+    policy: deny
+
+- name: UFW — allow SSH, HTTP, HTTPS
+  ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop: ["22", "80", "443"]
+
+- name: UFW — enabled
+  ufw:
+    state: enabled
+
+- name: fail2ban — sshd jail
+  copy:
+    dest: /etc/fail2ban/jail.local
+    content: |
+      [DEFAULT]
+      bantime = 1h
+      findtime = 10m
+      maxretry = 5
+
+      [sshd]
+      enabled = true
+    mode: "0644"
+  notify: Restart fail2ban
+
+- name: Enable unattended security upgrades
+  copy:
+    dest: /etc/apt/apt.conf.d/20auto-upgrades
+    content: |
+      APT::Periodic::Update-Package-Lists "1";
+      APT::Periodic::Unattended-Upgrade "1";
+    mode: "0644"
+
+- name: fail2ban + unattended-upgrades services enabled
+  service:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop: [fail2ban, unattended-upgrades]

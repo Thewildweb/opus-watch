@@ -1,0 +1,106 @@
+---
+- name: Install rsync (theme sync)
+  apt:
+    name: rsync
+    state: present
+
+- name: Site directory
+  file:
+    path: "{{ site_dir }}"
+    state: directory
+    owner: erik
+    group: erik
+    mode: "0755"
+
+- name: Compose environment file (DB credentials)
+  copy:
+    dest: "{{ site_dir }}/.env"
+    content: |
+      MYSQL_ROOT_PASSWORD={{ mysql_root_password }}
+      MYSQL_PASSWORD={{ mysql_wordpress_password }}
+    owner: erik
+    group: erik
+    mode: "0600"
+
+- name: Generate WordPress salts (once)
+  shell: |
+    set -e
+    {
+      for key in AUTH_KEY SECURE_AUTH_KEY LOGGED_IN_KEY NONCE_KEY AUTH_SALT SECURE_AUTH_SALT LOGGED_IN_SALT NONCE_SALT; do
+        echo "WORDPRESS_${key}=$(openssl rand -base64 48 | tr -d '\n=+/')"
+      done
+    } > {{ site_dir }}/wp-salts.env
+    chmod 600 {{ site_dir }}/wp-salts.env
+  args:
+    creates: "{{ site_dir }}/wp-salts.env"
+
+- name: PHP upload limits (plugin zips, product images)
+  copy:
+    dest: "{{ site_dir }}/php-uploads.ini"
+    content: |
+      upload_max_filesize = 64M
+      post_max_size = 64M
+      memory_limit = 256M
+      max_execution_time = 120
+    mode: "0644"
+
+- name: Caddyfile
+  template:
+    src: Caddyfile.j2
+    dest: "{{ site_dir }}/Caddyfile"
+    mode: "0644"
+  notify: Reload compose stack
+
+- name: docker-compose.yml
+  template:
+    src: docker-compose.yml.j2
+    dest: "{{ site_dir }}/docker-compose.yml"
+    mode: "0644"
+  notify: Reload compose stack
+
+- name: wp-content directories
+  file:
+    path: "{{ site_dir }}/{{ item }}"
+    state: directory
+    owner: erik
+    group: erik
+    mode: "0755"
+  loop:
+    - wp-content
+    - wp-content/themes
+    - wp-content/mu-plugins
+
+- name: Sync theme from repo
+  become: false
+  vars:
+    ansible_become: false  # inventory var outranks the keyword for synchronize
+  synchronize:
+    src: "{{ playbook_dir }}/../../wp-content/themes/maison-opus/"
+    dest: "{{ site_dir }}/wp-content/themes/maison-opus/"
+    delete: true
+    rsync_opts: ["--exclude=.git"]
+  notify: Reload compose stack
+
+- name: Sync mu-plugins from repo
+  become: false
+  vars:
+    ansible_become: false
+  synchronize:
+    src: "{{ playbook_dir }}/../../wp-content/mu-plugins/"
+    dest: "{{ site_dir }}/wp-content/mu-plugins/"
+    delete: true
+  notify: Reload compose stack
+
+- name: Theme/mu-plugins readable by www-data
+  file:
+    path: "{{ site_dir }}/wp-content"
+    state: directory
+    recurse: true
+    mode: "u=rwX,g=rX,o=rX"
+
+- name: Compose stack up
+  command: docker compose up -d --remove-orphans
+  args:
+    chdir: "{{ site_dir }}"
+  register: compose_up
+  changed_when: "'Started' in compose_up.stderr or 'Created' in compose_up.stderr"

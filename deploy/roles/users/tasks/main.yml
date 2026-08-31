@@ -1,0 +1,17 @@
+---
+- name: Ensure operator users exist
+  user:
+    name: "{{ item.name }}"
+    shell: "{{ item.shell }}"
+    # The docker group doesn't exist until the docker role runs; it adds it there.
+    groups: "{{ item.groups | reject('eq', 'docker') | list }}"
+    append: true
+    password: "{{ item.password_hash }}"
+    update_password: on_create
+  loop: "{{ operator_users }}"
+
+- name: Install SSH keys
+  authorized_key:
+    user: "{{ item.0.name }}"
+    key: "{{ item.1 }}"
+  loop: "{{ operator_users | subelements('ssh_keys') }}"

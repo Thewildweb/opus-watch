@@ -1,0 +1,19 @@
+---
+- name: Install Docker + compose v2 (Ubuntu packages)
+  apt:
+    name: [docker.io, docker-compose-v2]
+    state: present
+
+- name: Docker service enabled
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Add operator users to docker group
+  user:
+    name: "{{ item.name }}"
+    groups: [docker]
+    append: true
+  loop: "{{ operator_users }}"
+  when: "'docker' in item.groups"
