@@ -63,6 +63,20 @@ function opus_price_ranges() {
 	);
 }
 
+/**
+ * Attribute filters shown in the sidebar: query param => [taxonomy, label].
+ * (pa_bouwjaar exists too but the year-range filter below covers it; doos/
+ * papieren are near-uniform "Ja" and not worth a filter.)
+ */
+function opus_attribute_filters() {
+	return array(
+		'staat'         => array( 'pa_staat', __( 'Staat', 'maison-opus' ) ),
+		'kastmaat'      => array( 'pa_kastmaat', __( 'Kastmaat', 'maison-opus' ) ),
+		'kastmateriaal' => array( 'pa_kastmateriaal', __( 'Kastmateriaal', 'maison-opus' ) ),
+		'wijzerplaat'   => array( 'pa_wijzerplaat', __( 'Wijzerplaat', 'maison-opus' ) ),
+	);
+}
+
 /** Selected filters from the query string, sanitized. */
 function opus_active_filters() {
 	$types = isset( $_GET['type'] ) ? array_map( 'sanitize_key', (array) $_GET['type'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification
@@ -72,19 +86,33 @@ function opus_active_filters() {
 	$van   = isset( $_GET['jaar_van'] ) ? absint( $_GET['jaar_van'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification
 	$tot   = isset( $_GET['jaar_tot'] ) ? absint( $_GET['jaar_tot'] ) : 0; // phpcs:ignore WordPress.Security.NonceVerification
 
-	return array(
+	$filters = array(
 		'type'     => $types,
 		'model'    => $model,
 		'prijs'    => $prijs,
 		'jaar_van' => $van,
 		'jaar_tot' => $tot,
 	);
+
+	foreach ( array_keys( opus_attribute_filters() ) as $param ) {
+		$filters[ $param ] = isset( $_GET[ $param ] ) ? array_map( 'sanitize_key', (array) $_GET[ $param ] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification
+	}
+
+	return $filters;
 }
 
 /** Do the current query args carry any filter? */
 function opus_filters_are_active() {
 	$f = opus_active_filters();
-	return $f['type'] || $f['model'] || $f['prijs'] || $f['jaar_van'] || $f['jaar_tot'];
+	if ( $f['type'] || $f['model'] || $f['prijs'] || $f['jaar_van'] || $f['jaar_tot'] ) {
+		return true;
+	}
+	foreach ( array_keys( opus_attribute_filters() ) as $param ) {
+		if ( $f[ $param ] ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 /** Apply the filters to the main product query on brand archives + shop. */
@@ -111,7 +139,19 @@ add_action(
 				'terms'    => array( $f['model'] ),
 			);
 		}
-		if ( $f['type'] || $f['model'] ) {
+		$attr_active = false;
+		foreach ( opus_attribute_filters() as $param => $conf ) {
+			if ( $f[ $param ] ) {
+				$tax_query[] = array(
+					'taxonomy' => $conf[0],
+					'field'    => 'slug',
+					'terms'    => $f[ $param ],
+				);
+				$attr_active = true;
+			}
+		}
+
+		if ( $f['type'] || $f['model'] || $attr_active ) {
 			$query->set( 'tax_query', $tax_query );
 		}
 
@@ -208,15 +248,17 @@ function opus_shop_filters() {
 	$years  = opus_available_years();
 
 	// Filter args to carry along when switching brand.
-	$carry = array_filter(
-		array(
-			'type'     => $f['type'],
-			'model'    => $f['model'],
-			'prijs'    => $f['prijs'],
-			'jaar_van' => $f['jaar_van'],
-			'jaar_tot' => $f['jaar_tot'],
-		)
+	$carry = array(
+		'type'     => $f['type'],
+		'model'    => $f['model'],
+		'prijs'    => $f['prijs'],
+		'jaar_van' => $f['jaar_van'],
+		'jaar_tot' => $f['jaar_tot'],
 	);
+	foreach ( array_keys( opus_attribute_filters() ) as $param ) {
+		$carry[ $param ] = $f[ $param ];
+	}
+	$carry = array_filter( $carry );
 	?>
 	<aside class="shop-filters">
 		<form class="shop-filters__form" method="get" action="<?php echo esc_url( $action ); ?>">
@@ -285,6 +327,29 @@ function opus_shop_filters() {
 					</div>
 				</fieldset>
 			<?php endif; ?>
+
+			<?php foreach ( opus_attribute_filters() as $opus_param => $opus_conf ) : ?>
+				<?php
+				$opus_attr_terms = get_terms(
+					array(
+						'taxonomy'   => $opus_conf[0],
+						'hide_empty' => true,
+					)
+				);
+				if ( is_wp_error( $opus_attr_terms ) || ! $opus_attr_terms ) {
+					continue;
+				}
+				?>
+				<fieldset class="filter-group">
+					<legend class="filter-group__title"><?php echo esc_html( $opus_conf[1] ); ?></legend>
+					<?php foreach ( $opus_attr_terms as $opus_term ) : ?>
+						<label class="filter-check">
+							<input type="checkbox" name="<?php echo esc_attr( $opus_param ); ?>[]" value="<?php echo esc_attr( $opus_term->slug ); ?>" <?php checked( in_array( $opus_term->slug, $f[ $opus_param ], true ) ); ?> />
+							<span><?php echo esc_html( $opus_term->name ); ?></span>
+						</label>
+					<?php endforeach; ?>
+				</fieldset>
+			<?php endforeach; ?>
 
 			<fieldset class="filter-group">
 				<legend class="filter-group__title">Prijs</legend>

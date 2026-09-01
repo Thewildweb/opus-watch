@@ -620,6 +620,81 @@ add_filter(
 	}
 );
 
+/**
+ * Related watches: same model family first, then same brand, then a similar
+ * price range (±40%) — instead of WooCommerce's random same-category pick.
+ * Services keep the default behaviour (their template doesn't show related).
+ */
+add_filter(
+	'woocommerce_related_products',
+	function ( $related, $product_id, $args ) {
+		if ( has_term( array( 'service', 'servicing' ), 'product_cat', $product_id ) ) {
+			return $related;
+		}
+
+		$limit = isset( $args['limit'] ) ? (int) $args['limit'] : 3;
+		$picks = array();
+
+		$pick = function ( $tax_query, $meta_query = array() ) use ( &$picks, $limit, $product_id ) {
+			if ( count( $picks ) >= $limit ) {
+				return;
+			}
+			// Never suggest a service product.
+			$tax_query[] = array(
+				'taxonomy' => 'product_cat',
+				'field'    => 'slug',
+				'terms'    => array( 'service', 'servicing' ),
+				'operator' => 'NOT IN',
+			);
+			$q = new WP_Query(
+				array(
+					'post_type'      => 'product',
+					'post_status'    => 'publish',
+					'posts_per_page' => $limit - count( $picks ),
+					'post__not_in'   => array_merge( array( $product_id ), $picks ),
+					'orderby'        => 'rand',
+					'fields'         => 'ids',
+					'tax_query'      => $tax_query,
+					'meta_query'     => $meta_query,
+				)
+			);
+			$picks = array_merge( $picks, $q->posts );
+		};
+
+		// 1. Same model family (watch_model).
+		$models = wp_get_post_terms( $product_id, 'watch_model', array( 'fields' => 'ids' ) );
+		if ( ! is_wp_error( $models ) && $models ) {
+			$pick( array( array( 'taxonomy' => 'watch_model', 'field' => 'term_id', 'terms' => $models ) ) );
+		}
+
+		// 2. Same brand.
+		$brands = wp_get_post_terms( $product_id, 'product_brand', array( 'fields' => 'ids' ) );
+		if ( ! is_wp_error( $brands ) && $brands ) {
+			$pick( array( array( 'taxonomy' => 'product_brand', 'field' => 'term_id', 'terms' => $brands ) ) );
+		}
+
+		// 3. Similar price range (±40%), any brand.
+		$price = (float) get_post_meta( $product_id, '_price', true );
+		if ( $price > 0 ) {
+			$pick(
+				array(),
+				array(
+					array(
+						'key'     => '_price',
+						'value'   => array( (int) ( $price * 0.6 ), (int) ( $price * 1.4 ) ),
+						'compare' => 'BETWEEN',
+						'type'    => 'NUMERIC',
+					),
+				)
+			);
+		}
+
+		return $picks ? $picks : $related;
+	},
+	10,
+	3
+);
+
 /* ─────────────────────────────────────────────────────────────
  * Shop mega-menu — brand column (1/6) + recent watches (5/6).
  * ───────────────────────────────────────────────────────────── */
