@@ -536,19 +536,66 @@ function opus_brand_term_link( $brand ) {
 }
 
 /* ─────────────────────────────────────────────────────────────
- * Single product — spec sheet parsed from the imported description.
- * The importer bakes a <table> of specs into the product description;
- * we lift it out into a clean label=>value map (Dutch labels) and keep
- * the remaining prose separately so the template can style each.
+ * Single product — spec sheet from the product's structured data.
+ * Primary source: the global attributes (pa_*), the brand/model
+ * taxonomies and the _opus_* meta. The legacy path — parsing a spec
+ * <table> baked into the description by the importer — remains as a
+ * fallback for products that carry no attribute data yet, and any
+ * such table is always stripped from the prose either way.
  * ───────────────────────────────────────────────────────────── */
+
+/** Spec rows from attributes/taxonomies/meta; empty when none apply. */
+function opus_product_spec_from_attributes( $product ) {
+	$pid = $product->get_id();
+
+	$tax_names = function ( $taxonomy ) use ( $pid ) {
+		$names = wp_get_post_terms( $pid, $taxonomy, array( 'fields' => 'names' ) );
+		return ( ! is_wp_error( $names ) && $names ) ? implode( ', ', $names ) : '';
+	};
+
+	$rows = array(
+		array( __( 'Merk', 'maison-opus' ), $tax_names( 'product_brand' ) ),
+		array( __( 'Model', 'maison-opus' ), $tax_names( 'watch_model' ) ),
+		array( __( 'Referentie', 'maison-opus' ), (string) get_post_meta( $pid, '_opus_reference', true ) ),
+		array( __( 'Staat', 'maison-opus' ), $tax_names( 'pa_staat' ) ),
+		array( __( 'Bouwjaar', 'maison-opus' ), $tax_names( 'pa_bouwjaar' ) ),
+		array( __( 'Kastmaat', 'maison-opus' ), $tax_names( 'pa_kastmaat' ) ),
+		array( __( 'Kastmateriaal', 'maison-opus' ), $tax_names( 'pa_kastmateriaal' ) ),
+		array( __( 'Bandmateriaal', 'maison-opus' ), $tax_names( 'pa_bandmateriaal' ) ),
+		array( __( 'Wijzerplaat', 'maison-opus' ), $tax_names( 'pa_wijzerplaat' ) ),
+		array( __( 'Uurwerk', 'maison-opus' ), (string) get_post_meta( $pid, '_opus_movement', true ) ),
+		array( __( 'Sluiting', 'maison-opus' ), (string) get_post_meta( $pid, '_opus_clasp', true ) ),
+		array( __( 'Doos', 'maison-opus' ), $tax_names( 'pa_doos' ) ),
+		array( __( 'Papieren', 'maison-opus' ), $tax_names( 'pa_papieren' ) ),
+	);
+
+	$specs = array();
+	foreach ( $rows as $row ) {
+		if ( '' !== trim( $row[1] ) ) {
+			$specs[ $row[0] ] = $row[1];
+		}
+	}
+
+	// A couple of stray values is not a real spec sheet — let the legacy
+	// table parser have a go instead.
+	return count( $specs ) >= 3 ? $specs : array();
+}
+
 function opus_product_spec_data( $product ) {
 	$html  = (string) $product->get_description();
-	$specs = array();
+	$specs = opus_product_spec_from_attributes( $product );
 	$prose = $html;
 
 	if ( $html && preg_match( '/<table[^>]*>.*?<\/table>/is', $html, $m ) ) {
 		$table = $m[0];
 		$prose = str_replace( $table, '', $html );
+
+		if ( $specs ) {
+			$table = ''; // structured data wins; table only stripped from prose
+		}
+	}
+
+	if ( ! $specs && ! empty( $table ) ) {
 
 		$labels = array(
 			'brand'             => __( 'Merk', 'maison-opus' ),
