@@ -108,6 +108,24 @@ a { color: inherit; }
 }
 .cart-count.has-items { color: var(--gilt); font-weight: 500; }
 
+/* ── Sold watches: stay on the site (SEO), clearly marked, not buyable ── */
+.piece-frame { position: relative; }
+.piece-sold-flag,
+.product-sold__flag {
+  display: inline-block;
+  font-variant: all-small-caps;
+  letter-spacing: 0.22em;
+  font-size: 13px;
+  color: var(--paper);
+  background: var(--ink-soft);
+  padding: 4px 12px 5px;
+}
+.piece-sold-flag { position: absolute; top: 14px; left: 14px; z-index: 2; }
+.piece--sold .piece-photo, .piece--sold svg.dial { opacity: 0.72; }
+.piece--sold .piece-price { color: var(--ink-soft); font-style: italic; }
+.product-sold { margin: 6px 0 10px; }
+.product-sold p { margin: 10px 0 0; color: var(--ink-soft); }
+
 /* ── Burger & mobile menu drawer (activated ≤880px, harmless above) ── */
 .nav-burger {
   display: none;

@@ -334,7 +334,8 @@ function opus_featured_products( $limit = 3 ) {
 	}
 	$products = wc_get_products(
 		array(
-			'status'   => 'publish',
+			'status'       => 'publish',
+			'stock_status' => 'instock',
 			'featured' => true,
 			'limit'    => $limit,
 			'orderby'  => 'date',
@@ -345,7 +346,8 @@ function opus_featured_products( $limit = 3 ) {
 	if ( empty( $products ) ) {
 		$products = wc_get_products(
 			array(
-				'status'   => 'publish',
+				'status'       => 'publish',
+				'stock_status' => 'instock',
 				'limit'    => $limit,
 				'orderby'  => 'date',
 				'order'    => 'DESC',
@@ -405,9 +407,11 @@ function opus_product_piece( $product, $seed = 0 ) {
 	$brands = wp_get_post_terms( $id, 'product_brand', array( 'fields' => 'names' ) );
 	$brand  = ( ! is_wp_error( $brands ) && $brands ) ? $brands[0] : '';
 	$desc   = wp_strip_all_tags( $product->get_short_description() );
+	$sold   = ! $product->is_in_stock();
 	?>
-	<a class="piece" href="<?php echo esc_url( get_permalink( $id ) ); ?>">
+	<a class="piece<?php echo $sold ? ' piece--sold' : ''; ?>" href="<?php echo esc_url( get_permalink( $id ) ); ?>">
 		<div class="piece-frame">
+			<?php if ( $sold ) : ?><span class="piece-sold-flag"><?php esc_html_e( 'Verkocht', 'maison-opus' ); ?></span><?php endif; ?>
 			<?php
 			if ( has_post_thumbnail( $id ) ) {
 				echo get_the_post_thumbnail( $id, 'large', array( 'class' => 'piece-photo' ) );
@@ -423,7 +427,7 @@ function opus_product_piece( $product, $seed = 0 ) {
 		<?php if ( $desc ) : ?>
 			<div class="piece-line"><?php echo esc_html( $desc ); ?></div>
 		<?php endif; ?>
-		<div class="piece-price"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
+		<div class="piece-price"><?php echo $sold ? esc_html__( 'Verkocht', 'maison-opus' ) : wp_kses_post( $product->get_price_html() ); ?></div>
 	</a>
 	<?php
 }
@@ -696,6 +700,10 @@ add_filter(
 				'terms'    => array( 'service', 'servicing' ),
 				'operator' => 'NOT IN',
 			);
+			$meta_query[] = array(
+				'key'   => '_stock_status',
+				'value' => 'instock',
+			);
 			$q = new WP_Query(
 				array(
 					'post_type'      => 'product',
@@ -766,8 +774,9 @@ function opus_render_shop_mega() {
 	$brands  = is_wp_error( $brands ) ? array() : $brands;
 	$watches = wc_get_products(
 		array(
-			'status'    => 'publish',
-			'limit'     => 4,
+			'status'       => 'publish',
+			'stock_status' => 'instock',
+			'limit'        => 4,
 			'orderby'   => 'date',
 			'order'     => 'DESC',
 			'tax_query' => array(
@@ -821,8 +830,9 @@ function opus_render_shop_mega() {
 			<?php
 			$brand_watches = wc_get_products(
 				array(
-					'status'    => 'publish',
-					'limit'     => 4,
+					'status'       => 'publish',
+					'stock_status' => 'instock',
+					'limit'        => 4,
 					'orderby'   => 'date',
 					'order'     => 'DESC',
 					'tax_query' => array(

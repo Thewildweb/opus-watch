@@ -57,7 +57,9 @@ $short   = $product->get_short_description();
 
 			<h1 class="product-title"><?php echo esc_html( $product->get_name() ); ?></h1>
 
-			<div class="product-price"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
+			<?php if ( $product->is_in_stock() ) : ?>
+				<div class="product-price"><?php echo wp_kses_post( $product->get_price_html() ); ?></div>
+			<?php endif; ?>
 
 			<?php if ( $short ) : ?>
 				<div class="product-intro">
@@ -65,9 +67,22 @@ $short   = $product->get_short_description();
 				</div>
 			<?php endif; ?>
 
-			<div class="product-buy">
-				<?php woocommerce_template_single_add_to_cart(); ?>
-			</div>
+			<?php if ( $product->is_in_stock() ) : ?>
+				<div class="product-buy">
+					<?php woocommerce_template_single_add_to_cart(); ?>
+				</div>
+			<?php else : ?>
+				<?php
+				$opus_zoek_pg  = get_page_by_path( 'zoekopdracht' );
+				$opus_zoek_url = $opus_zoek_pg ? get_permalink( apply_filters( 'wpml_object_id', $opus_zoek_pg->ID, 'page', true ) ) : home_url( '/zoekopdracht/' );
+				?>
+				<div class="product-sold">
+					<span class="product-sold__flag"><?php esc_html_e( 'Verkocht', 'maison-opus' ); ?></span>
+					<p><?php esc_html_e( 'Dit horloge is inmiddels verkocht.', 'maison-opus' ); ?>
+						<?php esc_html_e( 'Dan vinden wij het.', 'maison-opus' ); ?>
+						<a href="<?php echo esc_url( $opus_zoek_url ); ?>"><?php esc_html_e( 'Plaats een zoekopdracht', 'maison-opus' ); ?></a></p>
+				</div>
+			<?php endif; ?>
 
 			<ul class="product-assurances">
 				<li><?php esc_html_e( 'Verzekerde verzending wereldwijd', 'maison-opus' ); ?></li>
