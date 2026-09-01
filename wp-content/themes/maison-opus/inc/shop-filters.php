@@ -53,6 +53,22 @@ add_action(
 	}
 );
 
+/**
+ * Keep the products list readable: Yoast's five columns squeezed the table
+ * until headers rendered vertically. SEO editing stays available on the
+ * product itself; the list keeps the columns a shop owner actually scans.
+ */
+add_filter(
+	'manage_edit-product_columns',
+	function ( $columns ) {
+		foreach ( array( 'wpseo-score', 'wpseo-score-readability', 'wpseo-title', 'wpseo-metadesc', 'wpseo-focuskw', 'wpseo-links', 'wpseo-linked' ) as $key ) {
+			unset( $columns[ $key ] );
+		}
+		return $columns;
+	},
+	20
+);
+
 /** The price buckets (key => label). Keys are "min-max" in euros. */
 function opus_price_ranges() {
 	return array(
