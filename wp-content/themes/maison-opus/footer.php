@@ -35,7 +35,6 @@
 				<h4><?php esc_html_e( 'Collectie', 'maison-opus' ); ?></h4>
 				<a href="<?php echo esc_url( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' ) ); ?>"><?php esc_html_e( 'Alle horloges', 'maison-opus' ); ?></a>
 				<a href="<?php echo esc_url( $opus_ft_page( 'database' ) ); ?>"><?php esc_html_e( 'De database', 'maison-opus' ); ?></a>
-				<a href="<?php echo esc_url( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'myaccount' ) : home_url( '/' ) ); ?>"><?php esc_html_e( 'Inloggen', 'maison-opus' ); ?></a>
 			</div>
 			<div>
 				<h4><?php esc_html_e( 'Onderhoud', 'maison-opus' ); ?></h4>
