@@ -703,10 +703,12 @@ function opus_render_shop_mega() {
 		return;
 	}
 	$shop    = wc_get_page_permalink( 'shop' );
+	// All brands, like the homepage brand wall — brands without stock still
+	// have a landing page worth reaching from the menu.
 	$brands  = get_terms(
 		array(
 			'taxonomy'   => 'product_brand',
-			'hide_empty' => true,
+			'hide_empty' => false,
 			'orderby'    => 'count',
 			'order'      => 'DESC',
 		)
@@ -737,7 +739,7 @@ function opus_render_shop_mega() {
 					$bl = get_term_link( $b );
 					?>
 					<a href="<?php echo esc_url( is_wp_error( $bl ) ? $shop : $bl ); ?>">
-						<?php echo esc_html( $b->name ); ?> <span><?php echo (int) $b->count; ?></span>
+						<?php echo esc_html( $b->name ); ?><?php if ( $b->count ) : ?> <span><?php echo (int) $b->count; ?></span><?php endif; ?>
 					</a>
 				<?php endforeach; endif; ?>
 		</div>
