@@ -713,6 +713,7 @@ function opus_render_shop_mega() {
 			'order'      => 'DESC',
 		)
 	);
+	$brands  = is_wp_error( $brands ) ? array() : $brands;
 	$watches = wc_get_products(
 		array(
 			'status'    => 'publish',
@@ -728,34 +729,92 @@ function opus_render_shop_mega() {
 			),
 		)
 	);
+
+	// Language-aware link to the zoekopdracht page for the empty-brand callout.
+	$zoek_page = get_page_by_path( 'zoekopdracht' );
+	$zoek_url  = home_url( '/zoekopdracht/' );
+	if ( $zoek_page ) {
+		$zoek_url = get_permalink( apply_filters( 'wpml_object_id', $zoek_page->ID, 'page', true ) );
+	}
+
+	$render_cards = function ( $items ) {
+		foreach ( $items as $w ) {
+			?>
+			<a class="mega-card" href="<?php echo esc_url( get_permalink( $w->get_id() ) ); ?>">
+				<span class="mega-thumb"><?php echo $w->get_image( 'woocommerce_thumbnail' ); ?></span>
+				<span class="mega-cname"><?php echo esc_html( $w->get_name() ); ?></span>
+				<span class="mega-cprice"><?php echo wp_kses_post( $w->get_price_html() ); ?></span>
+			</a>
+			<?php
+		}
+	};
 	?>
 	<div class="mega-inner">
 		<div class="mega-brands">
 			<p class="mega-label"><?php esc_html_e( 'Merken', 'maison-opus' ); ?></p>
-			<a href="<?php echo esc_url( $shop ); ?>"><?php esc_html_e( 'Alle horloges', 'maison-opus' ); ?></a>
+			<a href="<?php echo esc_url( $shop ); ?>" data-brand=""><?php esc_html_e( 'Alle horloges', 'maison-opus' ); ?></a>
 			<?php
-			if ( ! is_wp_error( $brands ) ) :
-				foreach ( $brands as $b ) :
-					$bl = get_term_link( $b );
-					?>
-					<a href="<?php echo esc_url( is_wp_error( $bl ) ? $shop : $bl ); ?>">
-						<?php echo esc_html( $b->name ); ?><?php if ( $b->count ) : ?> <span><?php echo (int) $b->count; ?></span><?php endif; ?>
-					</a>
-				<?php endforeach; endif; ?>
+			foreach ( $brands as $b ) :
+				$bl = get_term_link( $b );
+				?>
+				<a href="<?php echo esc_url( is_wp_error( $bl ) ? $shop : $bl ); ?>" data-brand="<?php echo esc_attr( $b->slug ); ?>">
+					<?php echo esc_html( $b->name ); ?><?php if ( $b->count ) : ?> <span><?php echo (int) $b->count; ?></span><?php endif; ?>
+				</a>
+			<?php endforeach; ?>
 		</div>
-		<div class="mega-watches">
+		<div class="mega-watches" data-panel="">
 			<p class="mega-label"><?php esc_html_e( 'Nieuw binnen', 'maison-opus' ); ?></p>
-			<div class="mega-grid">
-				<?php foreach ( $watches as $w ) : ?>
-					<a class="mega-card" href="<?php echo esc_url( get_permalink( $w->get_id() ) ); ?>">
-						<span class="mega-thumb"><?php echo $w->get_image( 'woocommerce_thumbnail' ); ?></span>
-						<span class="mega-cname"><?php echo esc_html( $w->get_name() ); ?></span>
-						<span class="mega-cprice"><?php echo wp_kses_post( $w->get_price_html() ); ?></span>
-					</a>
-				<?php endforeach; ?>
-			</div>
+			<div class="mega-grid"><?php $render_cards( $watches ); ?></div>
 		</div>
+		<?php foreach ( $brands as $b ) : ?>
+			<?php
+			$brand_watches = wc_get_products(
+				array(
+					'status'    => 'publish',
+					'limit'     => 4,
+					'orderby'   => 'date',
+					'order'     => 'DESC',
+					'tax_query' => array(
+						array(
+							'taxonomy' => 'product_brand',
+							'field'    => 'term_id',
+							'terms'    => array( $b->term_id ),
+						),
+					),
+				)
+			);
+			?>
+			<div class="mega-watches" data-panel="<?php echo esc_attr( $b->slug ); ?>" hidden>
+				<p class="mega-label"><?php echo esc_html( $b->name ); ?></p>
+				<?php if ( $brand_watches ) : ?>
+					<div class="mega-grid"><?php $render_cards( $brand_watches ); ?></div>
+				<?php else : ?>
+					<div class="mega-empty">
+						<p class="mega-empty__lede"><?php echo esc_html( sprintf( __( 'Momenteel geen %s op voorraad.', 'maison-opus' ), $b->name ) ); ?></p>
+						<p class="mega-empty__sub"><?php esc_html_e( 'Niet op voorraad?', 'maison-opus' ); ?> <?php esc_html_e( 'Dan vinden wij het.', 'maison-opus' ); ?></p>
+						<a class="btn solid" href="<?php echo esc_url( $zoek_url ); ?>"><?php esc_html_e( 'Plaats een zoekopdracht', 'maison-opus' ); ?></a>
+					</div>
+				<?php endif; ?>
+			</div>
+		<?php endforeach; ?>
 	</div>
+	<script>
+	( function () {
+		var mega = document.currentScript.closest( '.mega' );
+		if ( ! mega ) { return; }
+		var links  = mega.querySelectorAll( '.mega-brands a[data-brand]' );
+		var panels = mega.querySelectorAll( '[data-panel]' );
+		function show( key ) {
+			panels.forEach( function ( p ) { p.hidden = p.getAttribute( 'data-panel' ) !== key; } );
+		}
+		links.forEach( function ( link ) {
+			[ 'mouseenter', 'focus' ].forEach( function ( ev ) {
+				link.addEventListener( ev, function () { show( link.getAttribute( 'data-brand' ) ); } );
+			} );
+		} );
+		mega.addEventListener( 'mouseleave', function () { show( '' ); } );
+	}() );
+	</script>
 	<?php
 }
 
