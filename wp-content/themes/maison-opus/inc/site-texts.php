@@ -215,8 +215,30 @@ function opus_business_profile_fields() {
 		'betaalmethoden'   => array( 'label' => 'Betaalmethoden', 'default' => '', 'hint' => 'Bijv. "iDEAL, creditcard en bankoverschrijving" — invullen zodra Mollie is aangesloten.' ),
 		'retourbeleid'     => array( 'label' => 'Retourlabel & kosten', 'default' => '', 'hint' => 'Geeft Opus een retourlabel uit, en wie draagt de kosten? Volledige zin(nen).', 'textarea' => true ),
 		'bewaartermijn_service' => array( 'label' => 'Bewaartermijn service-dossiers', 'default' => '', 'hint' => 'Bijv. "de garantieperiode plus twee jaar".' ),
+		'umami_id'         => array( 'label' => 'Umami website-ID', 'default' => '', 'hint' => 'Statistieken-ID uit analytics.opus.watches; leeg = geen meting.' ),
 	);
 }
+
+/**
+ * Umami analytics — cookieless, so no consent banner is needed. The script
+ * only loads for visitors (not for logged-in staff, whose clicks would
+ * pollute the numbers) and only when a website-ID is configured.
+ */
+add_action(
+	'wp_head',
+	function () {
+		$id = opus_business_get( 'umami_id' );
+		if ( ! $id || is_user_logged_in() ) {
+			return;
+		}
+		printf(
+			'<script defer src="https://analytics.%1$s/script.js" data-website-id="%2$s"></script>' . "\n",
+			esc_attr( wp_parse_url( home_url(), PHP_URL_HOST ) === 'localhost' ? 'opus.watches' : preg_replace( '/^www\./', '', wp_parse_url( home_url(), PHP_URL_HOST ) ) ),
+			esc_attr( $id )
+		);
+	},
+	20
+);
 
 /** A profile value, or the registry default, or '' — no placeholder text. */
 function opus_business_get( $key ) {

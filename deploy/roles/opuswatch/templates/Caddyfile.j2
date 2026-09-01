@@ -1,3 +1,7 @@
+analytics.{{ site_domain }} {
+	reverse_proxy umami:3000
+}
+
 # www serves a permanent redirect to the apex — one canonical hostname.
 www.{{ site_domain }} {
 	redir https://{{ site_domain }}{uri} permanent

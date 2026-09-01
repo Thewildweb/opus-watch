@@ -19,6 +19,8 @@
       MYSQL_ROOT_PASSWORD={{ mysql_root_password }}
       MYSQL_PASSWORD={{ mysql_wordpress_password }}
       BREVO_API_KEY={{ brevo_api_key }}
+      UMAMI_DB_PASSWORD={{ umami_db_password }}
+      UMAMI_APP_SECRET={{ umami_app_secret }}
     owner: erik
     group: erik
     mode: "0600"

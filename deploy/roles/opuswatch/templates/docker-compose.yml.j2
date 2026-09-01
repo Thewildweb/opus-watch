@@ -75,6 +75,10 @@ services:
       WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
       WORDPRESS_TABLE_PREFIX: wp_
       BREVO_API_KEY: ${BREVO_API_KEY}
+      # CLI runs in a different language/MO context than the web — letting it
+      # write into the shared persistent cache poisons term links (the /brand/
+      # vs /merk/ base bug). CLI gets no persistent object cache.
+      WP_REDIS_DISABLED: "true"
       WORDPRESS_CONFIG_EXTRA: |
         define('WP_REDIS_HOST', 'redis');
         define('WP_REDIS_TIMEOUT', 1);
@@ -111,6 +115,27 @@ services:
       timeout: 5s
       retries: 12
 
+  umami-db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD}
+    volumes:
+      - umami_db:/var/lib/postgresql/data
+
+  # Privacy-friendly analytics at analytics.{{ site_domain }} (via Caddy).
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    restart: unless-stopped
+    depends_on:
+      - umami-db
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD}@umami-db:5432/umami
+      DATABASE_TYPE: postgresql
+      APP_SECRET: ${UMAMI_APP_SECRET}
+
   caddy:
     image: caddy:2
     restart: unless-stopped
@@ -129,3 +154,4 @@ volumes:
   caddy_data:
   caddy_config:
   es_data:
+  umami_db:
