@@ -119,14 +119,9 @@ $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 					if ( is_wp_error( $link ) ) {
 						continue;
 					}
-					$logo = opus_brand_logo_url( $bt->slug );
 					?>
 					<a class="brand-logo" href="<?php echo esc_url( $link ); ?>" aria-label="<?php echo esc_attr( $bt->name ); ?>">
-						<?php if ( $logo ) : ?>
-							<img src="<?php echo esc_url( $logo ); ?>" alt="<?php echo esc_attr( $bt->name ); ?>" loading="lazy" />
-						<?php else : ?>
-							<span class="brand-wordmark"><?php echo esc_html( $bt->name ); ?></span>
-						<?php endif; ?>
+						<span class="brand-wordmark"><?php echo esc_html( $bt->name ); ?></span>
 					</a>
 					<?php
 				endforeach;

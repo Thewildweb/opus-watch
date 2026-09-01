@@ -78,12 +78,78 @@ function opus_attribute_filters() {
 }
 
 /**
+ * Product ids matching every active filter EXCEPT the given attribute group
+ * (a group's own selection must not narrow its own options). Returns null
+ * when no other filter is active — i.e. no extra restriction.
+ */
+function opus_filtered_product_ids( $exclude_param ) {
+	static $cache = array();
+	if ( array_key_exists( $exclude_param, $cache ) ) {
+		return $cache[ $exclude_param ];
+	}
+	$f         = opus_active_filters();
+	$tax_query = array();
+	$meta_query = array();
+	$any       = false;
+
+	if ( $f['type'] ) {
+		$tax_query[] = array( 'taxonomy' => 'watch_type', 'field' => 'slug', 'terms' => $f['type'] );
+		$any         = true;
+	}
+	if ( $f['model'] ) {
+		$tax_query[] = array( 'taxonomy' => 'watch_model', 'field' => 'slug', 'terms' => array( $f['model'] ) );
+		$any         = true;
+	}
+	foreach ( opus_attribute_filters() as $param => $conf ) {
+		if ( $param === $exclude_param || ! $f[ $param ] ) {
+			continue;
+		}
+		$tax_query[] = array( 'taxonomy' => $conf[0], 'field' => 'slug', 'terms' => $f[ $param ] );
+		$any         = true;
+	}
+	if ( $f['prijs'] ) {
+		$price_q = array( 'relation' => 'OR' );
+		foreach ( $f['prijs'] as $key ) {
+			list( $min, $max ) = array_map( 'intval', explode( '-', $key ) );
+			$price_q[]         = array( 'key' => '_price', 'value' => array( $min, $max ), 'compare' => 'BETWEEN', 'type' => 'NUMERIC' );
+		}
+		$meta_query[] = $price_q;
+		$any          = true;
+	}
+	if ( $f['jaar_van'] || $f['jaar_tot'] ) {
+		$meta_query[] = array(
+			'key'     => '_opus_year',
+			'value'   => array( $f['jaar_van'] ? $f['jaar_van'] : 1900, $f['jaar_tot'] ? $f['jaar_tot'] : 2100 ),
+			'compare' => 'BETWEEN',
+			'type'    => 'NUMERIC',
+		);
+		$any = true;
+	}
+
+	if ( ! $any ) {
+		return $cache[ $exclude_param ] = null;
+	}
+	$q = new WP_Query(
+		array(
+			'post_type'      => 'product',
+			'post_status'    => 'publish',
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+			'no_found_rows'  => true,
+			'tax_query'      => $tax_query,
+			'meta_query'     => $meta_query,
+		)
+	);
+	return $cache[ $exclude_param ] = array_map( 'intval', $q->posts );
+}
+
+/**
  * Terms of an attribute taxonomy with at least one product IN STOCK — via
  * WooCommerce's attribute lookup table, so a sold watch drops out of the
  * filter options immediately. On a brand archive the options are scoped to
  * that brand's stock, so only choices that can return results are offered.
  */
-function opus_attribute_terms_in_stock( $taxonomy ) {
+function opus_attribute_terms_in_stock( $taxonomy, $param = '' ) {
 	global $wpdb;
 	$terms = get_terms(
 		array(
@@ -104,20 +170,35 @@ function opus_attribute_terms_in_stock( $taxonomy ) {
 		);
 	}
 
+	// Facet: restrict to products matching the OTHER active filters.
+	$product_ctx = '';
+	$ctx_ids     = $param ? opus_filtered_product_ids( $param ) : null;
+	if ( is_array( $ctx_ids ) ) {
+		$product_ctx = $ctx_ids
+			? ' AND l.product_id IN (' . implode( ',', $ctx_ids ) . ')'
+			: ' AND 1 = 0';
+	}
+
 	$ids = implode( ',', array_map( 'intval', wp_list_pluck( $terms, 'term_id' ) ) );
 	$in_stock = $wpdb->get_col( $wpdb->prepare(
 		"SELECT DISTINCT l.term_id
 		 FROM {$wpdb->prefix}wc_product_attributes_lookup l{$brand_join}
-		 WHERE l.taxonomy = %s AND l.in_stock = 1 AND l.term_id IN ({$ids})",
+		 WHERE l.taxonomy = %s AND l.in_stock = 1 AND l.term_id IN ({$ids}){$product_ctx}",
 		$taxonomy
 	) );
 	$in_stock = array_map( 'intval', $in_stock );
 
+	// Keep the user's own current selections visible even when other groups
+	// have narrowed them away — otherwise they cannot be unticked.
+	$f        = opus_active_filters();
+	$selected = ( $param && ! empty( $f[ $param ] ) ) ? $f[ $param ] : array();
+
 	return array_values(
 		array_filter(
 			$terms,
-			function ( $t ) use ( $in_stock ) {
-				return in_array( (int) $t->term_id, $in_stock, true );
+			function ( $t ) use ( $in_stock, $selected ) {
+				return in_array( (int) $t->term_id, $in_stock, true )
+					|| in_array( $t->slug, $selected, true );
 			}
 		)
 	);
@@ -311,7 +392,7 @@ function opus_shop_filters() {
 
 			<?php if ( $types ) : ?>
 				<fieldset class="filter-group">
-					<legend class="filter-group__title">Type horloge</legend>
+					<legend class="filter-group__title"><?php esc_html_e( 'Type horloge', 'maison-opus' ); ?></legend>
 					<?php foreach ( $types as $t ) : ?>
 						<label class="filter-check">
 							<input type="checkbox" name="type[]" value="<?php echo esc_attr( $t->slug ); ?>" <?php checked( in_array( $t->slug, $f['type'], true ) ); ?> />
@@ -323,9 +404,9 @@ function opus_shop_filters() {
 
 			<?php if ( $models ) : ?>
 				<div class="filter-group">
-					<label class="filter-group__title" for="opus-filter-model">Model</label>
+					<label class="filter-group__title" for="opus-filter-model"><?php esc_html_e( 'Model', 'maison-opus' ); ?></label>
 					<select id="opus-filter-model" class="filter-model" name="model">
-						<option value="">Alle modellen</option>
+						<option value=""><?php esc_html_e( 'Alle modellen', 'maison-opus' ); ?></option>
 						<?php foreach ( $models as $m ) : ?>
 							<option value="<?php echo esc_attr( $m->slug ); ?>" <?php selected( $m->slug, $f['model'] ); ?>>
 								<?php echo esc_html( $m->name ); ?> (<?php echo (int) $m->count; ?>)
@@ -337,7 +418,7 @@ function opus_shop_filters() {
 
 			<?php if ( $brands && ! $current ) : /* brand pages are already brand-scoped — no Merk block there */ ?>
 				<div class="filter-group">
-					<p class="filter-group__title">Merk</p>
+					<p class="filter-group__title"><?php esc_html_e( 'Merk', 'maison-opus' ); ?></p>
 					<?php
 					foreach ( $brands as $b ) :
 						$link = get_term_link( $b );
@@ -355,17 +436,17 @@ function opus_shop_filters() {
 
 			<?php if ( $years ) : ?>
 				<fieldset class="filter-group">
-					<legend class="filter-group__title">Bouwjaar</legend>
+					<legend class="filter-group__title"><?php esc_html_e( 'Bouwjaar', 'maison-opus' ); ?></legend>
 					<div class="filter-years">
-						<select name="jaar_van" aria-label="Bouwjaar vanaf">
-							<option value="">Van</option>
+						<select name="jaar_van" aria-label="<?php esc_attr_e( 'Bouwjaar vanaf', 'maison-opus' ); ?>">
+							<option value=""><?php esc_html_e( 'Van', 'maison-opus' ); ?></option>
 							<?php foreach ( array_reverse( $years ) as $y ) : ?>
 								<option value="<?php echo esc_attr( $y ); ?>" <?php selected( (int) $y, $f['jaar_van'] ); ?>><?php echo esc_html( $y ); ?></option>
 							<?php endforeach; ?>
 						</select>
 						<span aria-hidden="true">—</span>
-						<select name="jaar_tot" aria-label="Bouwjaar tot en met">
-							<option value="">Tot</option>
+						<select name="jaar_tot" aria-label="<?php esc_attr_e( 'Bouwjaar tot en met', 'maison-opus' ); ?>">
+							<option value=""><?php esc_html_e( 'Tot', 'maison-opus' ); ?></option>
 							<?php foreach ( $years as $y ) : ?>
 								<option value="<?php echo esc_attr( $y ); ?>" <?php selected( (int) $y, $f['jaar_tot'] ); ?>><?php echo esc_html( $y ); ?></option>
 							<?php endforeach; ?>
@@ -376,7 +457,7 @@ function opus_shop_filters() {
 
 			<?php foreach ( opus_attribute_filters() as $opus_param => $opus_conf ) : ?>
 				<?php
-				$opus_attr_terms = opus_attribute_terms_in_stock( $opus_conf[0] );
+				$opus_attr_terms = opus_attribute_terms_in_stock( $opus_conf[0], $opus_param );
 				if ( ! $opus_attr_terms ) {
 					continue;
 				}
@@ -393,7 +474,7 @@ function opus_shop_filters() {
 			<?php endforeach; ?>
 
 			<fieldset class="filter-group">
-				<legend class="filter-group__title">Prijs</legend>
+				<legend class="filter-group__title"><?php esc_html_e( 'Prijs', 'maison-opus' ); ?></legend>
 				<?php foreach ( opus_price_ranges() as $key => $label ) : ?>
 					<label class="filter-check">
 						<input type="checkbox" name="prijs[]" value="<?php echo esc_attr( $key ); ?>" <?php checked( in_array( $key, $f['prijs'], true ) ); ?> />
@@ -403,9 +484,9 @@ function opus_shop_filters() {
 			</fieldset>
 
 			<div class="filter-actions">
-				<button class="btn solid" type="submit">Toepassen</button>
+				<button class="btn solid" type="submit"><?php esc_html_e( 'Toepassen', 'maison-opus' ); ?></button>
 				<?php if ( opus_filters_are_active() ) : ?>
-					<a class="filter-reset" href="<?php echo esc_url( $action ); ?>">Wis filters</a>
+					<a class="filter-reset" href="<?php echo esc_url( $action ); ?>"><?php esc_html_e( 'Wis filters', 'maison-opus' ); ?></a>
 				<?php endif; ?>
 			</div>
 		</form>
