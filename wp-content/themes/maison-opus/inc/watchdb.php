@@ -106,13 +106,28 @@ function opus_watch_query( $args = array() ) {
 	$where  = array( '1=1' );
 	$params = array();
 
-	$search = trim( (string) $args['search'] );
+	$search   = trim( (string) $args['search'] );
+	$es_order = '';
 	if ( '' !== $search ) {
-		$like     = '%' . $wpdb->esc_like( $search ) . '%';
-		$where[]  = '(name LIKE %s OR reference LIKE %s OR family LIKE %s)';
-		$params[] = $like;
-		$params[] = $like;
-		$params[] = $like;
+		$es_ids = function_exists( 'opus_watch_es_search' ) ? opus_watch_es_search( $search ) : null;
+		if ( is_array( $es_ids ) ) {
+			// Elasticsearch answered: filter to its (typo-tolerant) matches,
+			// and remember its ranking for relevance ordering.
+			if ( $es_ids ) {
+				$id_list  = implode( ',', array_map( 'intval', $es_ids ) );
+				$where[]  = "id IN ({$id_list})";
+				$es_order = "FIELD(id, {$id_list})";
+			} else {
+				$where[] = '1=0';
+			}
+		} else {
+			// No ES (local dev / container down): original LIKE search.
+			$like     = '%' . $wpdb->esc_like( $search ) . '%';
+			$where[]  = '(name LIKE %s OR reference LIKE %s OR family LIKE %s)';
+			$params[] = $like;
+			$params[] = $like;
+			$params[] = $like;
+		}
 	}
 
 	$brands = array_filter( array_map( 'trim', (array) $args['brands'] ) );
@@ -158,6 +173,9 @@ function opus_watch_query( $args = array() ) {
 	// Page window.
 	$sorts    = opus_watch_sorts();
 	$order    = isset( $sorts[ $args['sort'] ] ) ? $sorts[ $args['sort'] ] : $sorts['relevance'];
+	if ( $es_order && 'relevance' === $args['sort'] ) {
+		$order = $es_order; // ES relevance ranking
+	}
 	$per_page = max( 1, min( 60, (int) $args['per_page'] ) );
 	$page     = max( 1, (int) $args['page'] );
 	$offset   = ( $page - 1 ) * $per_page;

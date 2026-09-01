@@ -118,6 +118,13 @@
     user: erik
     job: "curl -fsS -m 60 -o /dev/null https://{{ site_domain }}/wp-cron.php?doing_wp_cron"
 
+- name: Elasticsearch requires vm.max_map_count >= 262144
+  ansible.posix.sysctl:
+    name: vm.max_map_count
+    value: "262144"
+    state: present
+    sysctl_set: true
+
 - name: Compose stack up
   command: docker compose up -d --remove-orphans
   args:

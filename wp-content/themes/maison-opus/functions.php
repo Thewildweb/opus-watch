@@ -14,6 +14,9 @@ define( 'MAISON_OPUS_VERSION', '0.1.0' );
 /** Watch database — custom-table reference catalogue (table, importer, REST, detail route). */
 require_once get_template_directory() . '/inc/watchdb.php';
 
+/** Watch database × Elasticsearch — typo-tolerant search (SQL fallback). */
+require_once get_template_directory() . '/inc/watchdb-es.php';
+
 /** Hardening — REST/author enumeration, version disclosure. */
 require_once get_template_directory() . '/inc/hardening.php';
 

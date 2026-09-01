@@ -72,6 +72,11 @@ services:
     entrypoint: wp
     command: ["--info"]
 
+  # Object-cache parity with production (harmless if unused).
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru", "--save", ""]
+
   phpmyadmin:
     image: phpmyadmin:5
     depends_on:

@@ -44,6 +44,17 @@ Re-running any step is safe (idempotent). Theme + mu-plugins deploy from the
 repo via `site.yml` (rsync) — that is also the routine "deploy a theme change"
 command.
 
+## Search & caching
+
+- **Redis** (`redis` service): WordPress object cache via the Redis Object
+  Cache plugin (Predis). `wp redis status` to check; disable with
+  `wp redis disable` if it ever misbehaves.
+- **Elasticsearch** (`elasticsearch` service, internal-only): ElasticPress
+  powers the shop search (`wp elasticpress sync` after bulk content
+  changes); the watch database's text search queries the `opus_watches`
+  index with SQL-LIKE fallback — rebuild it after an import with
+  `wp opus watchdb-reindex`.
+
 ## Cloudflare
 
 - Single `A opus.watches → 85.17.236.215` (proxied) + `www` CNAME (proxied).
