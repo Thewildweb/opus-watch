@@ -800,6 +800,7 @@ function opus_render_shop_mega() {
 	};
 	?>
 	<div class="mega-inner">
+		<?php $opus_mega_counts = function_exists( 'opus_term_counts_current_lang' ) ? opus_term_counts_current_lang( wp_list_pluck( $brands, 'term_id' ) ) : array(); ?>
 		<div class="mega-brands">
 			<p class="mega-label"><?php esc_html_e( 'Merken', 'maison-opus' ); ?></p>
 			<a href="<?php echo esc_url( $shop ); ?>" data-brand=""><?php esc_html_e( 'Alle horloges', 'maison-opus' ); ?></a>
@@ -808,7 +809,7 @@ function opus_render_shop_mega() {
 				$bl = get_term_link( $b );
 				?>
 				<a href="<?php echo esc_url( is_wp_error( $bl ) ? $shop : $bl ); ?>" data-brand="<?php echo esc_attr( $b->slug ); ?>">
-					<?php echo esc_html( $b->name ); ?><?php if ( $b->count ) : ?> <span><?php echo (int) $b->count; ?></span><?php endif; ?>
+					<?php $opus_bn = (int) ( $opus_mega_counts[ $b->term_id ] ?? 0 ); ?><?php echo esc_html( $b->name ); ?><?php if ( $opus_bn ) : ?> <span><?php echo $opus_bn; ?></span><?php endif; ?>
 				</a>
 			<?php endforeach; ?>
 		</div>

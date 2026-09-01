@@ -246,7 +246,7 @@ function opus_filters_are_active() {
 add_action(
 	'woocommerce_product_query',
 	function ( $query ) {
-		if ( is_admin() || ( ! is_tax( 'product_brand' ) && ! ( function_exists( 'is_shop' ) && is_shop() ) ) ) {
+		if ( is_admin() || ! opus_filters_apply_here() ) {
 			return;
 		}
 		$f = opus_active_filters();
@@ -345,6 +345,81 @@ function opus_available_years() {
  * Render the filter sidebar. Auto-submits on change; the "Merk" block is
  * navigation between brand archives and carries the active filters along.
  */
+/**
+ * Per-term product counts for the CURRENT language. Raw term counts include
+ * every language's product twin (Rolex showed 136 instead of 68).
+ *
+ * @param int[] $term_ids
+ * @return array term_id => count
+ */
+function opus_term_counts_current_lang( $term_ids ) {
+	global $wpdb;
+	$term_ids = array_filter( array_map( 'intval', (array) $term_ids ) );
+	if ( ! $term_ids ) {
+		return array();
+	}
+	$lang = apply_filters( 'wpml_current_language', null );
+	if ( ! $lang ) {
+		return array();
+	}
+	$in   = implode( ',', $term_ids );
+	$rows = $wpdb->get_results( $wpdb->prepare(
+		"SELECT tt.term_id, COUNT(*) AS n
+		 FROM {$wpdb->term_relationships} tr
+		 JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+		 JOIN {$wpdb->prefix}icl_translations t ON t.element_id = tr.object_id AND t.element_type = 'post_product' AND t.language_code = %s
+		 JOIN {$wpdb->posts} p ON p.ID = tr.object_id AND p.post_status = 'publish'
+		 WHERE tt.term_id IN ({$in})
+		 GROUP BY tt.term_id",
+		$lang
+	), ARRAY_A );
+	$out = array();
+	foreach ( $rows as $r ) {
+		$out[ (int) $r['term_id'] ] = (int) $r['n'];
+	}
+	return $out;
+}
+
+/** Archives that carry the filter UI: shop, watch categories, brand pages. */
+function opus_filters_apply_here() {
+	if ( is_tax( 'product_brand' ) || ( function_exists( 'is_shop' ) && is_shop() ) ) {
+		return true;
+	}
+	// Watch categories only — the service category has its own template.
+	return function_exists( 'is_product_category' )
+		&& is_product_category()
+		&& ! is_product_category( array( 'service', 'servicing' ) );
+}
+
+/**
+ * "Filters" toggle + (on non-brand archives) the filter panel itself.
+ * Brand pages already render the sidebar inline; there the toggle only
+ * appears on small screens, where CSS turns that same sidebar into the
+ * modal. On shop/category archives the panel is modal-only at any width.
+ */
+add_action(
+	'woocommerce_before_shop_loop',
+	function () {
+		if ( ! opus_filters_apply_here() ) {
+			return;
+		}
+		$brand_page = is_tax( 'product_brand' );
+		?>
+		<button type="button"
+			class="opus-filters-toggle<?php echo $brand_page ? ' opus-filters-toggle--mobile-only' : ''; ?>"
+			data-opus-filters-open aria-expanded="false">
+			<?php esc_html_e( 'Filters', 'maison-opus' ); ?><?php if ( opus_filters_are_active() ) : ?><span class="opus-filters-toggle__dot" aria-hidden="true"></span><?php endif; ?>
+		</button>
+		<?php
+		if ( ! $brand_page ) {
+			echo '<div class="opus-filters-host">';
+			opus_shop_filters();
+			echo '</div>';
+		}
+	},
+	5
+);
+
 function opus_shop_filters() {
 	$f       = opus_active_filters();
 	$current = is_tax( 'product_brand' ) ? get_queried_object() : null;
@@ -388,6 +463,10 @@ function opus_shop_filters() {
 	$carry = array_filter( $carry );
 	?>
 	<aside class="shop-filters">
+		<div class="shop-filters__head">
+			<span class="shop-filters__title"><?php esc_html_e( 'Filters', 'maison-opus' ); ?></span>
+			<button type="button" class="shop-filters__close" aria-label="<?php esc_attr_e( 'Sluiten', 'maison-opus' ); ?>" data-opus-filters-close>&times;</button>
+		</div>
 		<form class="shop-filters__form" method="get" action="<?php echo esc_url( $action ); ?>">
 
 			<?php if ( $types ) : ?>
@@ -409,14 +488,15 @@ function opus_shop_filters() {
 						<option value=""><?php esc_html_e( 'Alle modellen', 'maison-opus' ); ?></option>
 						<?php foreach ( $models as $m ) : ?>
 							<option value="<?php echo esc_attr( $m->slug ); ?>" <?php selected( $m->slug, $f['model'] ); ?>>
-								<?php echo esc_html( $m->name ); ?> (<?php echo (int) $m->count; ?>)
+								<?php echo esc_html( $m->name ); ?> (<?php echo (int) ( $opus_lang_counts[ $m->term_id ] ?? $m->count ); ?>)
 							</option>
 						<?php endforeach; ?>
 					</select>
 				</div>
 			<?php endif; ?>
 
-			<?php if ( $brands && ! $current ) : /* brand pages are already brand-scoped — no Merk block there */ ?>
+			<?php $opus_lang_counts = opus_term_counts_current_lang( array_merge( wp_list_pluck( $brands, 'term_id' ), wp_list_pluck( $models, 'term_id' ) ) ); ?>
+	<?php if ( $brands && ! $current ) : /* brand pages are already brand-scoped — no Merk block there */ ?>
 				<div class="filter-group">
 					<p class="filter-group__title"><?php esc_html_e( 'Merk', 'maison-opus' ); ?></p>
 					<?php
@@ -428,7 +508,7 @@ function opus_shop_filters() {
 						$link = $carry ? add_query_arg( $carry, $link ) : $link;
 						?>
 						<a class="filter-brand" href="<?php echo esc_url( $link ); ?>">
-							<?php echo esc_html( $b->name ); ?> <span><?php echo (int) $b->count; ?></span>
+							<?php echo esc_html( $b->name ); ?> <span><?php echo (int) ( $opus_lang_counts[ $b->term_id ] ?? $b->count ); ?></span>
 						</a>
 					<?php endforeach; ?>
 				</div>
@@ -497,6 +577,22 @@ function opus_shop_filters() {
 			if ( form ) {
 				form.addEventListener( 'change', function () { form.submit(); } );
 			}
+			var toggle = document.querySelector( '[data-opus-filters-open]' );
+			var aside  = document.querySelector( '.shop-filters' );
+			if ( ! toggle || ! aside ) { return; }
+			function set( open ) {
+				document.body.classList.toggle( 'opus-filters-open', open );
+				toggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+			}
+			toggle.addEventListener( 'click', function () {
+				set( ! document.body.classList.contains( 'opus-filters-open' ) );
+			} );
+			aside.addEventListener( 'click', function ( e ) {
+				if ( e.target.closest( '[data-opus-filters-close]' ) ) { set( false ); }
+			} );
+			document.addEventListener( 'keydown', function ( e ) {
+				if ( 'Escape' === e.key ) { set( false ); }
+			} );
 		}() );
 	</script>
 	<?php

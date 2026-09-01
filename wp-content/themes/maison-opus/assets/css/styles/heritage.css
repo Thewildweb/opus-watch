@@ -511,17 +511,25 @@ h1.hero-title .row-3 { display: block; letter-spacing: -0.02em; }
   .pieces { grid-template-columns: 1fr; }
   .section-head { grid-template-columns: 1fr; gap: 12px; }
 
+  /* WooCommerce pages: far less air above the breadcrumbs. */
+  .wc-main { padding-top: 0; }
+  .wc-main .section { padding-top: 26px; }
+  .woocommerce-breadcrumb { white-space: normal; overflow-wrap: anywhere; font-size: 0.85em; }
+  .product-hero { grid-template-columns: 1fr; gap: 36px; margin-bottom: 56px; }
+
   /* ── Mobile header: burger · wordmark · cart+language ── */
   .site-head { padding-top: 14px; }
-  .top-row { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; }
+  .top-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-bottom: 14px; }
   .top-row nav.left { display: none; }
   .nav-burger { display: inline-flex; }
-  .wordmark { flex: 1; text-align: center; }
+  /* Logo dead-centre regardless of the flanks' widths. */
+  .wordmark { position: absolute; left: 50%; top: calc(50% - 11px); transform: translate(-50%, -50%); }
   .wordmark img { height: 58px; margin: 0 auto; }
   .top-row nav.right { gap: 16px; }
   .top-row nav.right ul,
   .top-row nav.right > a:not(.cart-link) { display: none; }
-  .lang-switcher { padding-left: 14px; }
+  /* The drawer carries the language switcher; the bar stays minimal. */
+  .top-row .lang-switcher { display: none; }
   .meta-row { display: none; }
 }
 
@@ -1495,9 +1503,68 @@ ul.products li.product {
 .filter-years select { flex: 1; min-width: 0; padding: 8px 10px; font: inherit; font-size: 14px; color: var(--ink); background: var(--paper, #fff); border: 1px solid var(--rule); }
 .filter-actions { display: flex; align-items: center; gap: 18px; }
 .filter-reset { color: var(--ink-soft); font-size: 14px; font-style: italic; }
+
+/* ── Filters toggle + modal panel ── */
+.opus-filters-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0 0 24px;
+  padding: 11px 20px;
+  background: none;
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  font-variant: all-small-caps;
+  letter-spacing: 0.2em;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color .2s, border-color .2s;
+}
+.opus-filters-toggle:hover { border-color: var(--gilt); color: var(--gilt); }
+.opus-filters-toggle__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gilt); }
+.opus-filters-toggle--mobile-only { display: none; }
+
+/* Panel head (title + close) only exists visually in the modal. */
+.shop-filters__head { display: none; }
+
+/* On shop/category archives the panel is modal-only at any width. */
+.opus-filters-host .shop-filters { display: none; }
+
+body.opus-filters-open :is(.opus-filters-host, .brand-archive) .shop-filters {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(360px, 92%);
+  z-index: 9600;
+  background: var(--paper);
+  border-left: 1px solid var(--rule);
+  box-shadow: -18px 0 46px -30px var(--shadow);
+  padding: 20px 26px 30px;
+  overflow-y: auto;
+}
+body.opus-filters-open :is(.opus-filters-host, .brand-archive) .shop-filters__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+  margin-bottom: 22px;
+  border-bottom: 1px solid var(--rule);
+}
+.shop-filters__title { font-family: "Cormorant Garamond", "Cormorant Garamond Fallback", serif; font-size: 22px; }
+.shop-filters__close { background: none; border: 0; font-size: 26px; line-height: 1; padding: 4px 8px; cursor: pointer; color: var(--ink-soft); }
+/* The panel's ancestor .container is a stacking context (z-index: 2),
+   which would cap the fixed panel below the site header — lift it. */
+body.opus-filters-open main.wc-main { z-index: 9600; }
+body.opus-filters-open { overflow: hidden; }
+body.opus-filters-open::after { content: ""; position: fixed; inset: 0; background: rgba(40, 27, 16, 0.42); z-index: 9550; }
 @media (max-width: 900px) {
-	.brand-archive { grid-template-columns: 1fr; gap: 34px; }
+	.brand-archive { grid-template-columns: 1fr; gap: 0; }
 	.shop-filters { position: static; }
+	.opus-filters-toggle--mobile-only { display: inline-flex; }
+	.brand-archive > .shop-filters { display: none; }
 }
 
 /* Taxatie block under the service list */
