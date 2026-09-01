@@ -26,6 +26,10 @@
 			$opus_zoek = get_page_by_path( 'zoekopdracht' );
 			$opus_zoek = $opus_zoek ? get_permalink( $opus_zoek ) : home_url( '/zoekopdracht/' );
 			?>
+			<button class="nav-burger" type="button" aria-label="<?php esc_attr_e( 'Menu', 'maison-opus' ); ?>" aria-expanded="false" aria-controls="opus-mobile-menu" data-opus-menu-open>
+				<span></span><span></span><span></span>
+			</button>
+
 			<nav class="left" aria-label="<?php esc_attr_e( 'Primary', 'maison-opus' ); ?>">
 				<ul class="primary-nav">
 					<li class="has-mega">
@@ -80,3 +84,65 @@
 		</div>
 	</div>
 </header>
+
+<?php
+// Mobile menu — the drawer carries all navigation on small screens.
+$opus_mm_page = function ( $path ) {
+	$page = get_page_by_path( $path );
+	if ( ! $page ) {
+		return home_url( '/' . $path . '/' );
+	}
+	return get_permalink( apply_filters( 'wpml_object_id', $page->ID, 'page', true ) );
+};
+$opus_mm_brands = get_terms( array( 'taxonomy' => 'product_brand', 'hide_empty' => false, 'orderby' => 'count', 'order' => 'DESC' ) );
+$opus_mm_brands = is_wp_error( $opus_mm_brands ) ? array() : $opus_mm_brands;
+?>
+<div class="opus-mobile-menu" id="opus-mobile-menu" hidden>
+	<div class="opus-mobile-menu__scrim" data-opus-menu-close></div>
+	<nav class="opus-mobile-menu__panel" aria-label="<?php esc_attr_e( 'Menu', 'maison-opus' ); ?>">
+		<div class="opus-mobile-menu__head">
+			<span class="opus-mobile-menu__title">Opus Watches</span>
+			<button class="opus-mobile-menu__close" type="button" aria-label="<?php esc_attr_e( 'Sluiten', 'maison-opus' ); ?>" data-opus-menu-close>&times;</button>
+		</div>
+		<div class="opus-mobile-menu__links">
+			<a href="<?php echo esc_url( $opus_shop ); ?>"><?php esc_html_e( 'Alle horloges', 'maison-opus' ); ?></a>
+			<?php if ( $opus_mm_brands ) : ?>
+				<div class="opus-mobile-menu__brands">
+					<?php foreach ( $opus_mm_brands as $opus_mm_b ) : ?>
+						<?php $opus_mm_bl = get_term_link( $opus_mm_b ); ?>
+						<?php if ( ! is_wp_error( $opus_mm_bl ) ) : ?>
+							<a href="<?php echo esc_url( $opus_mm_bl ); ?>"><?php echo esc_html( $opus_mm_b->name ); ?></a>
+						<?php endif; ?>
+					<?php endforeach; ?>
+				</div>
+			<?php endif; ?>
+			<a href="<?php echo esc_url( $opus_svc ); ?>"><?php esc_html_e( 'Diensten', 'maison-opus' ); ?></a>
+			<a href="<?php echo esc_url( $opus_zoek ); ?>"><?php esc_html_e( 'Zoekopdracht', 'maison-opus' ); ?></a>
+			<a href="<?php echo esc_url( $opus_mm_page( 'database' ) ); ?>"><?php esc_html_e( 'De database', 'maison-opus' ); ?></a>
+			<a href="<?php echo esc_url( $opus_mm_page( 'over-ons' ) ); ?>"><?php esc_html_e( 'Over ons', 'maison-opus' ); ?></a>
+			<a href="<?php echo esc_url( $opus_mm_page( 'contact' ) ); ?>"><?php esc_html_e( 'Contact', 'maison-opus' ); ?></a>
+		</div>
+		<div class="opus-mobile-menu__foot">
+			<?php get_template_part( 'template-parts/language-switcher' ); ?>
+		</div>
+	</nav>
+</div>
+<script>
+( function () {
+	var menu   = document.getElementById( 'opus-mobile-menu' );
+	var burger = document.querySelector( '[data-opus-menu-open]' );
+	if ( ! menu || ! burger ) { return; }
+	function set( open ) {
+		menu.hidden = ! open;
+		document.body.classList.toggle( 'opus-menu-open', open );
+		burger.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
+	}
+	burger.addEventListener( 'click', function () { set( menu.hidden ); } );
+	menu.querySelectorAll( '[data-opus-menu-close]' ).forEach( function ( el ) {
+		el.addEventListener( 'click', function () { set( false ); } );
+	} );
+	document.addEventListener( 'keydown', function ( e ) {
+		if ( 'Escape' === e.key && ! menu.hidden ) { set( false ); }
+	} );
+}() );
+</script>

@@ -108,6 +108,88 @@ a { color: inherit; }
 }
 .cart-count.has-items { color: var(--gilt); font-weight: 500; }
 
+/* ── Burger & mobile menu drawer (activated ≤880px, harmless above) ── */
+.nav-burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+.nav-burger span { display: block; width: 22px; height: 1px; background: var(--ink); }
+
+.opus-mobile-menu[hidden] { display: none; }
+.opus-mobile-menu { position: fixed; inset: 0; z-index: 9500; }
+.opus-mobile-menu__scrim { position: absolute; inset: 0; background: rgba(40, 27, 16, 0.42); }
+.opus-mobile-menu__panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: min(330px, 88%);
+  display: flex;
+  flex-direction: column;
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
+  box-shadow: 18px 0 46px -30px var(--shadow);
+  padding: 20px 28px 28px;
+  overflow-y: auto;
+}
+.opus-mobile-menu__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.opus-mobile-menu__title {
+  font-family: "Cormorant Garamond", "Didot", serif;
+  font-size: 22px;
+}
+.opus-mobile-menu__close {
+  background: none;
+  border: 0;
+  font-size: 26px;
+  line-height: 1;
+  padding: 4px 8px;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+.opus-mobile-menu__links { display: flex; flex-direction: column; padding-top: 8px; }
+.opus-mobile-menu__links > a {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+  text-decoration: none;
+  color: var(--ink);
+  font-variant: all-small-caps;
+  letter-spacing: 0.16em;
+  font-size: 16px;
+}
+.opus-mobile-menu__brands {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px 18px;
+  padding: 10px 0 14px 16px;
+  border-bottom: 1px solid var(--rule);
+}
+.opus-mobile-menu__brands a {
+  padding: 6px 0;
+  text-decoration: none;
+  color: var(--ink-soft);
+  font-size: 14px;
+  font-style: italic;
+}
+.opus-mobile-menu__brands a:hover,
+.opus-mobile-menu__links > a:hover { color: var(--gilt); }
+.opus-mobile-menu__foot { margin-top: auto; padding-top: 22px; }
+.opus-mobile-menu__foot .lang-switcher { border-left: 0; padding-left: 0; font-size: 16px; }
+body.opus-menu-open { overflow: hidden; }
+
 .wordmark {
   text-align: center;
   font-family: "Cormorant Garamond", "Cormorant Garamond Fallback", serif;
@@ -425,10 +507,22 @@ h1.hero-title .row-3 { display: block; letter-spacing: -0.02em; }
 @media (max-width: 880px) {
   .container { padding: 0 24px; }
   .foot-grid { grid-template-columns: 1fr 1fr; }
-  .top-row nav.left { display: none; }
   .hero-grid, .atelier-grid { grid-template-columns: 1fr; }
   .pieces { grid-template-columns: 1fr; }
   .section-head { grid-template-columns: 1fr; gap: 12px; }
+
+  /* ── Mobile header: burger · wordmark · cart+language ── */
+  .site-head { padding-top: 14px; }
+  .top-row { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; }
+  .top-row nav.left { display: none; }
+  .nav-burger { display: inline-flex; }
+  .wordmark { flex: 1; text-align: center; }
+  .wordmark img { height: 58px; margin: 0 auto; }
+  .top-row nav.right { gap: 16px; }
+  .top-row nav.right ul,
+  .top-row nav.right > a:not(.cart-link) { display: none; }
+  .lang-switcher { padding-left: 14px; }
+  .meta-row { display: none; }
 }
 
 /* ═════════════════════════════════════════════════════════════
