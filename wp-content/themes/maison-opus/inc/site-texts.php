@@ -199,6 +199,55 @@ function opus_theme_image_fields() {
 	);
 }
 
+/* ─────────────────────────────────────────────────────────────
+ * Bedrijfsprofiel — company facts, edited on their own tab and pulled
+ * into content (legal pages, footer) via the [opus_bedrijf] shortcode.
+ * ───────────────────────────────────────────────────────────── */
+
+function opus_business_profile_fields() {
+	return array(
+		'kvk'              => array( 'label' => 'KvK-nummer', 'default' => '93934866', 'hint' => 'Getoond in de footer en op de contactpagina.' ),
+		'vestigingsnr'     => array( 'label' => 'Vestigingsnummer', 'default' => '', 'hint' => '' ),
+		'btw_id'           => array( 'label' => 'Btw-identificatienummer', 'default' => '', 'hint' => 'Gebruikt in de privacyverklaring en algemene voorwaarden.' ),
+		'vervoerder'       => array( 'label' => 'Vervoerder', 'default' => '', 'hint' => 'Bijv. PostNL of DHL — genoemd in de privacyverklaring.' ),
+		'garantie_uurwerk' => array( 'label' => 'Garantie op het uurwerk', 'default' => '', 'hint' => 'Bijv. "24 maanden" — artikel garantie in de voorwaarden.' ),
+		'levertijd'        => array( 'label' => 'Levertijd / verzendbelofte', 'default' => '', 'hint' => 'Bijv. "besteld op werkdagen vóór 15:00 uur, de volgende werkdag verzonden".' ),
+		'betaalmethoden'   => array( 'label' => 'Betaalmethoden', 'default' => '', 'hint' => 'Bijv. "iDEAL, creditcard en bankoverschrijving" — invullen zodra Mollie is aangesloten.' ),
+		'retourbeleid'     => array( 'label' => 'Retourlabel & kosten', 'default' => '', 'hint' => 'Geeft Opus een retourlabel uit, en wie draagt de kosten? Volledige zin(nen).', 'textarea' => true ),
+		'bewaartermijn_service' => array( 'label' => 'Bewaartermijn service-dossiers', 'default' => '', 'hint' => 'Bijv. "de garantieperiode plus twee jaar".' ),
+	);
+}
+
+/** A profile value, or the registry default, or '' — no placeholder text. */
+function opus_business_get( $key ) {
+	$fields = opus_business_profile_fields();
+	if ( ! isset( $fields[ $key ] ) ) {
+		return '';
+	}
+	$profile = get_option( 'opus_business_profile', array() );
+	$value   = isset( $profile[ $key ] ) ? trim( (string) $profile[ $key ] ) : '';
+	return '' !== $value ? $value : $fields[ $key ]['default'];
+}
+
+/**
+ * [opus_bedrijf veld="btw_id"] — renders the profile value; an unfilled
+ * field renders a clearly visible placeholder so a draft page shows what
+ * is still missing (and the placeholder never leaks silently into print).
+ */
+add_shortcode(
+	'opus_bedrijf',
+	function ( $atts ) {
+		$atts  = shortcode_atts( array( 'veld' => '' ), $atts );
+		$value = opus_business_get( $atts['veld'] );
+		if ( '' !== $value ) {
+			return esc_html( $value );
+		}
+		$fields = opus_business_profile_fields();
+		$label  = isset( $fields[ $atts['veld'] ] ) ? $fields[ $atts['veld'] ]['label'] : $atts['veld'];
+		return '<mark class="opus-biz-missing">[nog aan te vullen: ' . esc_html( strtolower( $label ) ) . ']</mark>';
+	}
+);
+
 /**
  * Languages for the editor: default first, then secondary languages.
  *
@@ -340,6 +389,7 @@ function opus_site_texts_save() {
 	$nl_input      = isset( $_POST['nl'] ) ? (array) wp_unslash( $_POST['nl'] ) : array();
 	$tr_input      = isset( $_POST['tr'] ) ? (array) wp_unslash( $_POST['tr'] ) : array();
 	$img_input     = isset( $_POST['img'] ) ? (array) wp_unslash( $_POST['img'] ) : array();
+	$biz_input     = isset( $_POST['biz'] ) ? (array) wp_unslash( $_POST['biz'] ) : array();
 	$langs_changed = array();
 	$nl_saved      = 0;
 	$tr_saved      = 0;
@@ -431,6 +481,30 @@ function opus_site_texts_save() {
 		update_option( 'opus_theme_images', $images, true );
 	}
 
+	// Bedrijfsprofiel.
+	$biz_saved = 0;
+	if ( $biz_input ) {
+		$profile = get_option( 'opus_business_profile', array() );
+		$fields  = opus_business_profile_fields();
+		foreach ( $biz_input as $key => $value ) {
+			if ( ! isset( $fields[ $key ] ) ) {
+				continue;
+			}
+			$value   = trim( sanitize_textarea_field( (string) $value ) );
+			$current = isset( $profile[ $key ] ) ? $profile[ $key ] : '';
+			if ( $value === $current ) {
+				continue;
+			}
+			if ( '' === $value ) {
+				unset( $profile[ $key ] );
+			} else {
+				$profile[ $key ] = $value;
+			}
+			$biz_saved++;
+		}
+		update_option( 'opus_business_profile', $profile, true );
+	}
+
 	// Regenerate the .mo file per changed language.
 	if ( $langs_changed && class_exists( '\WPML\ST\TranslationFile\Domains' ) ) {
 		global $sitepress;
@@ -447,7 +521,7 @@ function opus_site_texts_save() {
 	wp_cache_flush();
 
 	$notices = array();
-	if ( $nl_saved || $tr_saved || $img_saved ) {
+	if ( $nl_saved || $tr_saved || $img_saved || $biz_saved ) {
 		$parts = array();
 		if ( $nl_saved ) {
 			$parts[] = sprintf( '%d Nederlandse tekst(en)', $nl_saved );
@@ -457,6 +531,9 @@ function opus_site_texts_save() {
 		}
 		if ( $img_saved ) {
 			$parts[] = sprintf( '%d afbeelding(en)', $img_saved );
+		}
+		if ( $biz_saved ) {
+			$parts[] = sprintf( '%d bedrijfsgegeven(s)', $biz_saved );
 		}
 		$notices[] = 'Opgeslagen: ' . implode( ', ', $parts ) . '.';
 	}
@@ -579,7 +656,7 @@ function opus_site_texts_render() {
 	$overrides = get_option( 'opus_text_overrides', array() );
 	$images    = get_option( 'opus_theme_images', array() );
 	$search    = isset( $_GET['zoek'] ) ? trim( (string) wp_unslash( $_GET['zoek'] ) ) : '';
-	$active    = isset( $_GET['tab'] ) && ( isset( $sections[ $_GET['tab'] ] ) || 'afbeeldingen' === $_GET['tab'] )
+	$active    = isset( $_GET['tab'] ) && ( isset( $sections[ $_GET['tab'] ] ) || in_array( $_GET['tab'], array( 'afbeeldingen', 'bedrijfsprofiel' ), true ) )
 		? sanitize_key( $_GET['tab'] ) : 'algemeen';
 	$base_url  = admin_url( 'admin.php?page=opus-site-texts' );
 	?>
@@ -623,6 +700,8 @@ function opus_site_texts_render() {
 			<?php endforeach; ?>
 			<a class="nav-tab <?php echo 'afbeeldingen' === $active ? 'nav-tab-active' : ''; ?>"
 				href="<?php echo esc_url( $base_url . '&tab=afbeeldingen' ); ?>">Afbeeldingen</a>
+			<a class="nav-tab <?php echo 'bedrijfsprofiel' === $active ? 'nav-tab-active' : ''; ?>"
+				href="<?php echo esc_url( $base_url . '&tab=bedrijfsprofiel' ); ?>">Bedrijfsprofiel</a>
 		</h2>
 		<?php endif; ?>
 
@@ -666,6 +745,29 @@ function opus_site_texts_render() {
 					</table>
 				<?php endforeach; ?>
 				<?php if ( $matches ) { submit_button( 'Opslaan' ); } ?>
+
+			<?php elseif ( 'bedrijfsprofiel' === $active ) : ?>
+				<?php $opus_profile = get_option( 'opus_business_profile', array() ); ?>
+				<p>Bedrijfsgegevens die op de site worden gebruikt — onder meer in de footer en (via <code>[opus_bedrijf veld="…"]</code>) in de privacyverklaring en algemene voorwaarden. Een leeg veld toont op die pagina&rsquo;s een zichtbare <mark>[nog aan te vullen]</mark>-markering, zodat niets ongemerkt ontbreekt.</p>
+				<table class="form-table" role="presentation">
+					<?php foreach ( opus_business_profile_fields() as $opus_bkey => $opus_bfield ) : ?>
+						<?php $opus_bval = isset( $opus_profile[ $opus_bkey ] ) ? $opus_profile[ $opus_bkey ] : ''; ?>
+						<tr>
+							<th scope="row"><label for="biz-<?php echo esc_attr( $opus_bkey ); ?>"><?php echo esc_html( $opus_bfield['label'] ); ?></label></th>
+							<td>
+								<?php if ( ! empty( $opus_bfield['textarea'] ) ) : ?>
+									<textarea id="biz-<?php echo esc_attr( $opus_bkey ); ?>" name="biz[<?php echo esc_attr( $opus_bkey ); ?>]" rows="3" style="width:100%;max-width:560px"><?php echo esc_textarea( $opus_bval ); ?></textarea>
+								<?php else : ?>
+									<input type="text" id="biz-<?php echo esc_attr( $opus_bkey ); ?>" name="biz[<?php echo esc_attr( $opus_bkey ); ?>]" value="<?php echo esc_attr( $opus_bval ); ?>" style="width:100%;max-width:560px" <?php echo $opus_bfield['default'] ? 'placeholder="' . esc_attr( $opus_bfield['default'] ) . '"' : ''; ?> />
+								<?php endif; ?>
+								<?php if ( $opus_bfield['hint'] || $opus_bfield['default'] ) : ?>
+									<p class="description"><?php echo esc_html( $opus_bfield['hint'] ); ?><?php echo $opus_bfield['default'] ? ' Standaard: ' . esc_html( $opus_bfield['default'] ) : ''; ?></p>
+								<?php endif; ?>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+				<?php submit_button( 'Bedrijfsprofiel opslaan' ); ?>
 
 			<?php elseif ( 'afbeeldingen' === $active ) : ?>
 				<table class="form-table" role="presentation">

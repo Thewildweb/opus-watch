@@ -77,6 +77,52 @@ function opus_attribute_filters() {
 	);
 }
 
+/**
+ * Terms of an attribute taxonomy with at least one product IN STOCK — via
+ * WooCommerce's attribute lookup table, so a sold watch drops out of the
+ * filter options immediately. On a brand archive the options are scoped to
+ * that brand's stock, so only choices that can return results are offered.
+ */
+function opus_attribute_terms_in_stock( $taxonomy ) {
+	global $wpdb;
+	$terms = get_terms(
+		array(
+			'taxonomy'   => $taxonomy,
+			'hide_empty' => true,
+		)
+	);
+	if ( is_wp_error( $terms ) || ! $terms ) {
+		return array();
+	}
+
+	$brand_join = '';
+	if ( is_tax( 'product_brand' ) ) {
+		$brand      = get_queried_object();
+		$brand_join = $wpdb->prepare(
+			" INNER JOIN {$wpdb->term_relationships} tr ON tr.object_id = l.product_id AND tr.term_taxonomy_id = %d",
+			$brand->term_taxonomy_id
+		);
+	}
+
+	$ids = implode( ',', array_map( 'intval', wp_list_pluck( $terms, 'term_id' ) ) );
+	$in_stock = $wpdb->get_col( $wpdb->prepare(
+		"SELECT DISTINCT l.term_id
+		 FROM {$wpdb->prefix}wc_product_attributes_lookup l{$brand_join}
+		 WHERE l.taxonomy = %s AND l.in_stock = 1 AND l.term_id IN ({$ids})",
+		$taxonomy
+	) );
+	$in_stock = array_map( 'intval', $in_stock );
+
+	return array_values(
+		array_filter(
+			$terms,
+			function ( $t ) use ( $in_stock ) {
+				return in_array( (int) $t->term_id, $in_stock, true );
+			}
+		)
+	);
+}
+
 /** Selected filters from the query string, sanitized. */
 function opus_active_filters() {
 	$types = isset( $_GET['type'] ) ? array_map( 'sanitize_key', (array) $_GET['type'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification
@@ -330,13 +376,8 @@ function opus_shop_filters() {
 
 			<?php foreach ( opus_attribute_filters() as $opus_param => $opus_conf ) : ?>
 				<?php
-				$opus_attr_terms = get_terms(
-					array(
-						'taxonomy'   => $opus_conf[0],
-						'hide_empty' => true,
-					)
-				);
-				if ( is_wp_error( $opus_attr_terms ) || ! $opus_attr_terms ) {
+				$opus_attr_terms = opus_attribute_terms_in_stock( $opus_conf[0] );
+				if ( ! $opus_attr_terms ) {
 					continue;
 				}
 				?>

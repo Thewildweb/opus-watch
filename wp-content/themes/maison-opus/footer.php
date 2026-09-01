@@ -51,7 +51,7 @@
 			</div>
 		</div>
 		<div class="foot-bot">
-			<div>© <?php echo esc_html( gmdate( 'Y' ) ); ?> Opus Watches · <?php esc_html_e( 'Onafhankelijk horlogehuis', 'maison-opus' ); ?> · KvK 93934866</div>
+			<div>© <?php echo esc_html( gmdate( 'Y' ) ); ?> Opus Watches · <?php esc_html_e( 'Onafhankelijk horlogehuis', 'maison-opus' ); ?> · KvK <?php echo esc_html( opus_business_get( 'kvk' ) ); ?></div>
 			<div class="foot-legal">
 				<?php
 				// These were plain text, which is no use to a customer looking
