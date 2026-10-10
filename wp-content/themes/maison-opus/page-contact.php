@@ -12,6 +12,9 @@
 get_header();
 
 $status   = isset( $_GET['contact'] ) ? sanitize_key( wp_unslash( $_GET['contact'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+// "Informeer naar dit horloge" on a price-on-request product links here with
+// the watch name, so the subject arrives pre-filled.
+$subject  = isset( $_GET['horloge'] ) ? sanitize_text_field( wp_unslash( $_GET['horloge'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 // Coordinates of De Entree 201 — also baked into the map image by
 // scripts/build-map-image.py; change them in both places.
 $map_lat = '52.3120932';
@@ -60,7 +63,7 @@ $intro    = trim( wp_strip_all_tags( get_the_content() ) );
 					</label>
 					<label class="zoek-field zoek-field--full">
 						<span><?php esc_html_e( 'Onderwerp', 'maison-opus' ); ?></span>
-						<input type="text" name="onderwerp" placeholder="<?php esc_attr_e( 'bijv. afspraak, onderhoud, een specifiek horloge', 'maison-opus' ); ?>" />
+						<input type="text" name="onderwerp" value="<?php echo esc_attr( $subject ); ?>" placeholder="<?php esc_attr_e( 'bijv. afspraak, onderhoud, een specifiek horloge', 'maison-opus' ); ?>" />
 					</label>
 					<label class="zoek-field zoek-field--full">
 						<span><?php esc_html_e( 'Bericht', 'maison-opus' ); ?> <em>*</em></span>

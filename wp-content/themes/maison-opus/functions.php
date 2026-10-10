@@ -397,6 +397,22 @@ function opus_dial_svg( $seed = 0 ) {
 }
 
 /**
+ * Watches without a price are "Prijs op aanvraag" (cards, mega menu, product
+ * page). Services keep their own _opus_price_display / "Op offerte" logic.
+ */
+add_filter(
+	'woocommerce_empty_price_html',
+	function ( $html, $product ) {
+		if ( has_term( array( 'service', 'servicing' ), 'product_cat', $product->get_id() ) ) {
+			return $html;
+		}
+		return '<span class="price-on-request">' . esc_html__( 'Prijs op aanvraag', 'maison-opus' ) . '</span>';
+	},
+	10,
+	2
+);
+
+/**
  * Render one product as a heritage "piece" card (matches 01-heritage.html).
  *
  * @param WC_Product $product Product to render.

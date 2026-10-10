@@ -67,10 +67,20 @@ $short   = $product->get_short_description();
 				</div>
 			<?php endif; ?>
 
-			<?php if ( $product->is_in_stock() ) : ?>
+			<?php if ( $product->is_in_stock() && $product->is_purchasable() ) : ?>
 				<div class="product-buy">
 					<?php woocommerce_template_single_add_to_cart(); ?>
 				</div>
+			<?php elseif ( $product->is_in_stock() ) : ?>
+				<?php
+				// Price on request: no cart, ask instead (subject pre-filled).
+				$opus_contact_id = $contact ? apply_filters( 'wpml_object_id', get_page_by_path( 'contact' )->ID, 'page', true ) : 0;
+				?>
+				<?php if ( $opus_contact_id ) : ?>
+					<div class="product-buy product-buy--inquire">
+						<a class="btn solid" href="<?php echo esc_url( add_query_arg( 'horloge', rawurlencode( $product->get_name() ), get_permalink( $opus_contact_id ) ) . '#contactform' ); ?>"><?php esc_html_e( 'Informeer naar dit horloge', 'maison-opus' ); ?></a>
+					</div>
+				<?php endif; ?>
 			<?php else : ?>
 				<?php
 				$opus_zoek_pg  = get_page_by_path( 'zoekopdracht' );
