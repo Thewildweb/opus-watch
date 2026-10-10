@@ -53,6 +53,7 @@ $opus_term = get_queried_object();
 	<?php opus_shop_filters(); ?>
 
 	<div class="brand-results">
+		<?php opus_filters_toggle( true ); /* phones: opens the sidebar as a modal */ ?>
 		<?php if ( woocommerce_product_loop() ) : ?>
 			<p class="brand-results__count">
 				<?php
@@ -100,7 +101,7 @@ $opus_term = get_queried_object();
 				<div class="brand-empty__actions">
 					<a class="btn solid" href="<?php echo esc_url( $opus_zoek_url ); ?>">Plaats een zoekopdracht</a>
 					<?php if ( opus_filters_are_active() ) : ?>
-						<a class="filter-reset" href="<?php echo esc_url( get_term_link( $opus_term ) ); ?>">Wis de filters</a>
+						<a class="filter-reset" href="<?php echo esc_url( opus_filters_base_url() ); ?>">Wis de filters</a>
 					<?php endif; ?>
 				</div>
 			</div>

@@ -370,3 +370,27 @@ form.cart.is-adding { opacity: 0.6; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) {
   .opus-notice { transition: none; }
 }
+
+/* ── Shop filters: results updating in place (assets/js/shop-filters.js) ── */
+.wc-main.is-loading :is(.brand-results, ul.products, .woocommerce-pagination) {
+  opacity: 0.45;
+  transition: opacity .15s ease;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .wc-main.is-loading :is(.brand-results, ul.products, .woocommerce-pagination) { transition: none; }
+}
+
+/* Visually hidden, still read by screen readers. */
+.screen-reader-text {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

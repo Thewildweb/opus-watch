@@ -93,131 +93,199 @@ function opus_attribute_filters() {
 	);
 }
 
-/**
- * Product ids matching every active filter EXCEPT the given attribute group
- * (a group's own selection must not narrow its own options). Returns null
- * when no other filter is active — i.e. no extra restriction.
+/*
+ * ── Facets: only offer options that return watches ─────────────────────
+ *
+ * Every filter group shows an option only when at least one in-stock watch
+ * would match it — within the current archive (brand / category / shop) and
+ * combined with the OTHER active filter groups (a group's own selection must
+ * not narrow its own options, or picking "Staal" would hide "Goud"). Counts
+ * come from the same sets. Options the visitor already ticked always stay,
+ * so they can be unticked.
+ *
+ * Products are few (dozens), so this works on id sets in PHP: one query for
+ * the archive's in-stock watches, one per active filter group, intersected.
  */
-function opus_filtered_product_ids( $exclude_param ) {
-	static $cache = array();
-	if ( array_key_exists( $exclude_param, $cache ) ) {
-		return $cache[ $exclude_param ];
-	}
-	$f         = opus_active_filters();
-	$tax_query = array();
-	$meta_query = array();
-	$any       = false;
 
-	if ( $f['type'] ) {
-		$tax_query[] = array( 'taxonomy' => 'watch_type', 'field' => 'slug', 'terms' => $f['type'] );
-		$any         = true;
+/** In-stock watches of the current archive, in the current language. */
+function opus_facet_base_ids() {
+	static $ids = null;
+	if ( null !== $ids ) {
+		return $ids;
 	}
-	if ( $f['model'] ) {
-		$tax_query[] = array( 'taxonomy' => 'watch_model', 'field' => 'slug', 'terms' => array( $f['model'] ) );
-		$any         = true;
+	$tax_query = array(
+		array(
+			'taxonomy' => 'product_cat',
+			'field'    => 'slug',
+			'terms'    => array( 'service', 'servicing' ),
+			'operator' => 'NOT IN',
+		),
+	);
+	if ( is_tax( 'product_brand' ) || ( function_exists( 'is_product_category' ) && is_product_category() ) ) {
+		$term        = get_queried_object();
+		$tax_query[] = array(
+			'taxonomy' => $term->taxonomy,
+			'field'    => 'term_id',
+			'terms'    => array( (int) $term->term_id ),
+		);
 	}
-	foreach ( opus_attribute_filters() as $param => $conf ) {
-		if ( $param === $exclude_param || ! $f[ $param ] ) {
-			continue;
-		}
-		$tax_query[] = array( 'taxonomy' => $conf[0], 'field' => 'slug', 'terms' => $f[ $param ] );
-		$any         = true;
+	$q   = new WP_Query(
+		array(
+			'post_type'        => 'product',
+			'post_status'      => 'publish',
+			'posts_per_page'   => -1,
+			'fields'           => 'ids',
+			'no_found_rows'    => true,
+			'ep_integrate'     => false, // plain SQL; ElasticPress serves the listing itself
+			'suppress_filters' => false, // keep WPML's current-language filter
+			'tax_query'        => $tax_query,
+			'meta_query'       => array(
+				array(
+					'key'   => '_stock_status',
+					'value' => 'instock',
+				),
+			),
+		)
+	);
+	return $ids = array_map( 'intval', $q->posts );
+}
+
+/** Of the base ids, those matching one active filter group (null = group inactive). */
+function opus_facet_group_ids( $group ) {
+	static $cache = array();
+	if ( array_key_exists( $group, $cache ) ) {
+		return $cache[ $group ];
 	}
-	if ( $f['prijs'] ) {
+	$f    = opus_active_filters();
+	$base = opus_facet_base_ids();
+	$args = null;
+
+	if ( 'type' === $group && $f['type'] ) {
+		$args = array( 'tax_query' => array( array( 'taxonomy' => 'watch_type', 'field' => 'slug', 'terms' => $f['type'] ) ) );
+	} elseif ( 'model' === $group && $f['model'] ) {
+		$args = array( 'tax_query' => array( array( 'taxonomy' => 'watch_model', 'field' => 'slug', 'terms' => array( $f['model'] ) ) ) );
+	} elseif ( 'prijs' === $group && $f['prijs'] ) {
 		$price_q = array( 'relation' => 'OR' );
 		foreach ( $f['prijs'] as $key ) {
 			list( $min, $max ) = array_map( 'intval', explode( '-', $key ) );
 			$price_q[]         = array( 'key' => '_price', 'value' => array( $min, $max ), 'compare' => 'BETWEEN', 'type' => 'NUMERIC' );
 		}
-		$meta_query[] = $price_q;
-		$any          = true;
-	}
-	if ( $f['jaar_van'] || $f['jaar_tot'] ) {
-		$meta_query[] = array(
-			'key'     => '_opus_year',
-			'value'   => array( $f['jaar_van'] ? $f['jaar_van'] : 1900, $f['jaar_tot'] ? $f['jaar_tot'] : 2100 ),
-			'compare' => 'BETWEEN',
-			'type'    => 'NUMERIC',
+		$args = array( 'meta_query' => array( $price_q ) );
+	} elseif ( 'jaar' === $group && ( $f['jaar_van'] || $f['jaar_tot'] ) ) {
+		$args = array(
+			'meta_query' => array(
+				array(
+					'key'     => '_opus_year',
+					'value'   => array( $f['jaar_van'] ? $f['jaar_van'] : 1900, $f['jaar_tot'] ? $f['jaar_tot'] : 2100 ),
+					'compare' => 'BETWEEN',
+					'type'    => 'NUMERIC',
+				),
+			),
 		);
-		$any = true;
+	} elseif ( isset( opus_attribute_filters()[ $group ] ) && $f[ $group ] ) {
+		$args = array( 'tax_query' => array( array( 'taxonomy' => opus_attribute_filters()[ $group ][0], 'field' => 'slug', 'terms' => $f[ $group ] ) ) );
 	}
 
-	if ( ! $any ) {
-		return $cache[ $exclude_param ] = null;
+	if ( null === $args || ! $base ) {
+		return $cache[ $group ] = ( null === $args ? null : array() );
 	}
 	$q = new WP_Query(
-		array(
-			'post_type'      => 'product',
-			'post_status'    => 'publish',
-			'posts_per_page' => -1,
-			'fields'         => 'ids',
-			'no_found_rows'  => true,
-			'tax_query'      => $tax_query,
-			'meta_query'     => $meta_query,
+		array_merge(
+			array(
+				'post_type'      => 'product',
+				'post_status'    => 'publish',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+				'no_found_rows'  => true,
+				'ep_integrate'   => false,
+				'post__in'       => $base,
+			),
+			$args
 		)
 	);
-	return $cache[ $exclude_param ] = array_map( 'intval', $q->posts );
+	return $cache[ $group ] = array_map( 'intval', $q->posts );
+}
+
+/** Watches the options of $group are counted against: base ∩ every OTHER active group. */
+function opus_facet_ids( $group ) {
+	$ids = opus_facet_base_ids();
+	foreach ( array_merge( array( 'type', 'model', 'prijs', 'jaar' ), array_keys( opus_attribute_filters() ) ) as $other ) {
+		if ( $other === $group ) {
+			continue;
+		}
+		$match = opus_facet_group_ids( $other );
+		if ( null !== $match ) {
+			$ids = array_values( array_intersect( $ids, $match ) );
+		}
+	}
+	return $ids;
 }
 
 /**
- * Terms of an attribute taxonomy with at least one product IN STOCK — via
- * WooCommerce's attribute lookup table, so a sold watch drops out of the
- * filter options immediately. On a brand archive the options are scoped to
- * that brand's stock, so only choices that can return results are offered.
+ * Terms of $taxonomy that occur among $ids, with their count among them,
+ * plus any $selected slugs (count 0) so a ticked option never disappears.
+ *
+ * @return array of [ 'term' => WP_Term, 'count' => int ]
  */
-function opus_attribute_terms_in_stock( $taxonomy, $param = '' ) {
+function opus_facet_terms( $taxonomy, $ids, $selected = array() ) {
 	global $wpdb;
-	$terms = get_terms(
-		array(
-			'taxonomy'   => $taxonomy,
-			'hide_empty' => true,
-		)
-	);
-	if ( is_wp_error( $terms ) || ! $terms ) {
+	$counts = array();
+	if ( $ids ) {
+		$rows = $wpdb->get_results( $wpdb->prepare(
+			"SELECT tt.term_id, COUNT(DISTINCT tr.object_id) AS n
+			 FROM {$wpdb->term_relationships} tr
+			 JOIN {$wpdb->term_taxonomy} tt ON tt.term_taxonomy_id = tr.term_taxonomy_id
+			 WHERE tt.taxonomy = %s AND tr.object_id IN (" . implode( ',', array_map( 'intval', $ids ) ) . ')
+			 GROUP BY tt.term_id',
+			$taxonomy
+		), ARRAY_A );
+		foreach ( $rows as $r ) {
+			$counts[ (int) $r['term_id'] ] = (int) $r['n'];
+		}
+	}
+	$terms = get_terms( array( 'taxonomy' => $taxonomy, 'hide_empty' => false ) );
+	$out   = array();
+	foreach ( is_wp_error( $terms ) ? array() : $terms as $t ) {
+		if ( isset( $counts[ $t->term_id ] ) || in_array( $t->slug, (array) $selected, true ) ) {
+			$out[] = array( 'term' => $t, 'count' => $counts[ $t->term_id ] ?? 0 );
+		}
+	}
+	return $out;
+}
+
+/** Build years present among the watches the year filter is counted against (desc). */
+function opus_facet_years() {
+	global $wpdb;
+	$ids = opus_facet_ids( 'jaar' );
+	if ( ! $ids ) {
 		return array();
 	}
-
-	$brand_join = '';
-	if ( is_tax( 'product_brand' ) ) {
-		$brand      = get_queried_object();
-		$brand_join = $wpdb->prepare(
-			" INNER JOIN {$wpdb->term_relationships} tr ON tr.object_id = l.product_id AND tr.term_taxonomy_id = %d",
-			$brand->term_taxonomy_id
-		);
-	}
-
-	// Facet: restrict to products matching the OTHER active filters.
-	$product_ctx = '';
-	$ctx_ids     = $param ? opus_filtered_product_ids( $param ) : null;
-	if ( is_array( $ctx_ids ) ) {
-		$product_ctx = $ctx_ids
-			? ' AND l.product_id IN (' . implode( ',', $ctx_ids ) . ')'
-			: ' AND 1 = 0';
-	}
-
-	$ids = implode( ',', array_map( 'intval', wp_list_pluck( $terms, 'term_id' ) ) );
-	$in_stock = $wpdb->get_col( $wpdb->prepare(
-		"SELECT DISTINCT l.term_id
-		 FROM {$wpdb->prefix}wc_product_attributes_lookup l{$brand_join}
-		 WHERE l.taxonomy = %s AND l.in_stock = 1 AND l.term_id IN ({$ids}){$product_ctx}",
-		$taxonomy
-	) );
-	$in_stock = array_map( 'intval', $in_stock );
-
-	// Keep the user's own current selections visible even when other groups
-	// have narrowed them away — otherwise they cannot be unticked.
-	$f        = opus_active_filters();
-	$selected = ( $param && ! empty( $f[ $param ] ) ) ? $f[ $param ] : array();
-
-	return array_values(
-		array_filter(
-			$terms,
-			function ( $t ) use ( $in_stock, $selected ) {
-				return in_array( (int) $t->term_id, $in_stock, true )
-					|| in_array( $t->slug, $selected, true );
-			}
-		)
+	return $wpdb->get_col(
+		"SELECT DISTINCT meta_value FROM {$wpdb->postmeta}
+		 WHERE meta_key = '_opus_year' AND meta_value REGEXP '^[0-9]{4}$'
+		   AND post_id IN (" . implode( ',', array_map( 'intval', $ids ) ) . ')
+		 ORDER BY meta_value DESC'
 	);
+}
+
+/** Price buckets with at least one watch (plus ticked ones). */
+function opus_facet_prices() {
+	global $wpdb;
+	$ids      = opus_facet_ids( 'prijs' );
+	$prices   = $ids ? array_map( 'floatval', $wpdb->get_col(
+		"SELECT meta_value FROM {$wpdb->postmeta}
+		 WHERE meta_key = '_price' AND meta_value <> '' AND post_id IN (" . implode( ',', array_map( 'intval', $ids ) ) . ')'
+	) ) : array();
+	$selected = opus_active_filters()['prijs'];
+	$out      = array();
+	foreach ( opus_price_ranges() as $key => $label ) {
+		list( $min, $max ) = array_map( 'intval', explode( '-', $key ) );
+		$hit = array_filter( $prices, fn( $p ) => $p >= $min && $p <= $max );
+		if ( $hit || in_array( $key, $selected, true ) ) {
+			$out[ $key ] = $label;
+		}
+	}
+	return $out;
 }
 
 /** Selected filters from the query string, sanitized. */
@@ -343,23 +411,11 @@ add_filter(
 	}
 );
 
-/** Distinct build years present in the catalogue (desc order). */
-function opus_available_years() {
-	static $years = null;
-	if ( null === $years ) {
-		global $wpdb;
-		$years = $wpdb->get_col(
-			"SELECT DISTINCT meta_value FROM {$wpdb->postmeta}
-			 WHERE meta_key = '_opus_year' AND meta_value REGEXP '^[0-9]{4}$'
-			 ORDER BY meta_value DESC"
-		);
-	}
-	return $years;
-}
-
 /**
- * Render the filter sidebar. Auto-submits on change; the "Merk" block is
- * navigation between brand archives and carries the active filters along.
+ * Render the filter sidebar. assets/js/shop-filters.js applies changes in
+ * place (fetch + pushState); without JS the "Toepassen" button submits. The
+ * "Merk" block is navigation between brand archives and carries the active
+ * filters along.
  */
 /**
  * Per-term product counts for the CURRENT language. Raw term counts include
@@ -420,13 +476,7 @@ add_action(
 			return;
 		}
 		$brand_page = is_tax( 'product_brand' );
-		?>
-		<button type="button"
-			class="opus-filters-toggle<?php echo $brand_page ? ' opus-filters-toggle--mobile-only' : ''; ?>"
-			data-opus-filters-open aria-expanded="false">
-			<?php esc_html_e( 'Filters', 'maison-opus' ); ?><?php if ( opus_filters_are_active() ) : ?><span class="opus-filters-toggle__dot" aria-hidden="true"></span><?php endif; ?>
-		</button>
-		<?php
+		opus_filters_toggle( $brand_page );
 		if ( ! $brand_page ) {
 			echo '<div class="opus-filters-host">';
 			opus_shop_filters();
@@ -436,34 +486,32 @@ add_action(
 	5
 );
 
+/**
+ * The "Filters" button that opens the panel. On brand pages the panel is an
+ * inline sidebar on desktop, so the button only shows on small screens; the
+ * brand template calls this itself (it doesn't run woocommerce_before_shop_loop).
+ */
+function opus_filters_toggle( $mobile_only = false ) {
+	?>
+	<button type="button"
+		class="opus-filters-toggle<?php echo $mobile_only ? ' opus-filters-toggle--mobile-only' : ''; ?>"
+		data-opus-filters-open aria-expanded="false">
+		<?php esc_html_e( 'Filters', 'maison-opus' ); ?><?php if ( opus_filters_are_active() ) : ?><span class="opus-filters-toggle__dot" aria-hidden="true"></span><?php endif; ?>
+	</button>
+	<?php
+}
+
 function opus_shop_filters() {
 	$f       = opus_active_filters();
 	$current = is_tax( 'product_brand' ) ? get_queried_object() : null;
-	$action  = $current ? get_term_link( $current ) : ( function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' ) );
-	$action  = is_wp_error( $action ) ? home_url( '/' ) : $action;
+	$action  = opus_filters_base_url();
 
-	$types  = get_terms(
-		array(
-			'taxonomy'   => 'watch_type',
-			'hide_empty' => true,
-		)
-	);
-	$types  = is_wp_error( $types ) ? array() : $types;
-	$models = get_terms(
-		array(
-			'taxonomy'   => 'watch_model',
-			'hide_empty' => true,
-		)
-	);
-	$models = is_wp_error( $models ) ? array() : $models;
-	$brands = get_terms(
-		array(
-			'taxonomy'   => 'product_brand',
-			'hide_empty' => true,
-		)
-	);
-	$brands = is_wp_error( $brands ) ? array() : $brands;
-	$years  = opus_available_years();
+	// Only options that return watches here (see "Facets" above).
+	$types  = opus_facet_terms( 'watch_type', opus_facet_ids( 'type' ), $f['type'] );
+	$models = opus_facet_terms( 'watch_model', opus_facet_ids( 'model' ), $f['model'] ? array( $f['model'] ) : array() );
+	$brands = $current ? array() : opus_facet_terms( 'product_brand', opus_facet_ids( 'brand' ) );
+	$years  = opus_facet_years();
+	$prices = opus_facet_prices();
 
 	// Filter args to carry along when switching brand.
 	$carry = array(
@@ -488,7 +536,7 @@ function opus_shop_filters() {
 			<?php if ( $types ) : ?>
 				<fieldset class="filter-group">
 					<legend class="filter-group__title"><?php esc_html_e( 'Type horloge', 'maison-opus' ); ?></legend>
-					<?php foreach ( $types as $t ) : ?>
+					<?php foreach ( wp_list_pluck( $types, 'term' ) as $t ) : ?>
 						<label class="filter-check">
 							<input type="checkbox" name="type[]" value="<?php echo esc_attr( $t->slug ); ?>" <?php checked( in_array( $t->slug, $f['type'], true ) ); ?> />
 							<span><?php echo esc_html( $t->name ); ?></span>
@@ -502,21 +550,21 @@ function opus_shop_filters() {
 					<label class="filter-group__title" for="opus-filter-model"><?php esc_html_e( 'Model', 'maison-opus' ); ?></label>
 					<select id="opus-filter-model" class="filter-model" name="model">
 						<option value=""><?php esc_html_e( 'Alle modellen', 'maison-opus' ); ?></option>
-						<?php foreach ( $models as $m ) : ?>
-							<option value="<?php echo esc_attr( $m->slug ); ?>" <?php selected( $m->slug, $f['model'] ); ?>>
-								<?php echo esc_html( $m->name ); ?> (<?php echo (int) ( $opus_lang_counts[ $m->term_id ] ?? $m->count ); ?>)
+						<?php foreach ( $models as $opus_m ) : ?>
+							<option value="<?php echo esc_attr( $opus_m['term']->slug ); ?>" <?php selected( $opus_m['term']->slug, $f['model'] ); ?>>
+								<?php echo esc_html( $opus_m['term']->name ); ?> (<?php echo (int) $opus_m['count']; ?>)
 							</option>
 						<?php endforeach; ?>
 					</select>
 				</div>
 			<?php endif; ?>
 
-			<?php $opus_lang_counts = opus_term_counts_current_lang( array_merge( wp_list_pluck( $brands, 'term_id' ), wp_list_pluck( $models, 'term_id' ) ) ); ?>
 	<?php if ( $brands && ! $current ) : /* brand pages are already brand-scoped — no Merk block there */ ?>
 				<div class="filter-group">
 					<p class="filter-group__title"><?php esc_html_e( 'Merk', 'maison-opus' ); ?></p>
 					<?php
-					foreach ( $brands as $b ) :
+					foreach ( $brands as $opus_b ) :
+						$b    = $opus_b['term'];
 						$link = get_term_link( $b );
 						if ( is_wp_error( $link ) ) {
 							continue;
@@ -524,12 +572,20 @@ function opus_shop_filters() {
 						$link = $carry ? add_query_arg( $carry, $link ) : $link;
 						?>
 						<a class="filter-brand" href="<?php echo esc_url( $link ); ?>">
-							<?php echo esc_html( $b->name ); ?> <span><?php echo (int) ( $opus_lang_counts[ $b->term_id ] ?? $b->count ); ?></span>
+							<?php echo esc_html( $b->name ); ?> <span><?php echo (int) $opus_b['count']; ?></span>
 						</a>
 					<?php endforeach; ?>
 				</div>
 			<?php endif; ?>
 
+			<?php
+			foreach ( array( $f['jaar_van'], $f['jaar_tot'] ) as $opus_y ) {
+				if ( $opus_y && ! in_array( (string) $opus_y, $years, true ) ) {
+					$years[] = (string) $opus_y;
+				}
+			}
+			rsort( $years );
+			?>
 			<?php if ( $years ) : ?>
 				<fieldset class="filter-group">
 					<legend class="filter-group__title"><?php esc_html_e( 'Bouwjaar', 'maison-opus' ); ?></legend>
@@ -553,7 +609,7 @@ function opus_shop_filters() {
 
 			<?php foreach ( opus_attribute_filters() as $opus_param => $opus_conf ) : ?>
 				<?php
-				$opus_attr_terms = opus_attribute_terms_in_stock( $opus_conf[0], $opus_param );
+				$opus_attr_terms = wp_list_pluck( opus_facet_terms( $opus_conf[0], opus_facet_ids( $opus_param ), $f[ $opus_param ] ), 'term' );
 				if ( ! $opus_attr_terms ) {
 					continue;
 				}
@@ -569,15 +625,17 @@ function opus_shop_filters() {
 				</fieldset>
 			<?php endforeach; ?>
 
+			<?php if ( $prices ) : ?>
 			<fieldset class="filter-group">
 				<legend class="filter-group__title"><?php esc_html_e( 'Prijs', 'maison-opus' ); ?></legend>
-				<?php foreach ( opus_price_ranges() as $key => $label ) : ?>
+				<?php foreach ( $prices as $key => $label ) : ?>
 					<label class="filter-check">
 						<input type="checkbox" name="prijs[]" value="<?php echo esc_attr( $key ); ?>" <?php checked( in_array( $key, $f['prijs'], true ) ); ?> />
 						<span><?php echo esc_html( $label ); ?></span>
 					</label>
 				<?php endforeach; ?>
 			</fieldset>
+			<?php endif; ?>
 
 			<div class="filter-actions">
 				<button class="btn solid" type="submit"><?php esc_html_e( 'Toepassen', 'maison-opus' ); ?></button>
@@ -587,29 +645,33 @@ function opus_shop_filters() {
 			</div>
 		</form>
 	</aside>
-	<script>
-		( function () {
-			var form = document.querySelector( '.shop-filters__form' );
-			if ( form ) {
-				form.addEventListener( 'change', function () { form.submit(); } );
-			}
-			var toggle = document.querySelector( '[data-opus-filters-open]' );
-			var aside  = document.querySelector( '.shop-filters' );
-			if ( ! toggle || ! aside ) { return; }
-			function set( open ) {
-				document.body.classList.toggle( 'opus-filters-open', open );
-				toggle.setAttribute( 'aria-expanded', open ? 'true' : 'false' );
-			}
-			toggle.addEventListener( 'click', function () {
-				set( ! document.body.classList.contains( 'opus-filters-open' ) );
-			} );
-			aside.addEventListener( 'click', function ( e ) {
-				if ( e.target.closest( '[data-opus-filters-close]' ) ) { set( false ); }
-			} );
-			document.addEventListener( 'keydown', function ( e ) {
-				if ( 'Escape' === e.key ) { set( false ); }
-			} );
-		}() );
-	</script>
 	<?php
 }
+
+/**
+ * The archive being viewed, without filters or page number — what the filter
+ * form submits to and "Wis filters" links to. Built from the request path so
+ * the language prefix (/en/) survives: get_term_link() on a brand returns the
+ * Dutch URL even on the English page (brands are not translated).
+ */
+function opus_filters_base_url() {
+	$path = wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '/', PHP_URL_PATH ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- path only, rebuilt below.
+	$path = preg_replace( '#/page/\d+/?$#', '/', (string) $path );
+	// Scheme + host from the raw option: WPML filters home_url() and would
+	// prefix /en/ a second time.
+	$home = wp_parse_url( get_option( 'home' ) );
+	$base = $home['scheme'] . '://' . $home['host'] . ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
+	return $base . user_trailingslashit( '/' . trim( $path, '/' ) );
+}
+
+/** In-place filtering (and the filters panel toggle) on filter archives. */
+add_action(
+	'wp_enqueue_scripts',
+	function () {
+		if ( ! opus_filters_apply_here() ) {
+			return;
+		}
+		$rel = '/assets/js/shop-filters.js';
+		wp_enqueue_script( 'opus-shop-filters', get_template_directory_uri() . $rel, array(), maison_opus_asset_ver( $rel ), array( 'strategy' => 'defer', 'in_footer' => true ) );
+	}
+);
