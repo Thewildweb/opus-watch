@@ -205,9 +205,18 @@ function opus_theme_image_fields() {
  * ───────────────────────────────────────────────────────────── */
 
 function opus_business_profile_fields() {
+	$nap_hint = 'Getoond in de footer, op de contactpagina en in de bedrijfsgegevens voor Google.';
 	return array(
+		'straat'           => array( 'label' => 'Straat en huisnummer', 'default' => 'De Entree 201', 'hint' => $nap_hint ),
+		'postcode'         => array( 'label' => 'Postcode', 'default' => '1101 HG', 'hint' => $nap_hint ),
+		'plaats'           => array( 'label' => 'Plaats', 'default' => 'Amsterdam', 'hint' => $nap_hint ),
+		'telefoon'         => array( 'label' => 'Telefoonnummer', 'default' => '+31 20 261 4827', 'hint' => 'Internationaal noteren, bijv. +31 20 261 4827. ' . $nap_hint ),
+		'email'            => array( 'label' => 'E-mailadres', 'default' => 'info@opus.watches', 'hint' => $nap_hint, 'sanitize' => 'sanitize_email' ),
+		'open_dagen'       => array( 'label' => 'Openingsdagen', 'default' => 'tue,wed,thu,fri,sat', 'hint' => 'Dagen waarop klanten op afspraak terecht kunnen.', 'type' => 'days' ),
+		'opent'            => array( 'label' => 'Opent om', 'default' => '10:00', 'hint' => '', 'type' => 'time' ),
+		'sluit'            => array( 'label' => 'Sluit om', 'default' => '18:00', 'hint' => '', 'type' => 'time' ),
 		'kvk'              => array( 'label' => 'KvK-nummer', 'default' => '93934866', 'hint' => 'Getoond in de footer en op de contactpagina.' ),
-		'vestigingsnr'     => array( 'label' => 'Vestigingsnummer', 'default' => '', 'hint' => '' ),
+		'vestigingsnr'     => array( 'label' => 'Vestigingsnummer', 'default' => '000065652193', 'hint' => 'Getoond op de contactpagina.' ),
 		'btw_id'           => array( 'label' => 'Btw-identificatienummer', 'default' => '', 'hint' => 'Gebruikt in de privacyverklaring en algemene voorwaarden.' ),
 		'vervoerder'       => array( 'label' => 'Vervoerder', 'default' => '', 'hint' => 'Bijv. PostNL of DHL — genoemd in de privacyverklaring.' ),
 		'garantie_uurwerk' => array( 'label' => 'Garantie op het uurwerk', 'default' => '', 'hint' => 'Bijv. "24 maanden" — artikel garantie in de voorwaarden.' ),
@@ -512,7 +521,22 @@ function opus_site_texts_save() {
 			if ( ! isset( $fields[ $key ] ) ) {
 				continue;
 			}
-			$value   = trim( sanitize_textarea_field( (string) $value ) );
+			$type = isset( $fields[ $key ]['type'] ) ? $fields[ $key ]['type'] : 'text';
+			if ( 'days' === $type ) {
+				// Checkboxes → "tue,wed,…" in week order; unknown values dropped.
+				$value = implode( ',', array_intersect( array_keys( opus_weekdays() ), (array) $value ) );
+			} else {
+				$value = trim( sanitize_textarea_field( (string) $value ) );
+			}
+			if ( 'time' === $type && '' !== $value && ! preg_match( '/^([01]\d|2[0-3]):[0-5]\d$/', $value ) ) {
+				continue; // Not HH:MM — keep the previous value.
+			}
+			if ( ! empty( $fields[ $key ]['sanitize'] ) && '' !== $value ) {
+				$value = call_user_func( $fields[ $key ]['sanitize'], $value );
+				if ( '' === $value ) {
+					continue; // Invalid (e.g. not an e-mail address) — keep the previous value.
+				}
+			}
 			$current = isset( $profile[ $key ] ) ? $profile[ $key ] : '';
 			if ( $value === $current ) {
 				continue;
@@ -777,7 +801,18 @@ function opus_site_texts_render() {
 						<tr>
 							<th scope="row"><label for="biz-<?php echo esc_attr( $opus_bkey ); ?>"><?php echo esc_html( $opus_bfield['label'] ); ?></label></th>
 							<td>
-								<?php if ( ! empty( $opus_bfield['textarea'] ) ) : ?>
+								<?php $opus_btype = isset( $opus_bfield['type'] ) ? $opus_bfield['type'] : 'text'; ?>
+								<?php if ( 'days' === $opus_btype ) : ?>
+									<?php $opus_bdays = explode( ',', '' !== $opus_bval ? $opus_bval : $opus_bfield['default'] ); ?>
+									<fieldset id="biz-<?php echo esc_attr( $opus_bkey ); ?>">
+										<input type="hidden" name="biz[<?php echo esc_attr( $opus_bkey ); ?>][]" value="" />
+										<?php foreach ( opus_weekdays() as $opus_dkey => $opus_dlabel ) : ?>
+											<label style="margin-right:14px"><input type="checkbox" name="biz[<?php echo esc_attr( $opus_bkey ); ?>][]" value="<?php echo esc_attr( $opus_dkey ); ?>" <?php checked( in_array( $opus_dkey, $opus_bdays, true ) ); ?> /> <?php echo esc_html( $opus_dlabel[1] ); ?></label>
+										<?php endforeach; ?>
+									</fieldset>
+								<?php elseif ( 'time' === $opus_btype ) : ?>
+									<input type="time" id="biz-<?php echo esc_attr( $opus_bkey ); ?>" name="biz[<?php echo esc_attr( $opus_bkey ); ?>]" value="<?php echo esc_attr( '' !== $opus_bval ? $opus_bval : $opus_bfield['default'] ); ?>" />
+								<?php elseif ( ! empty( $opus_bfield['textarea'] ) ) : ?>
 									<textarea id="biz-<?php echo esc_attr( $opus_bkey ); ?>" name="biz[<?php echo esc_attr( $opus_bkey ); ?>]" rows="3" style="width:100%;max-width:560px"><?php echo esc_textarea( $opus_bval ); ?></textarea>
 								<?php else : ?>
 									<input type="text" id="biz-<?php echo esc_attr( $opus_bkey ); ?>" name="biz[<?php echo esc_attr( $opus_bkey ); ?>]" value="<?php echo esc_attr( $opus_bval ); ?>" style="width:100%;max-width:560px" <?php echo $opus_bfield['default'] ? 'placeholder="' . esc_attr( $opus_bfield['default'] ) . '"' : ''; ?> />

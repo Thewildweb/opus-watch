@@ -44,8 +44,14 @@
 			</div>
 			<div>
 				<h4><?php esc_html_e( 'Contact', 'maison-opus' ); ?></h4>
+				<?php $opus_nap = opus_nap(); // Full NAP, identical to the LocalBusiness schema (inc/seo-local.php). ?>
 				<a href="<?php echo esc_url( $opus_ft_page( 'contact' ) ); ?>"><?php esc_html_e( 'Neem contact op', 'maison-opus' ); ?></a>
-				<a href="<?php echo esc_url( $opus_ft_page( 'contact' ) ); ?>"><?php esc_html_e( 'De Entree 201, Amsterdam', 'maison-opus' ); ?></a>
+				<address class="foot-nap">
+					<?php echo esc_html( $opus_nap['street'] ); ?><br/>
+					<?php echo esc_html( $opus_nap['postcode'] . ' ' . $opus_nap['city'] ); ?>
+				</address>
+				<a href="tel:<?php echo esc_attr( str_replace( ' ', '', $opus_nap['phone'] ) ); ?>"><?php echo esc_html( $opus_nap['phone'] ); ?></a>
+				<a href="mailto:<?php echo esc_attr( $opus_nap['email'] ); ?>"><?php echo esc_html( $opus_nap['email'] ); ?></a>
 				<a href="<?php echo esc_url( $opus_ft_page( 'over-ons' ) ); ?>"><?php esc_html_e( 'Over ons', 'maison-opus' ); ?></a>
 			</div>
 		</div>

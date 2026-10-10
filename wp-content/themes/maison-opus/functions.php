@@ -41,6 +41,9 @@ require_once get_template_directory() . '/inc/site-texts.php';
 /** Design preview — logged-in users can switch to a work-in-progress skin. */
 require_once get_template_directory() . '/inc/design-preview.php';
 
+/** Local SEO: NAP, LocalBusiness schema, /brand/ → /merk/, no guess redirects. */
+require_once get_template_directory() . '/inc/seo-local.php';
+
 /**
  * Theme supports.
  */

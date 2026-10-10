@@ -298,6 +298,7 @@ body.opus-menu-open { overflow: hidden; }
 }
 .site-foot a { display: block; padding: 4px 0; color: var(--ink-soft); text-decoration: none; font-style: italic; }
 .site-foot a:hover { color: var(--gilt); }
+.site-foot .foot-nap { font-style: italic; padding: 4px 0; line-height: 1.5; }
 /* Legal row: inline links separated by middots, not stacked. */
 .foot-legal a { display: inline; padding: 0; }
 .site-foot .mark {

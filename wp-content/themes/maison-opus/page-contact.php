@@ -80,31 +80,32 @@ $intro    = trim( wp_strip_all_tags( get_the_content() ) );
 
 		<!-- ── Business details ─────────────────────────────── -->
 		<aside class="contact-details">
-			<h2 class="contact-name">Opus Watches</h2>
+			<?php $opus_nap = opus_nap(); // Bedrijfsprofiel (Site teksten), shared with footer + schema. ?>
+			<h2 class="contact-name"><?php echo esc_html( $opus_nap['name'] ); ?></h2>
 
 			<div class="contact-block">
 				<h3><?php esc_html_e( 'Bezoek', 'maison-opus' ); ?></h3>
-				<p><?php esc_html_e( 'De Entree 201', 'maison-opus' ); ?><br/>1101 HG <?php esc_html_e( 'Amsterdam', 'maison-opus' ); ?><br/><em><?php esc_html_e( 'Uitsluitend op afspraak', 'maison-opus' ); ?></em></p>
+				<p><?php echo esc_html( $opus_nap['street'] ); ?><br/><?php echo esc_html( $opus_nap['postcode'] . ' ' . $opus_nap['city'] ); ?><br/><em><?php esc_html_e( 'Uitsluitend op afspraak', 'maison-opus' ); ?></em></p>
 			</div>
 
 			<div class="contact-block">
 				<h3><?php esc_html_e( 'Bereikbaar', 'maison-opus' ); ?></h3>
 				<p>
-					<a href="mailto:info@opus.watches">info@opus.watches</a><br/>
-					<a href="tel:+31202614827">+31 20 261 4827</a>
+					<a href="mailto:<?php echo esc_attr( $opus_nap['email'] ); ?>"><?php echo esc_html( $opus_nap['email'] ); ?></a><br/>
+					<a href="tel:<?php echo esc_attr( str_replace( ' ', '', $opus_nap['phone'] ) ); ?>"><?php echo esc_html( $opus_nap['phone'] ); ?></a>
 				</p>
 			</div>
 
 			<div class="contact-block">
 				<h3><?php esc_html_e( 'Openingstijden', 'maison-opus' ); ?></h3>
-				<p><?php esc_html_e( 'Online & op afspraak', 'maison-opus' ); ?><br/>di – za · 10:00 – 18:00</p>
+				<p><?php esc_html_e( 'Online & op afspraak', 'maison-opus' ); ?><br/><?php echo esc_html( opus_opening_hours_text() ); ?></p>
 			</div>
 
 			<div class="contact-block contact-legal">
 				<h3><?php esc_html_e( 'Bedrijfsgegevens', 'maison-opus' ); ?></h3>
 				<dl>
-					<div><dt><?php esc_html_e( 'KvK', 'maison-opus' ); ?></dt><dd>93934866</dd></div>
-					<div><dt><?php esc_html_e( 'Vestigingsnr.', 'maison-opus' ); ?></dt><dd>000065652193</dd></div>
+					<div><dt><?php esc_html_e( 'KvK', 'maison-opus' ); ?></dt><dd><?php echo esc_html( opus_business_get( 'kvk' ) ); ?></dd></div>
+					<div><dt><?php esc_html_e( 'Vestigingsnr.', 'maison-opus' ); ?></dt><dd><?php echo esc_html( opus_business_get( 'vestigingsnr' ) ); ?></dd></div>
 				</dl>
 				<p class="contact-activity"><?php esc_html_e( 'Eenmanszaak · In- en verkoop en reparatie van uurwerken', 'maison-opus' ); ?></p>
 			</div>
@@ -126,7 +127,7 @@ $intro    = trim( wp_strip_all_tags( get_the_content() ) );
 			</picture>
 		</div>
 		<figcaption class="contact-map__credit">
-			<span>De Entree 201, Amsterdam</span>
+			<span><?php echo esc_html( $opus_nap['street'] . ', ' . $opus_nap['city'] ); ?></span>
 			<a href="<?php echo esc_url( 'https://www.openstreetmap.org/directions?to=' . $map_lat . '%2C' . $map_lon ); ?>"
 				target="_blank" rel="noopener"><?php esc_html_e( 'Routebeschrijving', 'maison-opus' ); ?></a>
 			<a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">&copy; OpenStreetMap-bijdragers</a>
