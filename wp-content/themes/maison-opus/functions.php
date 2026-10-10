@@ -38,6 +38,9 @@ require_once get_template_directory() . '/inc/taxatie.php';
 /** Site teksten — backend editor for all frontend theme strings (NL + EN). */
 require_once get_template_directory() . '/inc/site-texts.php';
 
+/** Design preview — logged-in users can switch to a work-in-progress skin. */
+require_once get_template_directory() . '/inc/design-preview.php';
+
 /**
  * Theme supports.
  */

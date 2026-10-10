@@ -125,7 +125,7 @@ function opus_site_texts_sections() {
 		),
 		'homepage'     => array(
 			'label' => 'Homepage',
-			'files' => array( 'front-page.php', 'template-parts/home-heritage.php' ),
+			'files' => array( 'front-page.php', 'template-parts/home-heritage.php', 'template-parts/home-v2.php' ),
 		),
 		'taxatie'      => array(
 			'label' => 'Taxatie',
