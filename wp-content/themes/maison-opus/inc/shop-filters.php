@@ -410,6 +410,12 @@ add_filter(
 		// Product: Home / Horloges / <brand> / <product>. Brands are a
 		// taxonomy of their own, not a subcategory, so Woo leaves them out.
 		if ( is_product() && count( $crumbs ) >= 2 ) {
+			// The Horloges category redirects to the shop page (inc/seo-local.php): link there directly.
+			foreach ( $crumbs as $i => $crumb ) {
+				if ( isset( $crumb[1] ) && preg_match( '#/product-category/watches(-en)?/?$#', $crumb[1] ) ) {
+					$crumbs[ $i ] = array( get_the_title( wc_get_page_id( 'shop' ) ), wc_get_page_permalink( 'shop' ) );
+				}
+			}
 			$brands = wp_get_post_terms( get_queried_object_id(), 'product_brand' );
 			$link   = ( ! is_wp_error( $brands ) && $brands ) ? get_term_link( $brands[0] ) : '';
 			if ( $link && ! is_wp_error( $link ) ) {

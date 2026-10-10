@@ -162,5 +162,101 @@ function opus_redirect_brand_base() {
 }
 add_action( 'template_redirect', 'opus_redirect_brand_base', 1 );
 
+/**
+ * One URL for "all watches": the shop page (/horloges/, /en/watches/).
+ * The Horloges category showed the same products under the same title, so
+ * it — and the shop's old slugs (/winkel/, /en/shop/) — 301 there, keeping
+ * the page number and any filters.
+ */
+function opus_redirect_to_shop() {
+	if ( ! function_exists( 'wc_get_page_permalink' ) ) {
+		return;
+	}
+	$path  = wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '', PHP_URL_PATH ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- only matched, then rebuilt.
+	$paged = 0;
+	if ( is_product_category( array( 'watches', 'watches-en' ) ) ) {
+		$paged = (int) get_query_var( 'paged' );
+	} elseif ( $path && preg_match( '#^(?:/en)?/(?:winkel|shop)(?:/page/(\d+))?/?$#', $path, $m ) ) {
+		$paged = isset( $m[1] ) ? (int) $m[1] : 0;
+	} else {
+		return;
+	}
+	$url = wc_get_page_permalink( 'shop' );
+	if ( $paged > 1 ) {
+		$url = trailingslashit( $url ) . 'page/' . $paged . '/';
+	}
+	if ( ! empty( $_SERVER['QUERY_STRING'] ) ) {
+		$url .= '?' . wp_unslash( $_SERVER['QUERY_STRING'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- passed through to the same site.
+	}
+	wp_safe_redirect( $url, 301 );
+	exit;
+}
+add_action( 'template_redirect', 'opus_redirect_to_shop', 1 );
+
+/** The Horloges category redirects (see above), so it stays out of the sitemap. */
+add_filter(
+	'wpseo_exclude_from_sitemap_by_term_ids',
+	function ( $ids ) {
+		$term = get_term_by( 'slug', 'watches', 'product_cat' );
+		$term = $term ? $term : get_term_by( 'slug', 'watches-en', 'product_cat' );
+		if ( ! $term ) {
+			return $ids;
+		}
+		$ids[] = $term->term_id;
+		// WPML only finds the current language's term by slug; add its translations.
+		foreach ( array_keys( (array) apply_filters( 'wpml_active_languages', null ) ) as $lang ) {
+			$ids[] = (int) apply_filters( 'wpml_object_id', $term->term_id, 'product_cat', false, $lang );
+		}
+		return array_values( array_filter( array_unique( $ids ) ) );
+	}
+);
+
+/**
+ * /cart/ was a leftover Dutch cart page from the first WooCommerce install
+ * (the real one is /winkelwagen/); it's unpublished, the URL redirects.
+ */
+function opus_redirect_old_cart() {
+	$path = wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '', PHP_URL_PATH ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- only matched.
+	if ( '/cart' === untrailingslashit( (string) $path ) && function_exists( 'wc_get_page_permalink' ) ) {
+		wp_safe_redirect( wc_get_page_permalink( 'cart' ), 301 );
+		exit;
+	}
+}
+add_action( 'template_redirect', 'opus_redirect_old_cart', 1 );
+
+/** Cart, checkout and account pages (all languages): personal, nothing to index. */
+function opus_private_shop_page_ids() {
+	if ( ! function_exists( 'wc_get_page_id' ) ) {
+		return array();
+	}
+	$ids = array();
+	foreach ( array( 'cart', 'checkout', 'myaccount' ) as $page ) {
+		$id = wc_get_page_id( $page );
+		if ( $id <= 0 ) {
+			continue;
+		}
+		$ids[] = $id;
+		foreach ( array_keys( (array) apply_filters( 'wpml_active_languages', null ) ) as $lang ) {
+			$ids[] = (int) apply_filters( 'wpml_object_id', $id, 'page', false, $lang );
+		}
+	}
+	return array_values( array_filter( array_unique( $ids ) ) );
+}
+
+add_filter(
+	'wpseo_exclude_from_sitemap_by_post_ids',
+	fn( $ids ) => array_merge( (array) $ids, opus_private_shop_page_ids() )
+);
+
+add_filter(
+	'wpseo_robots',
+	function ( $robots ) {
+		if ( function_exists( 'is_cart' ) && ( is_cart() || is_checkout() || is_account_page() ) ) {
+			return 'noindex, follow';
+		}
+		return $robots;
+	}
+);
+
 /** Unknown URL → 404, never a guessed "closest" post. */
 add_filter( 'do_redirect_guess_404_permalink', '__return_false' );

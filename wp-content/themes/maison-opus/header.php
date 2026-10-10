@@ -20,6 +20,8 @@
 		<div class="top-row">
 			<?php
 			$opus_shop = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' );
+			// Label = the shop page's title (Horloges / Watches), so it follows the page and its translation.
+			$opus_shop_label = function_exists( 'wc_get_page_id' ) && wc_get_page_id( 'shop' ) > 0 ? get_the_title( wc_get_page_id( 'shop' ) ) : __( 'Horloges', 'maison-opus' );
 			$opus_svc  = get_term_by( 'slug', 'service', 'product_cat' );
 			$opus_svc  = $opus_svc ? get_term_link( $opus_svc ) : $opus_shop;
 			$opus_svc  = is_wp_error( $opus_svc ) ? $opus_shop : $opus_svc;
@@ -33,7 +35,7 @@
 			<nav class="left" aria-label="<?php esc_attr_e( 'Primary', 'maison-opus' ); ?>">
 				<ul class="primary-nav">
 					<li class="has-mega">
-						<a href="<?php echo esc_url( $opus_shop ); ?>">Shop</a>
+						<a href="<?php echo esc_url( $opus_shop ); ?>"><?php echo esc_html( $opus_shop_label ); ?></a>
 						<div class="mega"><?php opus_render_shop_mega(); ?></div>
 					</li>
 					<li><a href="<?php echo esc_url( $opus_svc ); ?>"><?php esc_html_e( 'Diensten', 'maison-opus' ); ?></a></li>
