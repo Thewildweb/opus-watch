@@ -377,6 +377,12 @@ add_action( 'wp_head', 'opus_watch_schema', 20 );
  * Yoast only emits Product markup with its paid WooCommerce add-on, so the
  * search results carried no price or availability. Offers use the gross price
  * because the shop is configured tax-inclusive.
+ *
+ * "Prijs op aanvraag" watches have no price, and get NO offer: an Offer
+ * needs a price, and WooCommerce turns the empty price into 0 — which told
+ * Google every watch cost € 0. They keep the descriptive Product data
+ * (brand, reference, model, condition, photos); the offer appears by itself
+ * once a price is entered.
  */
 function opus_watch_product_schema() {
 	if ( ! function_exists( 'is_product' ) || ! is_product() ) {
@@ -386,43 +392,65 @@ function opus_watch_product_schema() {
 	if ( ! $product ) {
 		return;
 	}
+	$id = $product->get_id();
 
 	$data = array(
-		'@context'    => 'https://schema.org',
-		'@type'       => 'Product',
-		'name'        => $product->get_name(),
-		'url'         => get_permalink( $product->get_id() ),
-		'description' => wp_strip_all_tags( $product->get_short_description() ? $product->get_short_description() : $product->get_description() ),
-		'sku'         => $product->get_sku(),
+		'@context'      => 'https://schema.org',
+		'@type'         => 'Product',
+		'@id'           => get_permalink( $id ) . '#product',
+		'name'          => $product->get_name(),
+		'url'           => get_permalink( $id ),
+		'description'   => wp_strip_all_tags( $product->get_short_description() ? $product->get_short_description() : $product->get_description() ),
+		'sku'           => $product->get_sku(),
+		// Every watch here is pre-owned; "ongedragen" is still second hand.
+		'itemCondition' => 'https://schema.org/UsedCondition',
 	);
 
-	$image = wp_get_attachment_image_url( $product->get_image_id(), 'full' );
-	if ( $image ) {
-		$data['image'] = $image;
+	$reference = trim( (string) get_post_meta( $id, '_opus_reference', true ) );
+	if ( '' !== $reference ) {
+		$data['mpn'] = $reference;
 	}
 
-	$brands = wp_get_post_terms( $product->get_id(), 'product_brand', array( 'fields' => 'names' ) );
+	$images = array_filter(
+		array_map(
+			fn( $img ) => wp_get_attachment_image_url( $img, 'full' ),
+			array_merge( array( $product->get_image_id() ), $product->get_gallery_image_ids() )
+		)
+	);
+	if ( $images ) {
+		$data['image'] = array_values( array_unique( $images ) );
+	}
+
+	$brands = wp_get_post_terms( $id, 'product_brand', array( 'fields' => 'names' ) );
 	if ( ! is_wp_error( $brands ) && $brands ) {
 		$data['brand'] = array(
 			'@type' => 'Brand',
 			'name'  => $brands[0],
 		);
 	}
+	$models = wp_get_post_terms( $id, 'watch_model', array( 'fields' => 'names' ) );
+	if ( ! is_wp_error( $models ) && $models ) {
+		$data['model'] = $models[0];
+	}
+	$material = wc_get_product_terms( $id, 'pa_kastmateriaal', array( 'fields' => 'names' ) );
+	if ( $material ) {
+		$data['material'] = $material[0];
+	}
 
-	$price = wc_get_price_including_tax( $product );
-	if ( '' !== (string) $price ) {
+	if ( '' !== (string) $product->get_price() ) {
 		$data['offers'] = array(
 			'@type'         => 'Offer',
-			'url'           => get_permalink( $product->get_id() ),
-			'price'         => wc_format_decimal( $price, 2 ),
+			'url'           => get_permalink( $id ),
+			'price'         => wc_format_decimal( wc_get_price_including_tax( $product ), 2 ),
 			'priceCurrency' => get_woocommerce_currency(),
-			'availability'  => $product->is_in_stock()
-				? 'https://schema.org/InStock'
-				: 'https://schema.org/OutOfStock',
+			// One of a kind: once sold it is gone, not temporarily out of stock.
+			'availability'  => $product->is_in_stock() ? 'https://schema.org/InStock' : 'https://schema.org/SoldOut',
 			'itemCondition' => 'https://schema.org/UsedCondition',
 			'seller'        => array(
 				'@type' => 'Organization',
-				'name'  => get_bloginfo( 'name' ),
+				'@id'   => opus_business_schema_id(), // the business entity (inc/seo-local.php)
+				'name'  => opus_nap()['name'],
+				'url'   => home_url( '/' ),
 			),
 		);
 	}

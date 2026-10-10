@@ -407,7 +407,47 @@ add_filter(
 		if ( is_tax( 'product_brand' ) && function_exists( 'wc_get_page_permalink' ) && count( $crumbs ) >= 2 ) {
 			array_splice( $crumbs, 1, 0, array( array( get_the_title( wc_get_page_id( 'shop' ) ), wc_get_page_permalink( 'shop' ) ) ) );
 		}
+		// Product: Home / Horloges / <brand> / <product>. Brands are a
+		// taxonomy of their own, not a subcategory, so Woo leaves them out.
+		if ( is_product() && count( $crumbs ) >= 2 ) {
+			$brands = wp_get_post_terms( get_queried_object_id(), 'product_brand' );
+			$link   = ( ! is_wp_error( $brands ) && $brands ) ? get_term_link( $brands[0] ) : '';
+			if ( $link && ! is_wp_error( $link ) ) {
+				// Brands aren't translated, so get_term_link() is the Dutch URL; move it to the page's language.
+				$link = apply_filters( 'wpml_permalink', $link, apply_filters( 'wpml_current_language', null ) );
+				array_splice( $crumbs, count( $crumbs ) - 1, 0, array( array( $brands[0]->name, $link ) ) );
+			}
+		}
 		return $crumbs;
+	}
+);
+
+/**
+ * Yoast's breadcrumb (it feeds the BreadcrumbList schema Google reads) =
+ * WooCommerce's visible one on shop pages. Yoast built its own trail, which
+ * left out the brand and linked "Winkel" to the homepage (a stale indexable
+ * from when the shop was briefly set as the front page).
+ */
+add_filter(
+	'wpseo_breadcrumb_links',
+	function ( $links ) {
+		if ( ! function_exists( 'is_woocommerce' ) || ! is_woocommerce() || ! class_exists( 'WC_Breadcrumb' ) ) {
+			return $links;
+		}
+		$wc = new WC_Breadcrumb();
+		$wc->add_crumb( _x( 'Home', 'breadcrumb', 'woocommerce' ), apply_filters( 'woocommerce_breadcrumb_home_url', home_url( '/' ) ) );
+		$crumbs = $wc->generate(); // runs woocommerce_get_breadcrumb, so it includes the changes above
+		if ( count( $crumbs ) < 2 ) {
+			return $links;
+		}
+		$current = home_url( add_query_arg( array() ) );
+		return array_map(
+			fn( $c ) => array(
+				'text' => wp_strip_all_tags( $c[0] ),
+				'url'  => $c[1] ? $c[1] : $current,
+			),
+			$crumbs
+		);
 	}
 );
 
