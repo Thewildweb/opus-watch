@@ -10,8 +10,7 @@
  */
 
 $shop_url    = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' );
-$service_cat = get_term_by( 'slug', 'service', 'product_cat' );
-$service_url = $service_cat ? get_term_link( $service_cat ) : $shop_url;
+$service_url = opus_services_url();
 $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 $taxatie     = get_page_by_path( 'taxatie' );
 $taxatie_url = $taxatie ? get_permalink( apply_filters( 'wpml_object_id', $taxatie->ID, 'page', true ) ) : $service_url;
@@ -206,7 +205,7 @@ $v2_slider = function ( $slides, $variant ) use ( $v2_slide_link ) {
 			<p class="v2-eyebrow"><?php esc_html_e( 'Onderhoud', 'maison-opus' ); ?></p>
 			<h2 class="v2-h2"><?php esc_html_e( 'Breng uw horloge naar de werkbank.', 'maison-opus' ); ?></h2>
 			<p class="v2-lead">
-				<?php esc_html_e( 'Een groot deel van ons werk is de zorg voor horloges — die van ons en van andere merken, vintage en modern. Junior, onze horlogemaker, onderzoekt uw horloge en brengt een offerte uit voordat er iets gebeurt.', 'maison-opus' ); ?>
+				<?php esc_html_e( 'Een groot deel van ons werk is de zorg voor horloges — die van ons en van andere merken, vintage en modern. Onze horlogemaker onderzoekt uw horloge en brengt een offerte uit voordat er iets gebeurt.', 'maison-opus' ); ?>
 			</p>
 			<a class="v2-btn" href="<?php echo esc_url( $service_url ); ?>"><?php esc_html_e( 'Bekijk onze diensten', 'maison-opus' ); ?></a>
 		</div>

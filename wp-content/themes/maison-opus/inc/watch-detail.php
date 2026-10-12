@@ -100,6 +100,35 @@ get_header();
 		</div>
 	<?php endif; ?>
 
+	<?php
+	// From the reference to the workshop: service for this brand, and its value.
+	$opus_svc_url = function_exists( 'opus_service_url_for_brand' ) ? opus_service_url_for_brand( $watch['brand'] ) : '';
+	if ( $opus_svc_url && 'rolex' === sanitize_title( $watch['brand'] ) ) {
+		$opus_svc_url .= '#kalibers';
+	}
+	$opus_tax_page = get_page_by_path( 'taxatie' );
+	?>
+	<?php if ( $opus_svc_url ) : ?>
+		<section class="wdetail-service">
+			<h2 class="product-block-title"><?php esc_html_e( 'Onderhoud en waarde', 'maison-opus' ); ?></h2>
+			<p>
+				<?php
+				printf(
+					/* translators: %s: watch name, e.g. Rolex Datejust 36 */
+					esc_html__( 'Heeft u een %s? Onze horlogemakers onderhouden en reviseren hem in ons eigen atelier in Amsterdam, met een offerte vooraf.', 'maison-opus' ),
+					esc_html( $watch['name'] )
+				);
+				?>
+			</p>
+			<p class="wdetail-service__links">
+				<a href="<?php echo esc_url( $opus_svc_url ); ?>"><?php esc_html_e( 'Onderhoud en revisie', 'maison-opus' ); ?><span aria-hidden="true"> &rarr;</span></a>
+				<?php if ( $opus_tax_page ) : ?>
+					<a href="<?php echo esc_url( get_permalink( $opus_tax_page ) ); ?>"><?php esc_html_e( 'Wat is uw horloge waard?', 'maison-opus' ); ?><span aria-hidden="true"> &rarr;</span></a>
+				<?php endif; ?>
+			</p>
+		</section>
+	<?php endif; ?>
+
 	<p class="wdetail-source">
 		<?php esc_html_e( 'Gegevens ter referentie, samengesteld uit openbare bronnen.', 'maison-opus' ); ?>
 		<a href="<?php echo esc_url( $db_url ); ?>"><?php esc_html_e( '← Terug naar de database', 'maison-opus' ); ?></a>

@@ -40,6 +40,17 @@ $opus_term = get_queried_object();
 				esc_html( $opus_term->name )
 			);
 		}
+
+		// Rolex and Omega have their own service page (inc/service-pages.php).
+		$opus_brand_svc = in_array( $opus_term->slug, array( 'rolex', 'omega' ), true ) && function_exists( 'opus_service_url_for_brand' )
+			? opus_service_url_for_brand( $opus_term->name ) : '';
+		if ( $opus_brand_svc ) {
+			printf(
+				'<p class="brand-hero__dblink"><a href="%s">Onderhoud en revisie van uw %s<span aria-hidden="true"> &rarr;</span></a></p>',
+				esc_url( $opus_brand_svc ),
+				esc_html( $opus_term->name )
+			);
+		}
 		?>
 	</div>
 	<?php if ( $opus_hero ) : ?>

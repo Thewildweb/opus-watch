@@ -27,9 +27,8 @@
 				$id = apply_filters( 'wpml_object_id', $page->ID, 'page', true );
 				return get_permalink( $id );
 			};
-			$opus_ft_svc = get_term_by( 'slug', 'service', 'product_cat' );
-			$opus_ft_svc = $opus_ft_svc ? get_term_link( $opus_ft_svc ) : home_url( '/' );
-			$opus_ft_svc = is_wp_error( $opus_ft_svc ) ? home_url( '/' ) : $opus_ft_svc;
+			$opus_ft_svc     = opus_services_url();
+			$opus_ft_vintage = opus_service_page_url( 'vintage-horloge-reparatie' );
 			?>
 			<div>
 				<h4><?php esc_html_e( 'Collectie', 'maison-opus' ); ?></h4>
@@ -39,8 +38,8 @@
 			<div>
 				<h4><?php esc_html_e( 'Onderhoud', 'maison-opus' ); ?></h4>
 				<a href="<?php echo esc_url( $opus_ft_svc ); ?>"><?php esc_html_e( 'Onze diensten', 'maison-opus' ); ?></a>
-				<a href="<?php echo esc_url( $opus_ft_svc ); ?>"><?php esc_html_e( 'Onderhoud aanvragen', 'maison-opus' ); ?></a>
-				<a href="<?php echo esc_url( $opus_ft_svc ); ?>"><?php esc_html_e( 'Restauratie', 'maison-opus' ); ?></a>
+				<a href="<?php echo esc_url( $opus_ft_svc . '#svcform' ); ?>"><?php esc_html_e( 'Onderhoud aanvragen', 'maison-opus' ); ?></a>
+				<a href="<?php echo esc_url( $opus_ft_vintage ? $opus_ft_vintage : $opus_ft_svc ); ?>"><?php esc_html_e( 'Restauratie', 'maison-opus' ); ?></a>
 			</div>
 			<div>
 				<h4><?php esc_html_e( 'Contact', 'maison-opus' ); ?></h4>

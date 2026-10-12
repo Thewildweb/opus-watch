@@ -44,6 +44,9 @@ require_once get_template_directory() . '/inc/design-preview.php';
 /** Local SEO: NAP, LocalBusiness schema, /brand/ → /merk/, no guess redirects. */
 require_once get_template_directory() . '/inc/seo-local.php';
 
+/** Service pages: /diensten/, /rolex-service/ … (template, schema, links). */
+require_once get_template_directory() . '/inc/service-pages.php';
+
 /**
  * Theme supports.
  */

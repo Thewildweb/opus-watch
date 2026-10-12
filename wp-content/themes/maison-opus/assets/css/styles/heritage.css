@@ -1664,6 +1664,73 @@ body.opus-filters-open::after { content: ""; position: fixed; inset: 0; backgrou
   .svc-item__meta { text-align: left; align-items: flex-start; flex-direction: row; gap: 20px; }
 }
 
+/* ── Service pages (/diensten/, /rolex-service/ …, templates/service-page.php) ── */
+.svc-page .svc-head { margin-bottom: 40px; }
+.svc-phone { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 2px; }
+.svc-phone:hover { color: var(--gilt); border-color: var(--gilt); }
+.svc-facts { list-style: none; margin: 30px 0 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 26px; color: var(--ink-soft); font-size: 14px; }
+.svc-facts li { display: flex; align-items: center; gap: 8px; }
+.svc-facts li::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--gilt); flex: none; }
+
+.svc-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin: 0 0 72px; }
+.svc-card { background: var(--paper); padding: 26px 26px 22px; display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: var(--ink); min-width: 0; transition: background 0.2s; }
+.svc-card:hover, .svc-card:focus-visible { background: var(--paper-deep); }
+.svc-card__title { font-family: "Cormorant Garamond", "Cormorant Garamond Fallback", serif; font-size: clamp(22px, 2.2vw, 28px); line-height: 1.1; }
+.svc-card__text { color: var(--ink-soft); font-size: 15px; line-height: 1.5; flex: 1; }
+.svc-card__meta { color: var(--gilt); font-size: 14px; font-style: italic; }
+
+.svc-page-text h2 { font-family: "Cormorant Garamond", "Cormorant Garamond Fallback", serif; font-weight: 400; font-size: clamp(26px, 2.8vw, 34px); line-height: 1.15; color: var(--ink); margin: 1.9em 0 0.55em; text-wrap: balance; scroll-margin-top: 110px; }
+.svc-page-text > h2:first-child { margin-top: 0; }
+.svc-page-text ol { margin: 0 0 1.1em; padding-left: 1.3em; }
+.svc-page-text ol li { padding-left: 4px; margin-bottom: 8px; }
+.svc-page-text ol li::before { content: none; }
+.svc-page-text a { color: var(--gilt); text-underline-offset: 3px; }
+.svc-page-text .wp-block-table { margin: 0 0 1.4em; overflow-x: auto; }
+.svc-page-text table { width: 100%; border-collapse: collapse; font-size: 16px; line-height: 1.45; }
+.svc-page-text th, .svc-page-text td { text-align: left; padding: 11px 14px 11px 0; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.svc-page-text th { color: var(--ink); font-weight: 500; }
+/* Core's table block draws a black grid and a 3px header rule; use the site's hairlines. */
+.svc-page-text .wp-block-table th, .svc-page-text .wp-block-table td { border: 0; border-bottom: 1px solid var(--rule); }
+.svc-page-text .wp-block-table thead { border-bottom: 1px solid var(--ink-soft); }
+.svc-page-text td:last-child, .svc-page-text th:last-child { padding-right: 0; }
+.svc-page-text details { border-bottom: 1px solid var(--rule); }
+.svc-page-text h2 + details { border-top: 1px solid var(--rule); }
+.svc-page-text summary { cursor: pointer; list-style: none; padding: 18px 36px 18px 0; position: relative; color: var(--ink); font-size: 18px; }
+.svc-page-text summary::-webkit-details-marker { display: none; }
+.svc-page-text summary::after { content: "+"; position: absolute; right: 4px; top: 50%; transform: translateY(-50%); color: var(--gilt); font-size: 22px; line-height: 1; }
+.svc-page-text details[open] summary::after { content: "\2212"; }
+.svc-page-text summary:focus-visible { outline: 2px solid var(--gilt); outline-offset: 2px; }
+.svc-page-text details > p { margin: 0 0 18px; }
+
+.svc-related { margin-bottom: 64px; }
+.svc-related ul { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--rule); }
+.svc-related li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; padding: 14px 0; border-bottom: 1px solid var(--rule); }
+.svc-related a { color: var(--ink); font-size: 18px; text-decoration: none; }
+.svc-related a:hover { color: var(--gilt); }
+.svc-related span { color: var(--ink-soft); font-size: 15px; }
+
+.svc-nap { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px; margin-bottom: 72px; padding: 32px 0 0; border-top: 1px solid var(--rule); }
+.svc-nap p { margin: 0; color: var(--ink-soft); line-height: 1.6; }
+.svc-nap a { color: var(--ink); }
+.svc-nap strong { color: var(--ink); font-weight: 500; }
+
+.svc-guide { margin: 1.4em 0 0; }
+.svc-guide a { color: var(--gilt); text-underline-offset: 3px; }
+.product-assurances a { color: inherit; text-underline-offset: 3px; }
+.wdetail-service { margin: 48px 0 8px; max-width: 760px; }
+.wdetail-service p { color: var(--ink-soft); line-height: 1.65; margin: 0 0 12px; }
+.wdetail-service__links { display: flex; flex-wrap: wrap; gap: 8px 28px; }
+.wdetail-service__links a { color: var(--gilt); text-underline-offset: 3px; }
+
+@media (max-width: 880px) {
+  .svc-cards { grid-template-columns: 1fr 1fr; }
+  .svc-nap { grid-template-columns: 1fr; gap: 20px; }
+}
+@media (max-width: 560px) {
+  .svc-cards { grid-template-columns: 1fr; }
+  .svc-facts { justify-content: flex-start; flex-direction: column; align-items: flex-start; }
+}
+
 /* ═════════════════════════════════════════════════════════════
    Contact page
    ═════════════════════════════════════════════════════════════ */

@@ -22,7 +22,7 @@ $states    = array( __( 'Maakt niet uit', 'maison-opus' ), __( 'Nieuw', 'maison-
 				<p class="zoek-eyebrow"><?php esc_html_e( 'Zoekopdracht', 'maison-opus' ); ?></p>
 				<h1 class="zoek-title"><?php esc_html_e( 'Niet op voorraad?', 'maison-opus' ); ?><br/><em><?php esc_html_e( 'Dan vinden wij het.', 'maison-opus' ); ?></em></h1>
 				<p class="zoek-lead">
-					<?php esc_html_e( 'Zoekt u een specifiek horloge dat niet in onze actuele collectie staat? Via ons netwerk gaan we voor u op zoek. Eén vast aanspreekpunt, korte lijnen en heldere afspraken — en elk horloge wordt vóór levering door Junior, onze horlogemaker, gecontroleerd op echtheid en staat.', 'maison-opus' ); ?>
+					<?php esc_html_e( 'Zoekt u een specifiek horloge dat niet in onze actuele collectie staat? Via ons netwerk gaan we voor u op zoek. Eén vast aanspreekpunt, korte lijnen en heldere afspraken — en elk horloge wordt vóór levering door onze horlogemaker gecontroleerd op echtheid en staat.', 'maison-opus' ); ?>
 				</p>
 				<a class="btn solid" href="#zoekform"><?php esc_html_e( 'Plaats een zoekopdracht', 'maison-opus' ); ?></a>
 			</div>

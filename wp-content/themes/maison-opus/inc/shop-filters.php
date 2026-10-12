@@ -415,6 +415,11 @@ add_filter(
 				if ( isset( $crumb[1] ) && preg_match( '#/product-category/watches(-en)?/?$#', $crumb[1] ) ) {
 					$crumbs[ $i ] = array( get_the_title( wc_get_page_id( 'shop' ) ), wc_get_page_permalink( 'shop' ) );
 				}
+				// Same for the service category, which redirects to /diensten/ (inc/service-pages.php).
+				$diensten = function_exists( 'opus_service_page_url' ) ? opus_service_page_url( 'diensten' ) : '';
+				if ( $diensten && isset( $crumb[1] ) && preg_match( '#/product-category/service/?$#', $crumb[1] ) ) {
+					$crumbs[ $i ] = array( __( 'Diensten', 'maison-opus' ), $diensten );
+				}
 			}
 			$brands = wp_get_post_terms( get_queried_object_id(), 'product_brand' );
 			$link   = ( ! is_wp_error( $brands ) && $brands ) ? get_term_link( $brands[0] ) : '';

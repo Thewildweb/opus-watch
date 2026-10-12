@@ -22,9 +22,7 @@
 			$opus_shop = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' );
 			// Label = the shop page's title (Horloges / Watches), so it follows the page and its translation.
 			$opus_shop_label = function_exists( 'wc_get_page_id' ) && wc_get_page_id( 'shop' ) > 0 ? get_the_title( wc_get_page_id( 'shop' ) ) : __( 'Horloges', 'maison-opus' );
-			$opus_svc  = get_term_by( 'slug', 'service', 'product_cat' );
-			$opus_svc  = $opus_svc ? get_term_link( $opus_svc ) : $opus_shop;
-			$opus_svc  = is_wp_error( $opus_svc ) ? $opus_shop : $opus_svc;
+			$opus_svc  = opus_services_url(); // /diensten/, or the service category on /en/
 			$opus_zoek = get_page_by_path( 'zoekopdracht' );
 			$opus_zoek = $opus_zoek ? get_permalink( $opus_zoek ) : home_url( '/zoekopdracht/' );
 			?>

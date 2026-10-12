@@ -97,7 +97,14 @@ $short   = $product->get_short_description();
 			<ul class="product-assurances">
 				<li><?php esc_html_e( 'Verzekerde verzending wereldwijd', 'maison-opus' ); ?></li>
 				<li><?php esc_html_e( 'Authenticiteit gegarandeerd', 'maison-opus' ); ?></li>
-				<li><?php esc_html_e( 'Onderhoud & revisie in eigen atelier', 'maison-opus' ); ?></li>
+				<?php $opus_svc_url = function_exists( 'opus_service_url_for_brand' ) ? opus_service_url_for_brand( $brand ) : ''; ?>
+				<li>
+					<?php if ( $opus_svc_url ) : ?>
+						<a href="<?php echo esc_url( $opus_svc_url ); ?>"><?php esc_html_e( 'Onderhoud & revisie in eigen atelier', 'maison-opus' ); ?></a>
+					<?php else : ?>
+						<?php esc_html_e( 'Onderhoud & revisie in eigen atelier', 'maison-opus' ); ?>
+					<?php endif; ?>
+				</li>
 			</ul>
 
 			<?php if ( $contact ) : ?>

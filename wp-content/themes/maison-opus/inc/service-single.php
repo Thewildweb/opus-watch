@@ -52,6 +52,10 @@ $gallery_ids = $product->get_gallery_image_ids();
 			<div class="svc-body">
 				<h2 class="product-block-title"><?php esc_html_e( 'Over deze service', 'maison-opus' ); ?></h2>
 				<div class="svc-body-text"><?php echo apply_filters( 'the_content', $full ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></div>
+				<?php $opus_guide = function_exists( 'opus_service_guide_for_product' ) ? opus_service_guide_for_product( $product->get_slug() ) : null; ?>
+				<?php if ( $opus_guide ) : ?>
+					<p class="svc-guide"><a href="<?php echo esc_url( $opus_guide[0] ); ?>"><?php echo esc_html( $opus_guide[1] ); ?><span aria-hidden="true"> &rarr;</span></a></p>
+				<?php endif; ?>
 			</div>
 		</div>
 	<?php endif; ?>

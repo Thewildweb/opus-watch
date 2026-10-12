@@ -24,7 +24,7 @@ do_action( 'woocommerce_before_main_content' );
 		if ( $opus_term_desc ) {
 			echo '<div class="term-description">' . wp_kses_post( wpautop( $opus_term_desc ) ) . '</div>';
 		} else {
-			echo '<p class="term-description">' . esc_html__( 'Onderhoud, revisie en restauratie in eigen atelier — voor uw horloge en dat van andere merken, vintage en modern. Junior onderzoekt uw horloge en brengt een offerte uit voordat er iets gebeurt.', 'maison-opus' ) . '</p>';
+			echo '<p class="term-description">' . esc_html__( 'Onderhoud, revisie en restauratie in eigen atelier — voor uw horloge en dat van andere merken, vintage en modern. Onze horlogemaker onderzoekt uw horloge en brengt een offerte uit voordat er iets gebeurt.', 'maison-opus' ) . '</p>';
 		}
 		?>
 		<a class="btn solid svc-intro__cta" href="#svcform"><?php esc_html_e( 'Onderhoud aanvragen', 'maison-opus' ); ?></a>

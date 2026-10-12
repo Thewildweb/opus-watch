@@ -12,8 +12,7 @@
 
 
 $shop_url    = function_exists( 'wc_get_page_permalink' ) ? wc_get_page_permalink( 'shop' ) : home_url( '/' );
-$service_cat = get_term_by( 'slug', 'service', 'product_cat' );
-$service_url = $service_cat ? get_term_link( $service_cat ) : $shop_url;
+$service_url = opus_services_url();
 $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 ?>
 
@@ -137,7 +136,7 @@ $service_url = is_wp_error( $service_url ) ? $shop_url : $service_url;
 		<div class="service-copy">
 			<h2><?php esc_html_e( 'Breng uw horloge', 'maison-opus' ); ?><br/><?php esc_html_e( 'naar de werkbank.', 'maison-opus' ); ?></h2>
 			<p class="service-lead">
-				<?php esc_html_e( 'Een groot deel van ons werk is de zorg voor horloges — die van ons en van andere merken, vintage en modern. Junior, onze horlogemaker, onderzoekt uw horloge en brengt een offerte uit voordat er iets gebeurt.', 'maison-opus' ); ?>
+				<?php esc_html_e( 'Een groot deel van ons werk is de zorg voor horloges — die van ons en van andere merken, vintage en modern. Onze horlogemaker onderzoekt uw horloge en brengt een offerte uit voordat er iets gebeurt.', 'maison-opus' ); ?>
 			</p>
 			<p class="service-lead">
 				<?php esc_html_e( 'Wanneer wij een horloge innemen, ontvangt u op uw telefoon een innamepagina: foto\'s, een omschrijving van het werk en onze voorwaarden. U leest het en gaat akkoord — en uw akkoord wordt vastgelegd voordat het werk begint.', 'maison-opus' ); ?>
