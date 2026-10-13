@@ -11,8 +11,8 @@
    ═════════════════════════════════════════════════════════════ */
 
 :root {
-  --sans: "Inter Tight", "Inter Tight Fallback", "Helvetica Neue", Arial, sans-serif;
-  --display: "Cinzel", "Cinzel Fallback", Georgia, serif; /* titles — echoes the logo */
+  --sans: "Jost", "Jost Fallback", "Helvetica Neue", Arial, sans-serif;
+  --display: "Marcellus", "Marcellus Fallback", Georgia, serif; /* titles */
   --green: #006039;
   --green-hover: #127749;
   --grey: #f4f4f4;
@@ -54,13 +54,13 @@ body * { font-style: normal !important; }
 }
 
 /* Headings: heritage's light display serif → firm sans. */
-/* Titles: bold Cinzel (capitals only — lowercase sets as small caps), like
-   the lettering of the logo. !important + the :is() class weight beat the
-   one-typeface rule above and heritage's per-selector light weights.
+/* Titles: Marcellus, which comes in a single weight — 400, never bolded, or
+   the browser fakes a heavier cut. !important + the :is() class weight beat
+   the one-typeface rule above and heritage's per-selector weights.
    Footer h4s are small labels and stay sans. */
 body :is(h1, h2, h3, .v2-h2, .v2-h3, .v2-intro__title) {
   font-family: var(--display) !important;
-  font-weight: 700 !important;
+  font-weight: 400 !important;
   letter-spacing: 0.01em;
 }
 h4 { font-weight: 700 !important; }

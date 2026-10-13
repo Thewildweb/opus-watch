@@ -69,11 +69,11 @@ SKINS = {
         "locals": ("Georgia", "Times New Roman", "Liberation Serif", "Nimbus Roman"),
     },
     "v2": {
-        "families": "Inter+Tight:wght@300;400;500;600;700&family=Cinzel:wght@600;700",
+        "families": "Jost:wght@300;400;500;600;700&family=Marcellus",
         "css": "fonts-v2.css",
         "ref": ARIAL,
         "locals": ("Arial", "Helvetica", "Liberation Sans", "Nimbus Sans"),
-        "serif": {"Cinzel"},  # titles; falls back to Georgia, not Arial
+        "serif": {"Marcellus"},  # titles; falls back to Georgia, not Arial
     },
 }
 
@@ -131,18 +131,34 @@ def main() -> int:
         print("Could not parse the Google Fonts response.", file=sys.stderr)
         return 1
 
+    # A variable family (Jost) comes back as one file per subset that Google
+    # repeats for every weight asked for. Group the blocks by file so it is
+    # stored and declared once, with a weight range, instead of once per weight.
+    groups: dict[str, dict] = {}
     for subset, chunk in faces:
         if subset not in KEEP_SUBSETS:
             skipped += 1
             continue
 
-        family = re.search(r"font-family:\s*'([^']+)'", chunk).group(1)
-        style = re.search(r"font-style:\s*(\w+)", chunk).group(1)
-        weight = re.search(r"font-weight:\s*(\d+)", chunk).group(1)
         remote = re.search(r"url\((https://[^)]+\.woff2)\)", chunk).group(1)
+        weight = int(re.search(r"font-weight:\s*(\d+)", chunk).group(1))
+        if remote in groups:
+            groups[remote]["weights"].append(weight)
+            continue
         urange = re.search(r"unicode-range:\s*([^;]+);", chunk)
+        groups[remote] = {
+            "subset": subset,
+            "family": re.search(r"font-family:\s*'([^']+)'", chunk).group(1),
+            "style": re.search(r"font-style:\s*(\w+)", chunk).group(1),
+            "weights": [weight],
+            "urange": urange.group(1).strip() if urange else None,
+        }
 
-        name = f"{family.lower().replace(' ', '-')}-{weight}-{style}-{subset}.woff2"
+    for remote, g in groups.items():
+        lo, hi = min(g["weights"]), max(g["weights"])
+        weight = f"{lo}" if lo == hi else f"{lo} {hi}"
+        span = f"{lo}" if lo == hi else f"{lo}-{hi}"
+        name = f"{g['family'].lower().replace(' ', '-')}-{span}-{g['style']}-{g['subset']}.woff2"
         target = FONT_DIR / name
         if not target.exists():
             target.write_bytes(
@@ -152,14 +168,14 @@ def main() -> int:
 
         rule = [
             "@font-face {",
-            f"  font-family: '{family}';",
-            f"  font-style: {style};",
+            f"  font-family: '{g['family']}';",
+            f"  font-style: {g['style']};",
             f"  font-weight: {weight};",
             "  font-display: optional;",
             f"  src: url('../fonts/{name}') format('woff2');",
         ]
-        if urange:
-            rule.append(f"  unicode-range: {urange.group(1).strip()};")
+        if g["urange"]:
+            rule.append(f"  unicode-range: {g['urange']};")
         rule.append("}")
         blocks.append("\n".join(rule))
 
