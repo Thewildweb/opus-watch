@@ -67,6 +67,7 @@ command.
 - WordPress: `DISALLOW_FILE_EDIT` (no code editor in admin) but plugin
   installs from the backend stay possible; xmlrpc blocked at Caddy;
   DB not exposed outside the compose network; unique salts per server.
-- After go-live: install a login rate limiter (e.g. Limit Login Attempts
-  Reloaded) from the backend, and re-register WPML with a production key
-  for opus.watches.
+- Login rate limiting: Limit Login Attempts Reloaded was installed after
+  go-live and removed again on 2026-10-13 (its admin notices broke). No
+  limiter is in place now; wp-login.php is only behind Cloudflare.
+- After go-live: re-register WPML with a production key for opus.watches.
