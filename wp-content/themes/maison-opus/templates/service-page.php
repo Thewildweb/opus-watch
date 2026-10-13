@@ -61,7 +61,8 @@ $opus_tel    = str_replace( ' ', '', $opus_nap['phone'] );
 					<nav class="svc-cards" aria-label="<?php esc_attr_e( 'Onze diensten', 'maison-opus' ); ?>">
 						<?php
 						foreach ( $opus_pages as $opus_card_slug => $opus_card ) :
-							$opus_card_url = 'diensten' === $opus_card_slug ? '' : opus_service_page_url( $opus_card_slug );
+							// The overview shows the general services; the brand pages are linked from the copy and the brand pages.
+							$opus_card_url = in_array( $opus_card_slug, array( 'diensten', 'rolex-service', 'omega-service' ), true ) ? '' : opus_service_page_url( $opus_card_slug );
 							if ( ! $opus_card_url ) {
 								continue;
 							}
