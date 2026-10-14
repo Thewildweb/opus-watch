@@ -71,3 +71,15 @@ command.
   go-live and removed again on 2026-10-13 (its admin notices broke). No
   limiter is in place now; wp-login.php is only behind Cloudflare.
 - After go-live: re-register WPML with a production key for opus.watches.
+
+## Backups
+
+- Nightly 02:30 UTC on the server: `~/bin/opus-backup` (template
+  `roles/opuswatch/templates/opus-backup.sh.j2`) writes
+  `~/backups/full-<date>/`: MariaDB dump, the whole WordPress install,
+  the Umami database and `/opt/opus-watch` (with `.env` — secrets).
+  7 days kept; log in `~/backups/backup.log`.
+- Off-site: big pulls them at 04:00 with `deploy/scripts/pull-backups.sh`
+  into `/mnt/sas14tb/backups/opus-watch/` (30 days, checksums verified).
+  Its key may only read `~/backups` (rrsync -ro). To be replaced by S3.
+- Restore steps: `deploy/RESTORE.md`.

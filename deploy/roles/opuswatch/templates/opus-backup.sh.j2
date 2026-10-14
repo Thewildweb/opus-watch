@@ -1,0 +1,40 @@
+#!/bin/bash
+# Nightly full backup of {{ site_domain }} — managed by Ansible (roles/opuswatch).
+#
+# Writes ~/backups/full-<date>/ with the MariaDB dump, the whole WordPress
+# install (core, wp-config.php, plugins, themes, uploads), the Umami database
+# and the stack config (compose, Caddyfile, .env — secrets). Keeps the last
+# {{ backup_keep_days }} days here; big pulls them off-site (read-only key, rrsync).
+# Not included, rebuildable: Elasticsearch index, Redis, Caddy certificates.
+set -euo pipefail
+
+SITE_DIR={{ site_dir }}
+ROOT=/home/erik/backups
+KEEP_DAYS={{ backup_keep_days }}
+NAME=full-$(date -u +%F-%H%M)
+WORK=$ROOT/.$NAME.partial
+
+umask 077
+mkdir -p "$WORK"
+trap 'rm -rf "$WORK"' EXIT
+cd "$SITE_DIR"
+
+docker compose exec -T db sh -c 'mariadb-dump -uroot -p"$MARIADB_ROOT_PASSWORD" --all-databases --single-transaction --routines --events --triggers' \
+  | gzip > "$WORK/mariadb-all.sql.gz"
+docker compose exec -T wordpress tar czf - -C /var/www html > "$WORK/wordpress-files.tar.gz"
+docker compose exec -T umami-db sh -c 'pg_dumpall -U "$POSTGRES_USER"' | gzip > "$WORK/umami-postgres.sql.gz"
+tar czf "$WORK/stack-config.tar.gz" -C "$(dirname "$SITE_DIR")" "$(basename "$SITE_DIR")"
+
+# A dump that stopped early still gzips fine; the footer proves it finished.
+zcat "$WORK/mariadb-all.sql.gz" | tail -1 | grep -q '^-- Dump completed' \
+  || { echo "mariadb dump incomplete" >&2; exit 1; }
+for f in "$WORK"/*.gz; do gzip -t "$f"; done
+
+(cd "$WORK" && sha256sum ./*.gz > SHA256SUMS)
+mv "$WORK" "$ROOT/$NAME"
+trap - EXIT
+
+# Prune: only our own nightly folders, never the manual pre-change dumps.
+find "$ROOT" -maxdepth 1 -type d -name 'full-*' -mtime +"$KEEP_DAYS" -exec rm -rf {} +
+
+echo "$(date -u +%FT%TZ) ok $NAME $(du -sh "$ROOT/$NAME" | cut -f1)"

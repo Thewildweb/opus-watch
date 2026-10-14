@@ -120,6 +120,37 @@
     user: erik
     job: "curl -fsS -m 60 -o /dev/null https://{{ site_domain }}/wp-cron.php?doing_wp_cron"
 
+- name: ~/bin and ~/backups for the backup job
+  file:
+    path: "/home/erik/{{ item }}"
+    state: directory
+    owner: erik
+    group: erik
+    mode: "0700"
+  loop: [bin, backups]
+
+- name: Nightly full backup script
+  template:
+    src: opus-backup.sh.j2
+    dest: /home/erik/bin/opus-backup
+    owner: erik
+    group: erik
+    mode: "0755"
+
+- name: Nightly full backup at 02:30 UTC
+  cron:
+    name: opus-backup
+    minute: "30"
+    hour: "2"
+    user: erik
+    job: "/home/erik/bin/opus-backup >> /home/erik/backups/backup.log 2>&1"
+
+- name: Off-site puller (big) may only read ~/backups, via rrsync
+  authorized_key:
+    user: erik
+    key: "{{ backup_pull_key }}"
+    key_options: 'command="/usr/bin/rrsync -ro /home/erik/backups",restrict'
+
 - name: Elasticsearch requires vm.max_map_count >= 262144
   ansible.posix.sysctl:
     name: vm.max_map_count
